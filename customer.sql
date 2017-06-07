@@ -1,3 +1,12 @@
+-- phpMyAdmin SQL Dump
+-- version 4.0.9
+-- http://www.phpmyadmin.net
+--
+-- Inang: localhost
+-- Waktu pembuatan: 02 Mei 2014 pada 12.05
+-- Versi Server: 5.5.34
+-- Versi PHP: 5.4.22
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -14,18 +23,15 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Stable structure `user`
+-- Stable structure `customer`
 --
 
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE IF NOT EXISTS `customer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `address` text NOT NULL,
   `email` varchar(200) NOT NULL,
   `phone` varchar(20) NOT NULL,
-  `country_code` varchar(5) NOT NULL,
-  `time_zone` varchar(10) NOT NULL,
-  `user_type` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
@@ -33,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 -- Dumping data for table`customer`
 --
 
-INSERT INTO `user` (`id`, `name`, `address`, `email`, `phone`) VALUES
+INSERT INTO `customer` (`id`, `name`, `address`, `email`, `phone`) VALUES
 (2, 'Nadya Eka', 'Jl. Ciwidey no 20', 'nadya@yahoo.com', '086454743743'),
 (3, 'Amali', 'Jl. kemandoran no 10 Jakarta', 'amalia@langit.com', '03937263623'),
 (4, 'Angel ', 'Jl. Ciledug no 45A. tanggerang', 'angel@gmail.com', '082271626121'),

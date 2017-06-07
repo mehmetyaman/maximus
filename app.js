@@ -8,9 +8,9 @@ var routes = require('./routes');
 var http = require('http');
 var path = require('path');
 
-//load users route
-var users = require('./routes/users');
-
+//load customers route
+var customers = require('./routes/customers');
+var translators = require('./routes/translators');
 var app = express();
 
 var connection  = require('express-myconnection'); 
@@ -55,13 +55,18 @@ app.use(
 
 
 app.get('/', routes.index);
-
-app.get('/users', users.list);
-app.get('/users/add', users.add);
-app.post('/users/add', users.save);
-app.get('/users/delete/:id', users.delete_user);
-app.get('/users/edit/:id', users.edit);
-app.post('/users/edit/:id',users.save_edit);
+app.get('/customers', customers.list);
+app.get('/customers/add', customers.add);
+app.post('/customers/add', customers.save);
+app.get('/customers/delete/:id', customers.delete_customer);
+app.get('/customers/edit/:id', customers.edit);
+app.post('/customers/edit/:id',customers.save_edit);
+app.get('/translators', translators.list);
+app.get('/translators/add', translators.add);
+app.post('/translators/add', translators.save);
+app.get('/translators/edit/:id', translators.edit);
+app.post('/translators/edit/:id',translators.save_edit);
+app.get('/translators/delete/:id', translators.delete_translator);
 
 app.use(app.router);
 

@@ -2,22 +2,19 @@
 
         <div class="page-data">
             
-            <form method="post" action="/users/edit/<%=data[0].id%>">
+            <form method="post" action="/customers/add">
                 <table cellpadding="11">
                 <tr>
-                    <td class="label">Name</td><td>: <input type="text" name="name" value="<%=data[0].name%>" required></td>
+                    <td class="label">Name</td><td>: <input type="text" name="name" required></td>
                  </tr>
                  <tr>
-                    <td class="label" valign="top">Address</td>
-                    <td valign="top">: 
-                        <textarea name="address" required cols="30" rows="5"><%=data[0].address%></textarea>
-                    </td>
+                    <td class="label" valign="top">Address</td><td valign="top">: <textarea name="address" required cols="30" rows="5"></textarea></td>
                 </tr>
                 <tr>
-                    <td class="label">Email</td><td>: <input type="text" value="<%=data[0].email%>" name="email" required></td>
+                    <td class="label">Email</td><td>: <input type="text" name="email" required></td>
                  </tr>
                   <tr>
-                    <td class="label">Phone</td><td>: <input type="text" name="phone" value="<%=data[0].phone%>" required></td>
+                    <td class="label">Phone</td><td>: <input type="text" name="phone" required></td>
                  </tr>
                  <tr>
                     <td class="label"></td>

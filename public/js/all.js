@@ -1,6 +1,18 @@
 function addUser(){
-    window.location.href = '/users/add';
+            
+    window.location.href = '/customers/add';
 }
 function cancelAdd(){
-    window.location.href = '/users';
+    
+    window.location.href = '/customers';
 }
+
+function addTranslator(){
+
+    window.location.href = '/translators/add';
+}
+function cancelAddTranslator(){
+
+    window.location.href = '/translators';
+}
+
