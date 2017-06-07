@@ -9,7 +9,8 @@ var http = require('http');
 var path = require('path');
 
 //load customers route
-var customers = require('./routes/customers'); 
+var customers = require('./routes/customers');
+var translators = require('./routes/translators');
 var app = express();
 
 var connection  = require('express-myconnection'); 
@@ -60,7 +61,12 @@ app.post('/customers/add', customers.save);
 app.get('/customers/delete/:id', customers.delete_customer);
 app.get('/customers/edit/:id', customers.edit);
 app.post('/customers/edit/:id',customers.save_edit);
-
+app.get('/translators', translators.list);
+app.get('/translators/add', translators.add);
+app.post('/translators/add', translators.save);
+app.get('/translators/edit/:id', translators.edit);
+app.post('/translators/edit/:id',translators.save_edit);
+app.get('/translators/delete/:id', translators.delete_translator);
 
 app.use(app.router);
 
