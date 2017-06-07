@@ -13,7 +13,7 @@ exports.list = function (req, res) {
 
             res.render('users', {page_title: "users - Node.js", data: rows});
 
-
+      // deneme
         });
 
         //console.log(query.sql);
