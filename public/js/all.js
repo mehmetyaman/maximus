@@ -1,10 +1,8 @@
 function addUser(){
-            
-    window.location.href = '/customers/add';
+    window.location.href = '/users/add';
 }
 function cancelAdd(){
-    
-    window.location.href = '/customers';
+    window.location.href = '/users';
 }
 
 function addTranslator(){
