@@ -14,5 +14,4 @@ app.js
 
 
 	
-You're gonna need to create a DB named 'maximus' 
-and import customer.sql && translator.sql
+You're gonna need to create a DB named 'maximus' and import customer.sql
