@@ -1,0 +1,87 @@
+<%- include ../layouts/header.ejs %>
+
+        <div class="page-data">
+
+            <form method="post" action="/translators/edit/<%=data[0].id%>">
+                <table cellpadding="11">
+                <tr>
+                    <td class="label">Username</td><td>: <input type="text" name="username" value="<%=data[0].username%>"  required></td>
+                 </tr>
+                <tr>
+                    <td class="label">Name</td><td>: <input type="text" name="name" value="<%=data[0].name%>" required></td>
+                 </tr>
+                 <tr>
+                    <td class="label">Surname</td><td>: <input type="text" name="surname" value="<%=data[0].surname%>" required></td>
+                </tr>
+                <tr>
+                    <td class="label">Email</td><td>: <input type="text" name="email" value="<%=data[0].email%>"  required></td>
+                 </tr>
+                 <tr>
+                    <td class="label" style="vertical-align:top">Choose Languages</td><td>:
+                         <table>
+                             <%
+                             var i=0;
+                             var langs = [];
+
+                             if(data[0].languages)
+                                langs = data[0].languages.split(','); // sql return = eng>tr,ru>eng
+
+                             for ( ; i < 3; i++ ){
+                                 var langFrom = -1;
+                                 var langTo = -1;
+                                 if(langs.length>i){
+                                     langFrom = langs[i].substr(0,langs[i].indexOf('>'));
+                                     langTo = langs[i].substr(langs[i].indexOf('>')+1);
+                                 }
+                             %>
+                             <tr>
+                                 <td class="label">From:</td>
+                                 <td>
+                                     <div class="styled-select blue semi-square">
+                                      <select id="langFrom<%=i%>" name="langFrom<%=i%>" onchange="populateTargetComboBox(langTo<%=i%>,this.value);">
+                                          <option value="-1" selected="selected">Choose</option>
+                                        <%for ( var j = 0; j < dataLang.length; j++ ) {
+                                             var selected = ( dataLang[j].lang_short == langFrom ) ? "selected" : "";
+                                        %>
+                                            <option value="<%=dataLang[j].lang_short %>" <%=selected %>><%=dataLang[j].lang_desc %></option>
+                                        <%}%>
+                                        </select>
+                                     </div>
+                                 <td class="label">To:</td>
+                                 <td>
+                                     <div class="styled-select blue semi-square">
+                                     <select id="langTo<%=i%>" name="langTo<%=i%>" >
+                                         <option value="-1" selected="selected">Choose</option>
+                                         <% if(langFrom!=-1) {
+                                                for ( var k = 0; k < dataLang.length; k++ ){
+                                                    var selected = ( dataLang[k].lang_short == langTo ) ? "selected" : "";
+                                         %>
+                                                    <option value="<%=dataLang[k].lang_short %>" <%=selected %>><%=dataLang[k].lang_desc %></option>
+                                         <%}
+                                         }
+                                         %>
+                                     </select>
+                                     </div>
+                                 </td>
+                            <tr/>
+                         <%}%>
+
+                             <script>
+                                 var data = <%- JSON.stringify(dataLang) %>;
+                             </script>
+                         </table>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td class="label"></td>
+                    <td>
+                        &nbsp; <input type="submit" name="submit" value="Save">
+                       <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAddTranslator()">
+                    </td>
+                 </tr>
+                </table>
+
+            </form>
+            
+        </div>
+<%- include ../layouts/footer.ejs %>
