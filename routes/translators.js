@@ -23,7 +23,7 @@ exports.list = function (req, res) {
             if (err)
                 console.log("Error Selecting : %s ", err);
 
-            res.render('translator/all_translators', {page_title: "Translators - Node.js", data: rows});
+            res.render('translator/translators', {page_title: "Translators - Node.js", data: rows});
 
 
         });
@@ -123,7 +123,7 @@ exports.save = function (req, res) {
                 });
 
             }
-            res.redirect('/translators');
+            res.redirect('translator/translators');
 
         });
 
@@ -181,7 +181,7 @@ exports.save_edit = function (req, res) {
 
             }
 
-            res.redirect('/translators');
+            res.redirect('translator/translators');
 
         });
 
@@ -208,7 +208,7 @@ exports.delete_translator = function(req,res){
                 console.log("Error deleting translator : %s ",err2 );
         });
 
-        res.redirect('/translators');
+        res.redirect('translator/translators');
 
     });
 };

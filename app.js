@@ -42,11 +42,11 @@ app.use(
     
     connection(mysql,{
         
-        host: '172.17.0.2',
+        host: 'localhost',
         user: 'root',
-        password : 'admin123',
+        password : '',
         port : 3306, //port mysql
-        database:'maximus'
+        database:'maxsimus'
 
     },'pool') //or single
 
