@@ -8,7 +8,7 @@ exports.list = function (req, res) {
 
         var query = connection.query('SELECT * FROM user', function (err, rows) {
 
-            if (err){
+            if (err) {
                 console.log("Error Selecting : %s ", err);
             }
 

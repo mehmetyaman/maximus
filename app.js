@@ -62,6 +62,7 @@ app.post('/users/add', users.save);
 app.get('/users/delete/:id', users.delete_user);
 app.get('/users/edit/:id', users.edit);
 app.post('/users/edit/:id',users.save_edit);
+
 app.get('/translators', translators.list);
 app.get('/translators/add', translators.add);
 app.post('/translators/add', translators.save);
