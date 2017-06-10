@@ -3,6 +3,11 @@
 
 	npm install
 
+also use start command to see a running application
+
+	npm start
+
+
 ## Configuration (database)
 app.js
 
