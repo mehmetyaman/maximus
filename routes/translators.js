@@ -46,7 +46,6 @@ exports.add = function (req, res) {
 
         });
 
-        //console.log(query.sql);
     });
 };
 
@@ -103,18 +102,11 @@ exports.save = function (req, res) {
             } else{
                 var insertId = results.insertId;
                 console.log(insertId);
-
+                langListCarrier = input.langListCarrier;
                 var values = [];
-                if (input.langFrom0!="-1" && input.langTo0!="-1"){
-                    values.push( [insertId, input.langFrom0, input.langTo0] );
-                }
-                if (input.langFrom1!="-1" && input.langTo1!="-1"){
-                    values.push( [insertId, input.langFrom1, input.langTo1] );
-                }
-                if (input.langFrom2!="-1" && input.langTo2!="-1"){
-                    values.push( [insertId, input.langFrom2, input.langTo2] );
-                }
-
+                langListCarrier.split(";").filter(function(e){return e}).forEach(function (item) {
+                    values.push( [insertId, item.split(",")[0], item.split(",")[1]] );
+                });
                 var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
 
                     if (err2)
@@ -123,7 +115,7 @@ exports.save = function (req, res) {
                 });
 
             }
-            res.redirect('translator/translators');
+            res.redirect('translators');
 
         });
 
@@ -181,7 +173,7 @@ exports.save_edit = function (req, res) {
 
             }
 
-            res.redirect('translator/translators');
+            res.redirect('translators');
 
         });
 
@@ -208,7 +200,7 @@ exports.delete_translator = function(req,res){
                 console.log("Error deleting translator : %s ",err2 );
         });
 
-        res.redirect('translator/translators');
+        res.redirect('translators');
 
     });
 };

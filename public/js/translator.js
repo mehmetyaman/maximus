@@ -34,3 +34,7 @@ function removeOptions(selectbox)
     }
 }
 
+function addLanguagePair(langArray){
+    langArray.push("dsfsdf");
+    alert(langArray);
+}
