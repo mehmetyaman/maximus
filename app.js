@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -7,17 +6,20 @@ var express = require('express');
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
+var config = require('config');
 
 //load users route
 var users = require('./routes/users');
 var translators = require('./routes/translators');
+var videochat = require('./routes/videochat');
+
 var app = express();
 
-var connection  = require('express-myconnection'); 
+var connection = require('express-myconnection');
 var mysql = require('mysql');
 
 // all environments
-app.set('port', process.env.PORT || 4300);
+app.set('port', process.env.PORT || config.get('app.port'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.use(express.favicon());
@@ -30,47 +32,67 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
+
+
 /*------------------------------------------
-    connection peer, register as middleware
-    type koneksi : single,pool and request 
--------------------------------------------*/
+ connection peer, register as middleware
+ type koneksi : single,pool and request
+ -------------------------------------------*/
 
 app.use(
-    
-    connection(mysql,{
-        
-        host: '172.17.0.2',
-        user: 'root',
-        password : 'admin123',
-        port : 3306, //port mysql
-        database:'maximus'
-
-    },'pool') //or single
-
+    connection(mysql, config.get('mysql'), 'pool') //or single
 );
 
+app.get('connection').connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+    var sql = "CREATE database maxsimus;";
+    con.query(sql, function (err, result) {
+        if (err) throw err;
+        console.log("sql executed");
+    });
+    var sql2 = fs.readFileSync('translator.sql').toString();
+    con.query(sql2, function (err, result) {
+        if (err) throw err;
+        console.log("sql2 executed");
+    });
+    var sql3 = fs.readFileSync('user.sql').toString();
+    con.query(sql3, function (err, result) {
+        if (err) throw err;
+        console.log("sql3 executed");
+    });
+});
 
 
 app.get('/', routes.index);
 
+// user mappings here sss
 app.get('/users', users.list);
 app.get('/users/add', users.add);
 app.post('/users/add', users.save);
 app.get('/users/delete/:id', users.delete_user);
 app.get('/users/edit/:id', users.edit);
-app.post('/users/edit/:id',users.save_edit);
+app.post('/users/edit/:id', users.save_edit);
+// user mappings here eee
+
+// translator mappings here sss
 app.get('/translators', translators.list);
 app.get('/translators/add', translators.add);
 app.post('/translators/add', translators.save);
-app.get('/translators/edit/:id', translators.edit);
-app.post('/translators/edit/:id',translators.save_edit);
 app.get('/translators/delete/:id', translators.delete_translator);
+app.get('/translators/edit/:id', translators.edit);
+app.post('/translators/edit/:id', translators.save_edit);
+// translator mapping here eee
+
+// videochat mapping start
+app.get('/peertest/:sessionId', videochat.peertest);
+// videochat mapping end
 
 app.use(app.router);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+http.createServer(app).listen(app.get('port'), function () {
+    console.log('Express server listening on port ' + app.get('port'));
 });

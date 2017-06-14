@@ -1,0 +1,14 @@
+
+{
+  "app": {
+    "port": 4300
+  },
+  "mysql": {
+    "host": "X.X.X.X",
+    "user": "root",
+    "password": "",
+    "port": 3306,
+    "database": "maxsimus"
+
+  }
+}

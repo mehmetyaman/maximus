@@ -8,11 +8,11 @@ exports.list = function (req, res) {
 
         var query = connection.query('SELECT * FROM user', function (err, rows) {
 
-            if (err)
+            if (err) {
                 console.log("Error Selecting : %s ", err);
+            }
 
-            res.render('users', {page_title: "users - Node.js", data: rows});
-
+            res.render('user/users', {page_title: "Users List", data: rows});
 
         });
 
@@ -22,7 +22,7 @@ exports.list = function (req, res) {
 };
 
 exports.add = function (req, res) {
-    res.render('add_user', {page_title: "Add users - Node.js"});
+    res.render('user/add_user', {page_title: "Add user"});
 };
 
 exports.edit = function (req, res) {
@@ -36,7 +36,7 @@ exports.edit = function (req, res) {
             if (err)
                 console.log("Error Selecting : %s ", err);
 
-            res.render('edit_user', {page_title: "Edit users - Node.js", data: rows});
+            res.render('user/edit_user', {page_title: "User Edit", data: rows});
 
 
         });
@@ -68,7 +68,7 @@ exports.save = function (req, res) {
             if (err)
                 console.log("Error inserting : %s ", err);
 
-            res.redirect('/users');
+            res.redirect('user/users');
 
         });
 
@@ -98,7 +98,7 @@ exports.save_edit = function (req, res) {
             if (err)
                 console.log("Error Updating : %s ", err);
 
-            res.redirect('/users');
+            res.redirect('user/users');
 
         });
 
@@ -117,7 +117,7 @@ exports.delete_user = function (req, res) {
             if (err)
                 console.log("Error deleting : %s ", err);
 
-            res.redirect('/users');
+            res.redirect('user/users');
 
         });
 
