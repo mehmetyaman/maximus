@@ -41,12 +41,8 @@ console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
  connection peer, register as middleware
  type koneksi : single,pool and request
  -------------------------------------------*/
-
-app.use(
-    connection(mysql, config.get('mysql'), 'pool') //or single
-);
-
-app.get('connection').connect(function(err) {
+var connection = mysql.createConnection(config.get('mysql'));
+connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
     var sql = "CREATE database maxsimus;";
@@ -65,7 +61,7 @@ app.get('connection').connect(function(err) {
         console.log("sql3 executed");
     });
 });
-
+app.use(connection);
 
 app.get('/', routes.index);
 
