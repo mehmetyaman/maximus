@@ -7,6 +7,9 @@ var routes = require('./routes');
 var http = require('http');
 var path = require('path');
 var config = require('config');
+var fs = require('fs');
+var connection = require('express-myconnection');
+var mysql = require('mysql');
 
 //load users route
 var users = require('./routes/users');
@@ -14,9 +17,6 @@ var translators = require('./routes/translators');
 var videochat = require('./routes/videochat');
 
 var app = express();
-
-var connection = require('express-myconnection');
-var mysql = require('mysql');
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
-
+console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
 
 
 /*------------------------------------------
