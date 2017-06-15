@@ -41,26 +41,16 @@ console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
  connection peer, register as middleware
  type koneksi : single,pool and request
  -------------------------------------------*/
-
 app.use(
-    connection(mysql, config.get('mysql'), 'pool') //or single
+    connection(mysql,config.get('mysql') , 'pool') //or single
 );
 
-
-// var sql = "CREATE database maxsimus;";
-// connection.query(sql, function (err, result) {
-//     if (err) throw err;
-//     console.log("sql executed");
-// });
-var sql2 = fs.readFileSync('translator.sql').toString();
-connection.query(sql2, function (err, result) {
+var con = mysql.createConnection(config.get('mysql'));
+var sql2 = fs.readFileSync('translator.sql').toString()
+                + fs.readFileSync('user.sql').toString();
+con.query(sql2, function (err, result) {
     if (err) throw err;
-    console.log("translator.sql executed");
-});
-var sql3 = fs.readFileSync('user.sql').toString();
-connection.query(sql3, function (err, result) {
-    if (err) throw err;
-    console.log("user.sql executed");
+    console.log("translator.sql ans user.sql executed");
 });
 
 
