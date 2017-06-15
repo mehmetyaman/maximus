@@ -43,22 +43,22 @@ console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
  -------------------------------------------*/
 var connection = mysql.createConnection(config.get('mysql'));
 connection.connect(function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    var sql = "CREATE database maxsimus;";
-    connection.query(sql, function (err, result) {
-        if (err) throw err;
-        console.log("sql executed");
-    });
+     if (err) throw err;
+     console.log("Connected!");
+    // var sql = "CREATE database maxsimus;";
+    // connection.query(sql, function (err, result) {
+    //     if (err) throw err;
+    //     console.log("sql executed");
+    // });
     var sql2 = fs.readFileSync('translator.sql').toString();
     connection.query(sql2, function (err, result) {
         if (err) throw err;
-        console.log("sql2 executed");
+        console.log("translator.sql executed");
     });
     var sql3 = fs.readFileSync('user.sql').toString();
     connection.query(sql3, function (err, result) {
         if (err) throw err;
-        console.log("sql3 executed");
+        console.log("user.sql executed");
     });
 });
 app.use(connection);
