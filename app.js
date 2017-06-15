@@ -41,27 +41,28 @@ console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
  connection peer, register as middleware
  type koneksi : single,pool and request
  -------------------------------------------*/
-var connection = mysql.createConnection(config.get('mysql'));
-connection.connect(function(err) {
-     if (err) throw err;
-     console.log("Connected!");
-    // var sql = "CREATE database maxsimus;";
-    // connection.query(sql, function (err, result) {
-    //     if (err) throw err;
-    //     console.log("sql executed");
-    // });
-    var sql2 = fs.readFileSync('translator.sql').toString();
-    connection.query(sql2, function (err, result) {
-        if (err) throw err;
-        console.log("translator.sql executed");
-    });
-    var sql3 = fs.readFileSync('user.sql').toString();
-    connection.query(sql3, function (err, result) {
-        if (err) throw err;
-        console.log("user.sql executed");
-    });
+
+app.use(
+    connection(mysql, config.get('mysql'), 'pool') //or single
+);
+
+
+// var sql = "CREATE database maxsimus;";
+// connection.query(sql, function (err, result) {
+//     if (err) throw err;
+//     console.log("sql executed");
+// });
+var sql2 = fs.readFileSync('translator.sql').toString();
+connection.query(sql2, function (err, result) {
+    if (err) throw err;
+    console.log("translator.sql executed");
 });
-app.use(connection);
+var sql3 = fs.readFileSync('user.sql').toString();
+connection.query(sql3, function (err, result) {
+    if (err) throw err;
+    console.log("user.sql executed");
+});
+
 
 app.get('/', routes.index);
 
