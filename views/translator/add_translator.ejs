@@ -1,65 +1,115 @@
 <%- include ../layouts/header.ejs %>
 
-        <div class="page-data">
+<div class="page-data">
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#langListCarrier").val("");
+            $(".add-row").click(function () {
+                if ($("#langFrom option:selected").val() == -1 || $("#langTo option:selected").val() == -1) {
+                    return false;
+                }
 
-            <form method="post" action="/translators/add">
-                <table cellpadding="11">
-                <tr>
-                    <td class="label">Username</td><td>: <input type="text" name="username" required></td>
-                 </tr>
-                <tr>
-                    <td class="label">Name</td><td>: <input type="text" name="name" required></td>
-                 </tr>
-                 <tr>
-                    <td class="label">Surname</td><td>: <input type="text" name="surname" required></td>
-                </tr>
-                <tr>
-                    <td class="label">Email</td><td>: <input type="text" name="email" required></td>
-                 </tr>
-                 <tr>
-                    <td class="label" style="vertical-align:top">Chose Languages</td><td>:
-                        <table>
-                            <%
-                            var i =0;
-                            for ( ; i < 3; i++ ){
-                            %>
-                            <tr>
-                                <td class="label">From:</td>
-                                <td>
-                                    <div class="styled-select blue semi-square">
-                                    <select id="langFrom<%=i%>" name="langFrom<%=i%>" onchange="populateTargetComboBox(langTo<%=i%>,this.value);">
-                                        <option value="-1" selected="selected">Choose</option>
-                                        <%for ( var j = 0; j < dataLang.length; j++ ){%>
-                                            <option value="<%=dataLang[j].lang_short %>"><%=dataLang[j].lang_desc %></option>
-                                        <%}%>
-                                    </select>
-                                    </div>
-                                <td class="label">To:</td>
-                                <td>
-                                    <div class="styled-select blue semi-square">
-                                    <select id="langTo<%=i%>" name="langTo<%=i%>" >
-                                        <option value="-1" selected="selected">Choose</option>
-                                    </select>
-                                    </div>
-                                </td>
-                            <tr/>
-                            <%}%>
-                            <script>
-                                var data = <%- JSON.stringify(dataLang) %>;
-                            </script>
-                        </table>
-                        </td>
-                    </tr>
-                 <tr>
-                    <td class="label"></td>
-                    <td>
-                        &nbsp; <input type="submit" name="submit" value="Save">
-                       <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAddTranslator()">
-                    </td>
-                 </tr>
-                </table>
+                if ($("#langFrom option:selected").val() == $("#langTo option:selected").val()) {
+                    return false;
+                }
 
-            </form>
-            
-        </div>
+                var langFrom = $("#langFrom option:selected").text();
+                var langTo = $("#langTo option:selected").text();
+                var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + langFrom + "</td><td>" + langTo + "</td></tr>";
+
+                $("#langListCarrier").val($("#langListCarrier").val() + ($("#langFrom option:selected").val()+"," + ""+$("#langTo option:selected").val()) +';');
+                $(".langTableBody").append(markup);
+            });
+
+            // Find and remove selected table rows
+            $(".delete-row").click(function () {
+                $(".langTableBody").find('input[name="record"]').each(function () {
+                    if ($(this).is(":checked")) {
+                        $(this).parents("tr").remove();
+                    }
+                });
+            });
+        });
+    </script>
+    <form method="post" action="/translators/add">
+        <table cellpadding="11">
+            <tr>
+                <td class="label">Username</td>
+                <td>: <input type="text" name="username" required></td>
+            </tr>
+            <tr>
+                <td class="label">Name</td>
+                <td>: <input type="text" name="name" required></td>
+            </tr>
+            <tr>
+                <td class="label">Surname</td>
+                <td>: <input type="text" name="surname" required></td>
+            </tr>
+            <tr>
+                <td class="label">Email</td>
+                <td>: <input type="text" name="email" required></td>
+            </tr>
+            <tr>
+                <td class="label" style="vertical-align:top">Chose Languages</td>
+                <td>:
+                    <table id="langTable">
+                        <tr id="langRow">
+                            <td class="label">From:</td>
+                            <td>
+                                <div class="styled-select blue semi-square">
+                                    <select id="langFrom">
+                                        <option value="-1" selected="selected">Choose</option>
+                                        <% dataLang.forEach(function (langObj) { %>
+                                        <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            <td class="label">To:</td>
+                            <td>
+                                <div class="styled-select blue semi-square">
+                                    <select id="langTo">
+                                        <option value="-1" selected="selected">Choose</option>
+                                        <% dataLang.forEach(function (langObj) { %>
+                                        <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="button" class="add-row" value="Add Row"></td>
+                        <tr/>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <table class="langTable">
+                        <thead>
+                        <tr>
+                            <th>Language</th>
+                            <th>From</th>
+                            <th>To</th>
+                        </tr>
+                        </thead>
+                        <tbody class="langTableBody">
+                        <input type="hidden" id="langListCarrier" name="langListCarrier" />
+                        </tbody>
+                    </table>
+                    <button type="button" class="delete-row">Delete Row</button>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="label"></td>
+                <td>
+                    &nbsp; <input type="submit" name="submit" value="Save">
+                    <input type="button" name="cancel" value="Cancel" class="cancel" onClick="cancelAddTranslator()">
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+</div>
 <%- include ../layouts/footer.ejs %>

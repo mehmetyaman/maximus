@@ -1,16 +1,16 @@
-function addUser(){
+function addUser() {
     window.location.href = '/users/add';
 }
-function cancelAdd(){
+
+function cancelAdd() {
     window.location.href = '/users';
 }
 
-function addTranslator(){
-
+function addTranslator() {
     window.location.href = '/translators/add';
 }
-function cancelAddTranslator(){
 
+function cancelAddTranslator() {
     window.location.href = '/translators';
 }
 

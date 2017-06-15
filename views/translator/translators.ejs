@@ -1,0 +1,37 @@
+<%- include ../layouts/header.ejs %>
+
+        <div class="page-data">
+         <div class="data-btn">
+           <button onClick="addTranslator();">+ Add</button>
+         </div>
+         <div class="data-table">
+            <table border="1" cellpadding="7" cellspacing="7">
+                <tr>
+                    <th>Id</th>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Languages</th>
+                </tr>
+
+                <% data.forEach(function (language) { %>
+                        <tr>
+                            <td><%=language.id%></td>
+                            <td><%=language.username%></td>
+                            <td><%=language.name%> <%=language.surname%></td>
+                            <td><%=language.email%></td>
+                            <td><%=(language.languages!=null) ? language.languages : ""%></td>
+                            <td>
+                                <a class="a-inside edit" href="../translators/edit/<%=language.id%>">Edit</a>
+
+                                <a class="a-inside delete" href="../translators/delete/<%=language.id%>">Delete</a>
+
+                            </td>
+                        </tr>
+                <% }) %>
+                
+            </table>
+         </div>
+        </div>
+        
+<%- include ../layouts/footer.ejs %>

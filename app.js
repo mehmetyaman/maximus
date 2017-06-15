@@ -46,8 +46,8 @@ app.use(
 );
 
 var con = mysql.createConnection(config.get('mysql'));
-var sql2 = fs.readFileSync('translator.sql').toString()
-                + fs.readFileSync('user.sql').toString();
+var sql2 = fs.readFileSync('user.sql').toString()
+                + fs.readFileSync('translator.sql').toString();
 con.query(sql2, function (err, result) {
     if (err) throw err;
     console.log("translator.sql ans user.sql executed");

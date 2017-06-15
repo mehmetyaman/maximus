@@ -4,6 +4,11 @@
 	npm install
 npm install
 
+also use start command to see a running application
+
+	npm start
+
+
 ## Configuration (database)
 app.js
 
@@ -11,9 +16,9 @@ app.js
         user: 'root',
         password : 'root',
         port : 3306, //port mysql
-        database:'maximus'
+        database:'maxsimus'
 
 
 	
-You're gonna need to create a DB named 'maximus' 
+You're gonna need to create a DB named 'maxsimus'
 and import user.sql && translator.sql
