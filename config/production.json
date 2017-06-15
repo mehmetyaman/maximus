@@ -4,11 +4,9 @@
     "port": 4300
   },
   "mysql": {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "port": 3306,
-    "database": "maxsimus"
-
+    "host": "lg7j30weuqckmw07.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    "user": "h5zy4u2vtu9bw0p9",
+    "password": "m1nfci58paw8q3ib",
+    "port": 3306
   }
 }
