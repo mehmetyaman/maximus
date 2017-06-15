@@ -8,6 +8,7 @@
     "user": "h5zy4u2vtu9bw0p9",
     "password": "m1nfci58paw8q3ib",
     "port": 3306,
-    "database": "h0y7e5c72s6xg7xw"
+    "database": "h0y7e5c72s6xg7xw",
+    "multipleStatements": "true"
   }
 }
