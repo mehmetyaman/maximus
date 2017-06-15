@@ -46,17 +46,17 @@ connection.connect(function(err) {
     if (err) throw err;
     console.log("Connected!");
     var sql = "CREATE database maxsimus;";
-    con.query(sql, function (err, result) {
+    connection.query(sql, function (err, result) {
         if (err) throw err;
         console.log("sql executed");
     });
     var sql2 = fs.readFileSync('translator.sql').toString();
-    con.query(sql2, function (err, result) {
+    connection.query(sql2, function (err, result) {
         if (err) throw err;
         console.log("sql2 executed");
     });
     var sql3 = fs.readFileSync('user.sql').toString();
-    con.query(sql3, function (err, result) {
+    connection.query(sql3, function (err, result) {
         if (err) throw err;
         console.log("sql3 executed");
     });
