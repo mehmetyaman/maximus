@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "preinstall":"npm install config"
+    "preinstall": "npm install config"
   },
   "dependencies": {
+    "config": "^1.26.1",
     "ejs": "^1.0.0",
     "ejs-html": "^4.0.3",
     "express": "3.5.1",

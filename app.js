@@ -14,7 +14,7 @@ var mysql = require('mysql');
 //load users route
 var users = require('./routes/users');
 var translators = require('./routes/translators');
-var videochat = require('./routes/videochat');
+//var videochat = require('./routes/videochat');
 
 var app = express();
 
@@ -75,7 +75,8 @@ app.post('/translators/edit/:id', translators.save_edit);
 // translator mapping here eee
 
 // videochat mapping start
-app.get('/peertest/:sessionId', videochat.peertest);
+//app.get('/peertest/:sessionId', videochat.peertest);
+//app.get('/appear/:sessionId', videochat.appear);
 // videochat mapping end
 
 app.use(app.router);

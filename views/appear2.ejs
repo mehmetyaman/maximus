@@ -1,135 +1,118 @@
-
 <html>
 <head>
     <title>Translation Session</title>
+    <link href="/../css/appear2.css" rel="stylesheet">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
     <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
     <script>
-        function makeid(){
+
+        // Compatibility shim
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        var peer = new Peer(makeid(), {host: 'localhost', port: 9000, path: '/'});
+        peer.on('open', function () {
+            $('#my-id').text(peer.id);
+        });
+
+        // Receiving a call
+        peer.on('call', function (call) {
+            // Answer the call automatically (instead of prompting user) for demo purposes
+            call.answer(window.localStream);
+            step3(call);
+        });
+        peer.on('error', function (err) {
+            alert(err.message);
+        });
+
+        function makeid() {
             var text = "";
             var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            for( var i=0; i < 5; i++ )
+            for (var i = 0; i < 5; i++)
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
 
             return text;
         }
 
-        // Compatibility shim
-        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-        var peer = new Peer(makeid(), {host: 'localhost', port: 9000, path: '/'});
-        peer.on('open', function(){
-            $('#my-id').text(peer.id);
-        });
-
-        // Receiving a call
-        peer.on('call', function(call){
-            // Answer the call automatically (instead of prompting user) for demo purposes
-            call.answer(window.localStream);
-            step3(call);
-        });
-        peer.on('error', function(err){
-            alert(err.message);
-            // Return to step 2 if error occurs
-            step2();
-        });
-
-        // Click handlers setup
-        $(function(){
-        //    $('#make-call').click(function(){
-                // Initiate a call!
-            if('<%-sessionID %>') {
-                var call = peer.call('<%= sessionID %>', window.localStream);
-                step3(call);
-            }
-        //    });
-
-            $('#end-call').click(function(){
-                window.existingCall.close();
-                step2();
-            });
-
-            // Retry if getUserMedia fails
-            $('#step1-retry').click(function(){
-                $('#step1-error').hide();
-                step1();
-            });
-
-            // Get things started
-            step1();
-        });
-
-        function step1 () {
+        function step1() {
             // Get audio/video stream
-            navigator.getUserMedia({audio: true, video: true}, function(stream){
+            navigator.getUserMedia({audio: true, video: true}, function (stream) {
                 // Set your video displays
                 $('#my-video').prop('src', URL.createObjectURL(stream));
 
                 window.localStream = stream;
-                step2();
-            }, function(){ $('#step1-error').show(); });
+            }, function () {
+                $('#step1-error').show();
+            });
         }
 
-        function step2 () {
-            $('#step1, #step3').hide();
-            $('#step2').show();
-        }
-
-        function step3 (call) {
-            // Hang up on an existing call if present
-            if (window.existingCall) {
-                window.existingCall.close();
-            }
-
+        function step3(call) {
             // Wait for stream on the call, then set peer video display
-            call.on('stream', function(stream){
-                $('#their-video').prop('src', URL.createObjectURL(stream));
+            call.on('stream', function (stream) {
+                addNewVideoBox(call.peer, stream);
+            });
+        }
+
+        // Get things started
+        step1();
+
+        if ('<%- sessionID %>' != 'create') {
+            setTimeout(
+                function () {
+                    var call = peer.call('<%- sessionID %>', window.localStream);
+                    var peers=split('<%-peers%>',',');
+                    step3(call);
+                }, 1000);
+        }
+
+        function addNewVideoBox(peerId, stream) {
+            var $trgtVideo = $('._2').clone();
+            $trgtVideo.attr('id', 'targetVideo_' + peerId);
+            $trgtVideo.find(".web-rtc-video").prop('src', URL.createObjectURL(stream));
+            $trgtVideo.appendTo($("#video-wrapper"));
+            $("#targetVideoFrame").remove();
+            setUpVideoBoxesCss();
+        }
+
+        function removeVideoBox(peerId) {
+            if ($("#video-wrapper > div").length > 2) {
+                $('#targetVideo_' + peerId).remove();
+                setUpVideoBoxesCss();
+            }
+        }
+
+        function setUpVideoBoxesCss() {
+            var i = 0;
+            $("#video-wrapper > div").each(function () {
+                i++;
+                var lastClass = $(this).attr("class").split(" ").pop();
+                $(this).removeClass(lastClass);
+                $(this).addClass('_' + i);
             });
 
-            // UI stuff
-            window.existingCall = call;
-            $('#their-id').text(call.peer);
-            call.on('close', step2);
-            $('#step1, #step2').hide();
-            $('#step3').show();
+            $("#video-wrapper").attr("class","div" + i);
         }
-
     </script>
-    <title > one click video conversations</title>
-    <base href="/">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+    <title>Video Conference</title>
 
     <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
 
-    <script type="text/javascript" src="//use.typekit.net/foj7ell.js" async></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 </head>
 <body>
-
-<div id="fb-root"></div>
-<script>
-    (function(d, s, id){
-        var js, fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) {return;}
-        js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
-        js.async = true;
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-</script>
 
 <main class="video-space" ng-class="{alone: getNumberOfConnectedClients() == 1 }" ng-style="backgroundStyle">
     <header class="video-space-header screen-element">
         <div class="content-wrapper">
-            <div ng-click="toggleRoomActivity()" ng-class="{'selected': roomActivityService.isOpen}" class="top-bar-button roomactivity">
-                <!----><i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <!-- Generator: Sketch 3.8.3 (29802) - http://www.bohemiancoding.com/sketch -->
+            <div ng-click="toggleRoomActivity()" ng-class="{'selected': roomActivityService.isOpen}"
+                 class="top-bar-button roomactivity">
+                <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
+                    <!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
+                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink">
                         <title>room-icon</title>
                         <desc>Created with Sketch.</desc>
                         <defs></defs>
                         <g id="Page-1-Copy-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g id="room-presence-b1---expanded-copy-3" transform="translate(-28.000000, -23.000000)" fill="#FFFFFF">
+                            <g id="room-presence-b1---expanded-copy-3" transform="translate(-28.000000, -23.000000)"
+                               fill="#FFFFFF">
                                 <g id="room-icon" transform="translate(28.000000, 23.000000)">
                                     <g id="rooms-icon">
                                         <circle id="Oval-153" cx="2" cy="2" r="2"></circle>
@@ -145,21 +128,8 @@
                                 </g>
                             </g>
                         </g>
-                    </svg></i>
-            </div>
-            <div class="logo-wrapper" ng-hide="RoomState.logoUrl" title="Go to https://appear.in" ng-click="goToFrontPage()">
-                <!----><div ng-include="'/images/logo-simple.6e03f7a3.svg'" class="logo"><!--?xml version="1.0" encoding="UTF-8"?-->
-                    <svg width="100%" height="100%" viewBox="0 0 63 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g id="logo">
-                                <path d="M52.1431,28.6482 C52.1431,30.4432 50.6451,31.9122 48.8131,31.9122 L10.3311,31.9122 C8.5001,31.9122 7.0011,30.4432 7.0011,28.6482 L7.0011,3.4992 C7.0011,1.7042 8.5001,0.2352 10.3311,0.2352 L48.8131,0.2352 C50.6451,0.2352 52.1431,1.7042 52.1431,3.4992 L52.1431,28.6482 Z" id="body" fill="#41CC8D"></path>
-                                <path d="M42.2112,7.1037 L3.5662,7.1037 C1.7352,7.1037 0.2362,8.6377 0.2362,10.4337 L0.2362,35.4477 C0.2362,37.2427 1.7352,38.7767 3.5662,38.7767 L14.7852,38.7767 L30.9942,48.1487 L30.9942,38.7767 L42.2112,38.7767 C44.0422,38.7767 45.5412,37.2427 45.5412,35.4477 L45.5412,10.4337 C45.5412,8.6377 44.0422,7.1037 42.2112,7.1037" id="bubble" fill="#FF2E63"></path>
-                                <path d="M61.2536,31.7307 L56.9066,28.2047 C56.0036,27.4727 55.4726,26.3237 55.4726,25.1037 L55.4726,7.0437 C55.4726,5.8237 56.0036,4.6747 56.9066,3.9427 L61.2536,0.4167 C61.8026,-0.0283 62.5856,0.3957 62.5856,1.1377 L62.5856,31.0097 C62.5856,31.7517 61.8026,32.1757 61.2536,31.7307" id="lens" fill="#41CC8D"></path>
-                                <path d="M27.9335,22.7744 C27.9335,19.7664 26.0785,17.2214 22.8085,17.2214 C19.6735,17.2214 17.8195,19.8994 17.8195,22.7744 C17.8195,25.6824 19.6055,28.3924 22.8085,28.3924 C26.1125,28.3924 27.9335,25.8154 27.9335,22.7744 L27.9335,22.7744 Z M30.9915,30.5624 L27.7845,30.5624 L27.7845,28.1574 L27.6975,28.1574 C26.4835,30.1614 24.5965,31.0674 22.3365,31.0674 C17.5155,31.0674 14.7855,27.1194 14.7855,22.6904 C14.7855,18.4604 17.6515,14.6434 22.2355,14.6434 C24.5615,14.6434 26.4505,16.1294 27.6975,17.7334 L27.7845,17.7334 L27.7845,15.3274 L30.9915,15.3274 L30.9915,30.5624 Z" id="a" fill="#FFFFFF"></path>
-                            </g>
-                        </g>
                     </svg>
-                </div>
+                </i>
             </div>
             <div class="logo-wrapper ng-hide" ng-show="RoomState.logoUrl">
                 <img class="custom-logo ng-hide" ng-show="RoomState.logoUrl">
@@ -168,801 +138,116 @@
                 <div class="room-url">
                     <p class="text user-select-all" id="my-id"></p>
                 </div>
-                <div class="copy-button-wrapper">
-                    <ai-copy-url-button button-text="Copy link" on-copy="onCopyToClipboard()" class-name="ui-button secondary-color copy-link-text-button" copy-text="https://appear.in/afaki"><button class="ui-button secondary-color copy-link-text-button" ng-click="module.copyToClipboard()">Copy link</button></ai-copy-url-button>
-                </div>
             </div>
             <div class="room-control-buttons control-button-group">
                 <div ng-click="openMediaSelectorModal()" class="top-bar-button contacts-button" title="Cam/Mic">
-                    <!----><i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <!-- Generator: Sketch 3.6.1 (26313) - http://www.bohemiancoding.com/sketch -->
-                            <title>camera</title>
-                            <desc>Created with Sketch.</desc>
+                    <i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'">
+                        <!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
+                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <defs></defs>
                             <g id="fb-messenger-invite" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)" fill="#FFFFFF">
+                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)"
+                                   fill="#FFFFFF">
                                     <g id="room" transform="translate(-1.000000, 0.000000)">
                                         <g id="top-bar-icons" transform="translate(472.000000, 14.000000)">
                                             <g id="cam-/-mic">
                                                 <g id="cam-/-mic-icon-icon">
-                                                    <path d="M9,14.9953976 C9,14.4456547 9.44748943,14 9.99850233,14 L21.0014977,14 C21.5529553,14 22,14.4556644 22,14.9953976 L22,23.0046024 C22,23.5543453 21.5525106,24 21.0014977,24 L9.99850233,24 C9.44704472,24 9,23.5443356 9,23.0046024 L9,14.9953976 Z M23,17 L26,14 L27,14 L27,24 L26,24 L23,21 L23,17 Z" id="camera"></path>
+                                                    <path d="M9,14.9953976 C9,14.4456547 9.44748943,14 9.99850233,14 L21.0014977,14 C21.5529553,14 22,14.4556644 22,14.9953976 L22,23.0046024 C22,23.5543453 21.5525106,24 21.0014977,24 L9.99850233,24 C9.44704472,24 9,23.5443356 9,23.0046024 L9,14.9953976 Z M23,17 L26,14 L27,14 L27,24 L26,24 L23,21 L23,17 Z"
+                                                          id="camera"></path>
                                                 </g>
                                             </g>
                                         </g>
                                     </g>
                                 </g>
                             </g>
-                        </svg></i>
+                        </svg>
+                    </i>
                     <span class="desc">
                     <span>Cam/Mic</span>
                 </span>
                 </div>
 
-                <div class="room-lock-toggle top-bar-button" ng-class="{'is-locked': RoomState.isLocked}" ng-click="displayLockErrorIfAppropriate()" title="Lock room">
-                    <styled-checkbox is-checked="RoomState.isLocked" unchecked-text="Lock" checked-text="Locked" checked-icon="/images/tools/locked.04ee64af.svg" unchecked-icon="/images/tools/unlocked.3068afdc.svg" is-disabled="isRoomLockDisabled()" callback="lockRoom"><div class="styled-checkbox unchecked" ng-class="isChecked ? 'checked' : 'unchecked'" ng-click="toggleIsChecked()">
-    <span class="text unchecked">
-        <!----><i class="icon" ng-include="uncheckedIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-<svg width="20px" height="17px" viewBox="0 0 20 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
-    <title>unlocked</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="room" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-442.000000, -760.000000)" fill="#FFFFFF">
-            <g id="locked" sketch:type="MSLayerGroup" transform="translate(388.000000, 690.000000)">
-                <g id="Rectangle-698-+-Rectangle-699" transform="translate(11.000000, 12.000000)" sketch:type="MSShapeGroup">
-                    <g id="unlocked" transform="translate(43.000000, 58.000000)">
-                        <rect id="body" x="6" y="8" width="14" height="9" rx="1"></rect>
-                        <path d="M7,12.5822803 C8.7639252,11.8090126 10,10.0449404 10,7.99245589 L10,5.00754411 C10,2.23477967 7.76142375,0 5,0 C2.24419519,0 0,2.24195386 0,5.00754411 L0,7 L2,7 L2,5.00754411 C2,3.34813793 3.34715181,2 5,2 C6.65909893,2 8,3.34159527 8,5.00754411 L8,7.99245589 C8,8.88154992 7.6132712,9.68128772 7,10.2321882 L7,12.5822803 Z" id="shank"></path>
-                    </g>
-                </g>
-            </g>
-        </g>
-    </g>
-</svg></i>
-        <span class="desc">Lock</span>
-    </span>
-                            <span class="text checked">
-        <!----><i class="icon" ng-include="checkedIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-<svg width="14px" height="17px" viewBox="0 0 14 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
-    <title>locked</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="room" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-418.000000, -760.000000)" fill="#FFFFFF">
-            <g id="locked" sketch:type="MSLayerGroup" transform="translate(388.000000, 690.000000)">
-                <g id="Rectangle-698-+-Rectangle-699" transform="translate(11.000000, 12.000000)" sketch:type="MSShapeGroup">
-                    <g id="locked" transform="translate(19.000000, 58.000000)">
-                        <rect id="body" x="0" y="8" width="14" height="9" rx="1"></rect>
-                        <path d="M4,5.00754411 L4,5.00754411 L4,7.99245589 C4,9.65840473 5.34090107,11 7,11 C8.65284819,11 10,9.65186207 10,7.99245589 L10,5.00754411 C10,3.34159527 8.65909893,2 7,2 C5.34715181,2 4,3.34813793 4,5.00754411 L4,5.00754411 Z M2,5.00754411 C2,2.24195386 4.24419519,0 7,0 C9.76142375,0 12,2.23477967 12,5.00754411 L12,7.99245589 C12,10.7580461 9.75580481,13 7,13 C4.23857625,13 2,10.7652203 2,7.99245589 L2,5.00754411 L2,5.00754411 Z" id="shank"></path>
-                    </g>
-                </g>
-            </g>
-        </g>
-    </g>
-</svg></i>
-        <span class="desc">Locked</span>
-    </span>
-                        </div>
-                    </styled-checkbox>
-                </div>
 
-                <div class="top-bar-button black room-settings-button" permission="canAccessRoomSettings" ng-click="openRoomSettings()" title="Room settings" style="display: none;">
-                    <!----><i class="icon" ng-include="'/images/tools/settings.d47aebaa.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                        <svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                            <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
-                            <title>settings</title>
-                            <desc>Created with Sketch.</desc>
-                            <defs></defs>
-                            <g id="room" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                <g id="Artboard-15" sketch:type="MSArtboardGroup" transform="translate(-746.000000, -37.000000)">
-                                    <g id="settings" sketch:type="MSLayerGroup" transform="translate(736.000000, 27.000000)">
-                                        <rect id="bounds" sketch:type="MSShapeGroup" x="0" y="0" width="36" height="36"></rect>
-                                        <path d="M26,19.2520918 L26,16.5846429 L24.1750255,16.042449 C24.0545408,15.6489796 23.9129847,15.2718367 23.7227806,14.9146173 L24.6600765,13.2179592 L22.7781122,11.3319133 L21.0834184,12.2613776 C20.726199,12.071352 20.350051,11.9453061 19.9567347,11.8249745 L19.4153571,10 L16.7479082,10 L16.2057143,11.8249745 C15.8122449,11.9453061 15.435102,12.0870153 15.0778827,12.2770663 L13.3812245,11.3397449 L11.4951786,13.2218878 L12.4246429,14.9164031 C12.2346173,15.2736224 12.0269388,15.649949 11.9066071,16.0432653 L10,16.5846429 L10,19.2520918 L11.9066071,19.7942857 C12.0269388,20.1877551 12.2094643,20.565051 12.3995153,20.9221173 L11.482602,22.6186224 L13.3750255,24.5048214 L15.0747704,23.5753571 C15.4319898,23.7653827 15.8107653,23.9732143 16.2040816,24.0935459 L16.7479082,26 L19.4153571,26 L19.957551,24.0933929 C20.3510204,23.9730612 20.7283163,23.7905357 21.0853827,23.6003316 L22.7818878,24.5172194 L24.6680867,22.6248214 L23.7386224,20.9252296 C23.928648,20.5680102 24.0548469,20.1890561 24.1751786,19.7957653 L26,19.2520918 L26,19.2520918 Z M18.0816327,21.9212664 C15.870962,21.9212664 14.0787484,20.1290528 14.0787484,17.9183821 C14.0787484,15.7077114 15.8708384,13.9156214 18.0816327,13.9156214 C20.2924269,13.9156214 22.0845169,15.7077114 22.0845169,17.9183821 C22.0845169,20.1290528 20.2924269,21.9212664 18.0816327,21.9212664 L18.0816327,21.9212664 Z" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                    </g>
-                                </g>
-                            </g>
-                        </svg></i>
-                    <p class="desc">Settings</p>
-                </div>
-
-                <!----><div ng-show="RoomState.isClaimed" class="top-bar-button black claim-room-button ng-hide" ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()" title="Claim room">
-                    <!----><i ng-include="'/images/tools/crown.742f663e.svg'" class="crown icon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                        <svg width="20px" height="12px" viewBox="0 0 20 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                            <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
-                            <title>crown</title>
-                            <desc>Created with Sketch.</desc>
-                            <defs></defs>
-                            <g id="room" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                <g id="Artboard-15" sketch:type="MSArtboardGroup" transform="translate(-632.000000, -39.000000)">
-                                    <g id="crown" sketch:type="MSLayerGroup" transform="translate(624.000000, 27.000000)">
-                                        <rect id="bounds" sketch:type="MSShapeGroup" x="0" y="0" width="36" height="36"></rect>
-                                        <path d="M10,24 L8,14.4 L14.5,18.8 L18,12 L21.5,18.8 L28,14.4 L26,24 L10,24 Z" id="Shape-Copy" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                    </g>
-                                </g>
-                            </g>
-                        </svg></i>
-                    <p class="desc">Claim</p>
-                </div><!---->
             </div>
             <div class="user-control-buttons control-button-group ng-hide" ng-show="RoomState.isClaimed">
                 <div class="flex-button-wrapper">
-                    <!----><button ng-if="!User.isLoggedIn" ng-click="clickedLoginButton()" class="ui-button-invis topbar-login-button topbar-small-button">
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedLoginButton()"
+                            class="ui-button-invis topbar-login-button topbar-small-button">
                         Log in
-                    </button><!---->
+                    </button>
 
-                    <!----><button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()" class="ui-button topbar-signup-button topbar-small-button">
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
+                            class="ui-button topbar-signup-button topbar-small-button">
                         Sign up
-                    </button><!---->
+                    </button>
                 </div>
             </div>
 
             <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
                 <div class="flex-button-wrapper">
-                    <!----><button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
+                    <button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()"
+                            class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
                         Claim this room
-                    </button><!---->
+                    </button>
 
-                    <!----><button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()" class="ui-text-button white jstest-signup-button">
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
+                            class="ui-text-button white jstest-signup-button">
                         Or <strong>Sign up</strong>
-                    </button><!---->
+                    </button>
                 </div>
             </div>
 
         </div>
     </header>
-
-    <div class="notification-backpane ng-hide" ng-show="isActive">
-        <div class="notification-pane" ng-hide="isInvisible">
-            <div class="notification-pane-content-wrapper">
-                <div class="logo">
-                    <img src="https://d1x2efl61akomv.cloudfront.net/images/icons/apple-touch-icon-60x60.d67ef039.png" alt="">
-                </div>
-
-                <div class="body">
-                    <p class="title">appear.in would like to send you push notifications.</p>
-                    <p class="flavor">Notifications can be turned off anytime in the app or from the browser settings.</p>
+    <div class="video-wrapper screen-element">
+        <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">
+            <div class="video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1" id="myVideoFrame">
+                <div class="video-box">
+                    <div class="video-frame" style="height: 100%;">
+                            <div class="video-stream-container">
+                                <video id="my-video" muted="true" class="web-rtc-video" autoplay></video>
+                            </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="button-group">
-                <button class="native cancel" ng-click="closePane()">Don't Allow</button>
-
-                <button class="native confirm" ng-click="setupDesktopNotifications()">Allow</button>
+            <div class="video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _2" id="targetVideoFrame">
+                <div class="video-box">
+                        <div class="video-frame" style="height: 100%;">
+                            <div class="video-stream-container">
+                                <video id="their-video" class="web-rtc-video" autoplay></video>
+                            </div>
+                        </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="in-room-messages">
-        <ng-transclude>
-            <knockers-notification data-knockers-modal="getModal('knockers')"><!---->
-            </knockers-notification>
-        </ng-transclude>
-    </div>
-
-    <room-activity ng-if="!isEmbedded" ng-class="{'open': isRoomActivityOpen}" class="">
-        <aside class="room-list-content flex-column">
-            <header class="room-list-header flex-row">
-                <div class="refresh-button-wrapper">
-                    <button class="pointer refresh-button icon-button" ng-class="{ animate: module.isLoading }" ng-click="module.refreshRoomList()"></button>
-                </div>
-
-                <button ng-click="module.closeRoomActivity()" class="pointer close-button icon-button"></button>
-            </header>
-
-            <favorite-rooms>
-                <h1>
-                    <i class="icon favorite-room-icon"></i>
-                    <span>Favorites</span>
-                </h1>
-                <p ng-if="module.favoriteRooms.length === 0" class="empty-list-message helper-text">
-                    Star rooms to keep them here for later
-                </p>
-
-            </favorite-rooms>
-
-            <visited-rooms><h1>Recents</h1>
-
-                <!---->
-
-                <!----><ul ng-if="module.visitedRooms.length > 0" class="unstyled">
-                    <!----><li class="room-list-item active" ng-repeat="room in module.visitedRooms | orderBy: '-numberOfClientsInRoom' track by room.roomName" ng-class="{active: room.numberOfClientsInRoom > 0}">
-
-                        <article class="room-list-item-wrapper flex-row">
-                            <a ng-click="module.goToRoom(room.roomName)" class="room-link flex-row">
-                                <!----><i class="icon status-icon" ng-include="'/images/roomlist-camera-icon.36d53ddb.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                    <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                        <title>roomlist-camera-icon</title>
-                                        <desc></desc>
-                                        <defs></defs>
-                                        <g class="roomlist-camera-icon" fill="#000">
-                                            <path d="M0,0.995398 C0,0.445655 0.4474894,0 0.9985023,0 L12.0014977,0 C12.5529553,0 13,0.455664 13,0.995398 L13,9.004602 C13,9.554345 12.5525106,10 12.0014977,10 L0.9985023,10 C0.4470447,10 0,9.544336 0,9.004602 L0,0.995398 L0,0.995398 L0,0.995398 Z M14,3.242919 C14,2.966519 14.1822658,2.610654 14.398159,2.454538 L17.601841,0.137914 C17.8217381,-0.021096 18,0.065131 18,0.346791 L18,9.65321 C18,9.92758 17.8070717,10.018276 17.5869956,9.868016 L14.4130044,7.700927 C14.1849084,7.545191 14,7.193386 14,6.918476 L14,3.242919 L14,3.242919 L14,3.242919 Z"></path>
-                                        </g>
-                                    </svg>
-                                </i>
-
-                                <div class="text-container flex-column">
-                                    <p class="room-name">afaki</p>
-                                    <p class="status-text">
-                                        <ng-pluralize count="room.numberOfClientsInRoom" when="{'0': 'Empty room',
-                                                 'one': '1 person',
-                                                 'other': '{} people'}">2 people</ng-pluralize>
-                                    </p>
-                                </div>
-                            </a>
-
-                            <button class="icon-button close-button" ng-click="module.removeVisitedRoom(room.roomName)"></button>
-
-                            <button class="icon-button add-favorite-button" ng-click="module.addRoomToFavorites(room.roomName)"></button>
-                        </article>
-                    </li><!----><li class="room-list-item" ng-repeat="room in module.visitedRooms | orderBy: '-numberOfClientsInRoom' track by room.roomName" ng-class="{active: room.numberOfClientsInRoom > 0}">
-
-                        <article class="room-list-item-wrapper flex-row">
-                            <a ng-click="module.goToRoom(room.roomName)" class="room-link flex-row">
-                                <!----><i class="icon status-icon" ng-include="'/images/roomlist-camera-icon.36d53ddb.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                    <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                        <title>roomlist-camera-icon</title>
-                                        <desc></desc>
-                                        <defs></defs>
-                                        <g class="roomlist-camera-icon" fill="#000">
-                                            <path d="M0,0.995398 C0,0.445655 0.4474894,0 0.9985023,0 L12.0014977,0 C12.5529553,0 13,0.455664 13,0.995398 L13,9.004602 C13,9.554345 12.5525106,10 12.0014977,10 L0.9985023,10 C0.4470447,10 0,9.544336 0,9.004602 L0,0.995398 L0,0.995398 L0,0.995398 Z M14,3.242919 C14,2.966519 14.1822658,2.610654 14.398159,2.454538 L17.601841,0.137914 C17.8217381,-0.021096 18,0.065131 18,0.346791 L18,9.65321 C18,9.92758 17.8070717,10.018276 17.5869956,9.868016 L14.4130044,7.700927 C14.1849084,7.545191 14,7.193386 14,6.918476 L14,3.242919 L14,3.242919 L14,3.242919 Z"></path>
-                                        </g>
-                                    </svg>
-                                </i>
-
-                                <div class="text-container flex-column">
-                                    <p class="room-name">eka</p>
-                                    <p class="status-text">
-                                        <ng-pluralize count="room.numberOfClientsInRoom" when="{'0': 'Empty room',
-                                                 'one': '1 person',
-                                                 'other': '{} people'}">Empty room</ng-pluralize>
-                                    </p>
-                                </div>
-                            </a>
-
-                            <button class="icon-button close-button" ng-click="module.removeVisitedRoom(room.roomName)"></button>
-
-                            <button class="icon-button add-favorite-button" ng-click="module.addRoomToFavorites(room.roomName)"></button>
-                        </article>
-                    </li><!----><li class="room-list-item" ng-repeat="room in module.visitedRooms | orderBy: '-numberOfClientsInRoom' track by room.roomName" ng-class="{active: room.numberOfClientsInRoom > 0}">
-
-                        <article class="room-list-item-wrapper flex-row">
-                            <a ng-click="module.goToRoom(room.roomName)" class="room-link flex-row">
-                                <!----><i class="icon status-icon" ng-include="'/images/roomlist-camera-icon.36d53ddb.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                    <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                        <title>roomlist-camera-icon</title>
-                                        <desc></desc>
-                                        <defs></defs>
-                                        <g class="roomlist-camera-icon" fill="#000">
-                                            <path d="M0,0.995398 C0,0.445655 0.4474894,0 0.9985023,0 L12.0014977,0 C12.5529553,0 13,0.455664 13,0.995398 L13,9.004602 C13,9.554345 12.5525106,10 12.0014977,10 L0.9985023,10 C0.4470447,10 0,9.544336 0,9.004602 L0,0.995398 L0,0.995398 L0,0.995398 Z M14,3.242919 C14,2.966519 14.1822658,2.610654 14.398159,2.454538 L17.601841,0.137914 C17.8217381,-0.021096 18,0.065131 18,0.346791 L18,9.65321 C18,9.92758 17.8070717,10.018276 17.5869956,9.868016 L14.4130044,7.700927 C14.1849084,7.545191 14,7.193386 14,6.918476 L14,3.242919 L14,3.242919 L14,3.242919 Z"></path>
-                                        </g>
-                                    </svg>
-                                </i>
-
-                                <div class="text-container flex-column">
-                                    <p class="room-name">unassuming-mosquito</p>
-                                    <p class="status-text">
-                                        <ng-pluralize count="room.numberOfClientsInRoom" when="{'0': 'Empty room',
-                                                 'one': '1 person',
-                                                 'other': '{} people'}">Empty room</ng-pluralize>
-                                    </p>
-                                </div>
-                            </a>
-
-                            <button class="icon-button close-button" ng-click="module.removeVisitedRoom(room.roomName)"></button>
-
-                            <button class="icon-button add-favorite-button" ng-click="module.addRoomToFavorites(room.roomName)"></button>
-                        </article>
-                    </li><!----><li class="room-list-item" ng-repeat="room in module.visitedRooms | orderBy: '-numberOfClientsInRoom' track by room.roomName" ng-class="{active: room.numberOfClientsInRoom > 0}">
-
-                        <article class="room-list-item-wrapper flex-row">
-                            <a ng-click="module.goToRoom(room.roomName)" class="room-link flex-row">
-                                <!----><i class="icon status-icon" ng-include="'/images/roomlist-camera-icon.36d53ddb.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                    <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                                        <title>roomlist-camera-icon</title>
-                                        <desc></desc>
-                                        <defs></defs>
-                                        <g class="roomlist-camera-icon" fill="#000">
-                                            <path d="M0,0.995398 C0,0.445655 0.4474894,0 0.9985023,0 L12.0014977,0 C12.5529553,0 13,0.455664 13,0.995398 L13,9.004602 C13,9.554345 12.5525106,10 12.0014977,10 L0.9985023,10 C0.4470447,10 0,9.544336 0,9.004602 L0,0.995398 L0,0.995398 L0,0.995398 Z M14,3.242919 C14,2.966519 14.1822658,2.610654 14.398159,2.454538 L17.601841,0.137914 C17.8217381,-0.021096 18,0.065131 18,0.346791 L18,9.65321 C18,9.92758 17.8070717,10.018276 17.5869956,9.868016 L14.4130044,7.700927 C14.1849084,7.545191 14,7.193386 14,6.918476 L14,3.242919 L14,3.242919 L14,3.242919 Z"></path>
-                                        </g>
-                                    </svg>
-                                </i>
-
-                                <div class="text-container flex-column">
-                                    <p class="room-name">healthy-octopus</p>
-                                    <p class="status-text">
-                                        <ng-pluralize count="room.numberOfClientsInRoom" when="{'0': 'Empty room',
-                                                 'one': '1 person',
-                                                 'other': '{} people'}">Empty room</ng-pluralize>
-                                    </p>
-                                </div>
-                            </a>
-
-                            <button class="icon-button close-button" ng-click="module.removeVisitedRoom(room.roomName)"></button>
-
-                            <button class="icon-button add-favorite-button" ng-click="module.addRoomToFavorites(room.roomName)"></button>
-                        </article>
-                    </li><!---->
-                </ul><!---->
-            </visited-rooms>
-        </aside>
-    </room-activity>
-
-    <div class="video-wrapper screen-element">
-
-        <local-client-controls ng-if="!isEmbedded"><div class="VideoToolbar VideoToolbar--fixed jstest-toolbar">
-                <div class="VideoToolbar-container">
-                    <div class="VideoToolbar-itemGroup">
-                        <button class="VideoToolbar-item--screenshare jstest-screenshare-button VideoToolbar-item splitscreen-not-draggable" ng-click="handleClick($event)" ng-dblclick="$event.stopPropagation()" ng-class="{
-        'is-highlighted': isHighlighted !== false &amp;&amp; isActive &amp;&amp; !isDisabled,
-        'is-disabled': isDisabled,
-    }" ng-attr-title="{{ currentText }}" action="module.toggleShareScreen()" is-active="module.localClient.isScreenSharingEnabled()" is-disabled="!module.isScreenShareSupported()" icon="{ active: '/images/tools/screen-share.40e0d120.svg' }" text="{
-                    active: 'Share screen',
-                    inactive: 'Stop sharing',
-                }" title="Share screen">
-                            <!----><div class="VideoToolbar-itemIcon" ng-include="currentIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                    <title>screen-share</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs></defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-573.000000, -385.000000)">
-                                            <path d="M580,409 L578,409 L578.255859,410.023436 C578.389034,410.556135 578.948026,411 579.500695,411 L601.499305,411 C602.052531,411 602.609306,410.562777 602.744141,410.023436 L603,409 L601,409 L601,397.007484 C601,396.44892 600.552846,396 600.001254,396 L580.998746,396 C580.438615,396 580,396.451066 580,397.007484 L580,409 L580,409 Z M582,398 L599,398 L599,407 L582,407 L582,398 L582,398 Z M589,409 L592,409 L592,409.5 C592,409.776142 591.784247,410 591.504611,410 L589.495389,410 C589.221793,410 589,409.768066 589,409.5 L589,409 L589,409 Z" id="screenshare" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                        </g>
-                                    </g>
-                                </svg></div>
-                            <div class="VideoToolbar-itemText">
-                                Share screen
-                            </div>
-                        </button>
-
-                        <button class="VideoToolbar-item--sticker jstest-stickers-button VideoToolbar-item splitscreen-not-draggable" ng-click="handleClick($event)" ng-dblclick="$event.stopPropagation()" ng-class="{
-        'is-highlighted': isHighlighted !== false &amp;&amp; isActive &amp;&amp; !isDisabled,
-        'is-disabled': isDisabled,
-    }" ng-attr-title="{{ currentText }}" is-highlighted="false" action="module.openStickerSelectModal($event)" icon="{ active: '/images/tools/entertainment-button.409a508c.svg' }" text="{ active: 'Stickers' }" title="Stickers">
-                            <!----><div class="VideoToolbar-itemIcon" ng-include="currentIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-
-                                    <title>Shape</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs></defs>
-                                    <g id="slices" transform="translate(425.000000, 348.000000)" sketch:type="MSLayerGroup"></g>
-                                    <path class="st0" fill="#FFFFFF" d="M18,7C11.9,7,7,11.9,7,18s4.9,11,11,11c6.1,0,11-4.9,11-11S24.1,7,18,7z M21.5,14c0.8,0,1.5,0.7,1.5,1.5
-    	S22.3,17,21.5,17S20,16.3,20,15.5S20.7,14,21.5,14z M14.5,14c0.8,0,1.5,0.7,1.5,1.5S15.3,17,14.5,17S13,16.3,13,15.5
-    	S13.7,14,14.5,14z M23.2,21.4c-1,1.7-3.1,2.8-5.3,2.8c-2.2,0-4.3-1.1-5.3-2.8c-0.3-0.5-0.1-1.2,0.4-1.5s1.2-0.1,1.5,0.4
-    	c0.6,1,2,1.7,3.5,1.7s2.9-0.6,3.5-1.7c0.3-0.6,1-0.7,1.5-0.4S23.7,20.9,23.2,21.4z"></path>
-                                </svg>
-                            </div>
-                            <div class="VideoToolbar-itemText">
-                                Stickers
-                            </div>
-                        </button>
-                    </div>
-
-                    <div class="VideoToolbar-closeApp jstest-leave-room">
-                        <button class="VideoToolbar-closeAppButton" ng-click="module.exitRoom()" title="Leave room">
-                            <!----><div class="VideoToolbar-closeAppIcon" ng-include="'/images/cross.0695b166.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                    <!-- Generator: Sketch 3.3.3 (12081) - http://www.bohemiancoding.com/sketch -->
-                                    <title>Path 56 Copy</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs></defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                        <g id="room---settings---general" sketch:type="MSArtboardGroup" transform="translate(-984.000000, -167.000000)" class="stroke" stroke="#000000" stroke-width="2">
-                                            <g id="Room-settings---followers" sketch:type="MSLayerGroup" transform="translate(420.000000, 144.000000)">
-                                                <g id="close-button" transform="translate(557.000000, 16.000000)" sketch:type="MSShapeGroup">
-                                                    <path d="M14.5,14.5 L21,21 L14.5,14.5 L8,21 L14.5,14.5 Z M14.5,14.5 L8,8 L14.5,14.5 L21,7.99999999 L14.5,14.5 Z" id="Path-56-Copy"></path>
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </div>
-
-                        </button>
-                    </div>
-
-                    <div class="VideoToolbar-itemGroup">
-                        <button class="VideoToolbar-item--mic jstest-toggle-audio-button VideoToolbar-item splitscreen-not-draggable" ng-click="handleClick($event)" ng-dblclick="$event.stopPropagation()" ng-class="{
-        'is-highlighted': isHighlighted !== false &amp;&amp; isActive &amp;&amp; !isDisabled,
-        'is-disabled': isDisabled,
-    }" ng-attr-title="{{ currentText }}" action="module.toggleAudioInputEnabled()" is-active="!module.localClient.isAudioInputEnabled" is-disabled="!module.localClient.capabilities.audio" icon="{
-                    active: '/images/tools/mic-on.7faecc28.svg',
-                    inactive: '/images/tools/mic-off.2be9fd10.svg'
-                }" text="{
-                    active: 'Mute',
-                    inactive: 'Unmute'
-                }" title="Mute">
-                            <!----><div class="VideoToolbar-itemIcon" ng-include="currentIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                    <title>mic-on</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs></defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-462.000000, -385.000000)">
-                                            <path d="M481,410.929111 L481,414 L485,414 L485,415 L475,415 L475,414 L479,414 L479,414 L479,410.929111 C475.607706,410.443881 473,407.526472 473,404 L473,402 L474,402 L475,402 L475,404 C475,406.761424 477.238576,409 480,409 C482.761424,409 485,406.761424 485,404 L485,402 L486,402 L487,402 L487,404 C487,407.526472 484.392294,410.443881 481,410.929111 L481,410.929111 Z M476,395.996203 C476,393.789161 477.795356,392 480,392 C482.209139,392 484,393.78883 484,395.996203 L484,404.003797 C484,406.210839 482.204644,408 480,408 C477.790861,408 476,406.21117 476,404.003797 L476,395.996203 Z" id="mic-on" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                        </g>
-                                    </g>
-                                </svg></div>
-                            <div class="VideoToolbar-itemText">
-                                Mute
-                            </div>
-                        </button>
-                        <button class="VideoToolbar-item--cam jstest-toggle-video-button VideoToolbar-item splitscreen-not-draggable" ng-click="handleClick($event)" ng-dblclick="$event.stopPropagation()" ng-class="{
-        'is-highlighted': isHighlighted !== false &amp;&amp; isActive &amp;&amp; !isDisabled,
-        'is-disabled': isDisabled,
-    }" ng-attr-title="{{ currentText }}" action="module.toggleVideoEnabled()" is-active="!module.localClient.isVideoEnabled" is-disabled="!module.localClient.capabilities.video" icon="{
-                    active: '/images/tools/camera-on.b998cf81.svg',
-                    inactive: '/images/tools/camera-off.dc4f81ee.svg'
-                }" text="{
-                    active: 'Video off',
-                    inactive: 'Video on'
-                }" title="Video off">
-                            <!----><div class="VideoToolbar-itemIcon" ng-include="currentIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                    <title>camera-on</title>
-                                    <desc>Created with Sketch.</desc>
-                                    <defs></defs>
-                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-425.000000, -385.000000)">
-                                            <path d="M432,398.00276 C432,396.896666 432.890058,396 434.000106,396 L446.999894,396 C448.104522,396 449,396.893543 449,398.00276 L449,406.99724 C449,408.103334 448.109942,409 446.999894,409 L434.000106,409 C432.895478,409 432,408.106457 432,406.99724 L432,398.00276 Z M450,399 L454,395 L454,410 L450,406 L450,399 Z" id="camera-on" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                        </g>
-                                    </g>
-                                </svg></div>
-                            <div class="VideoToolbar-itemText">
-                                Video off
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </local-client-controls><!---->
-
-        <splitscreen-container><div style="height: 100%; width: 100%;" ng-transclude="">
-                <!----><div vc-id="faad8684-33c3-4715-a88c-99bcdf1bc8aa-single-stream" vc-splitscreen-supersize-on-register="false" vc-splitscreen="true" vc-splitscreen-dragdrop="true" ng-if="!RoomState.localClient.hasSupportForSendingMultipleStreams" class="video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable" style="left: 0px; top: 24.0654px; width: 646.492px; height: 484.869px; font-size: 12.9298pt;">
-                    <!----><!----><video-view ng-repeat="stream in RoomState.localClient.streams.slice().reverse()" user="User.data" client="RoomState.localClient" stream="stream" ng-if="stream.isEnabled" is-super-sized="false" enable-super-size-stream="enableSuperSizeStream(client, stream)" disable-super-size-stream="disableSuperSizeStream(client, stream)"><div class="video-box local-client" ng-class="{
-        'local-client': module.client.isLocalClient
-    }" ng-dblclick="module.toggleSuperSize()">
-                            <div style="height: 100%;">
-                                <div class="video-frame" ng-show="module.stream.isVideoEnabled" style="height: 100%;">
-                                    <!---->
-                                    <!---->
-                                    <!----><div ng-if="module.stream.status === 'connection_successful' || module.stream.status === 'connection_disconnected'" class="wrapper" ng-class="{ 'disconnected': module.stream.status === 'connection_disconnected' }">
-                                        <div class="video-stream-container">
-                                            <video id="their-video" autoplay></video>
-                                        </div>
-                                    </div><!---->
-                                </div>
-                            </div>
-                            <video-sticker client-id="faad8684-33c3-4715-a88c-99bcdf1bc8aa"><div class="video-stream-sticker-container">
-                                    <!---->
-                                </div>
-                            </video-sticker>
-
-                            <!----><div class="top-left-corner" ng-if="module.stream.type !== module.STREAM_TYPES.SCREEN_SHARE">
-                                <div class="badge-column">
-                                    <!---->
-                                    <!---->
-                                    <div class="badge badge-muted ng-hide badge-clickable" ng-class="{'badge-clickable': module.client.isLocalClient}" ng-show="!module.client.isAudioInputEnabled" ng-click="module.client.isLocalClient &amp;&amp; module.enableAudioInput()">
-                                        <!----><i class="svg mic-off" ng-include="'/images/badges/mic-off.2be9fd10.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                            <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                <title>mic-off</title>
-                                                <desc>Created with Sketch.</desc>
-                                                <defs></defs>
-                                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                    <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-462.000000, -348.000000)">
-                                                        <path d="M476.548605,370.617728 L477.255361,369.910972 C477.971654,370.586166 478.937444,371 480,371 C482.204644,371 484,369.210839 484,367.003797 L484,363.166332 L484,363.166332 L489.207107,357.959225 C489.597631,357.568701 489.597631,356.935536 489.207107,356.545012 C488.816582,356.154487 488.183417,356.154487 487.792893,356.545012 L475.392555,368.945351 C475.139775,368.347393 475,367.690019 475,367 L475,366 C475,365.447715 474.556135,365 474,365 C473.447715,365 473,365.443865 473,366 L473,367 C473,368.249199 473.327221,369.421972 473.900625,370.43728 L470.792893,373.545012 C470.402369,373.935537 470.402369,374.568702 470.792893,374.959226 C471.183418,375.34975 471.816583,375.34975 472.207107,374.959226 L475.134113,372.032219 C476.167501,373.031659 477.507849,373.715676 479,373.929111 L479,377 L479,377 L475.995398,377 C475.455664,377 475,377.447715 475,378 C475,378.556135 475.445655,379 475.995398,379 L484.004602,379 C484.544336,379 485,378.552285 485,378 C485,377.443865 484.554345,377 484.004602,377 L481,377 L481,373.929111 C484.392294,373.443881 487,370.526472 487,367 L487,366 C487,365.447715 486.556135,365 486,365 C485.447715,365 485,365.443865 485,366 L485,367 C485,369.761424 482.761424,372 480,372 C478.661594,372 477.446012,371.474126 476.548605,370.617728 Z M483.953439,358.384466 C483.658763,356.467576 482.000961,355 480,355 C477.795356,355 476,356.789161 476,358.996203 L476,366.337905 L483.953439,358.384466 L483.953439,358.384466 Z" id="mic-off" class="fill" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                                        <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                    </g>
-                                                </g>
-                                            </svg>
-                                        </i>
-                                    </div>
-                                    <div class="badge badge-muted badge-clickable ng-hide" ng-show="!module.client.isAudioOutputEnabled" ng-click="module.toggleAudioOutputEnabled()">
-                                        <!----><i class="svg speaker-off" ng-include="'/images/badges/speaker-off.42bf8dae.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                            <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                <title>speaker-off</title>
-                                                <desc>Created with Sketch.</desc>
-                                                <defs></defs>
-                                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                    <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-499.000000, -348.000000)">
-                                                        <path d="M520,364.166332 L520,376 L514.083166,370.083166 L509.207107,374.959226 C508.816583,375.34975 508.183418,375.34975 507.792893,374.959226 C507.402369,374.568702 507.402369,373.935537 507.792893,373.545012 L524.792893,356.545012 C525.183417,356.154487 525.816582,356.154487 526.207107,356.545012 C526.597631,356.935536 526.597631,357.568701 526.207107,357.959225 L520,364.166332 Z M520,359.337905 L520,357 L514,363 L508.997545,363 C508.446616,363 508,363.437881 508,364.002929 L508,368.997071 C508,369.550973 508.446311,370 508.997545,370 L509.337905,370 L520,359.337905 L520,359.337905 Z" id="speaker-off" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                                        <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                    </g>
-                                                </g>
-                                            </svg></i>
-                                    </div>
-                                </div>
-                                <div class="badge-column">
-                                    <div ng-show="module.isTyping" class="badge badge-typing ng-hide">
-                                        <aside class="dot-dot-dot">
-                                            <span class="dot"></span>
-                                            <span class="dot"></span>
-                                            <span class="dot"></span>
-                                        </aside>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="top-right-corner">
-                                <div class="badge-actions">
-
-                                    <!----><div ng-if="module.shouldShowSuperSizeButton()" class="action-button supersize-toggle-button" ng-click="module.toggleSuperSize()">
-                                        <!----><!----><i ng-if="!module.isSuperSized" class="icon svg" ng-include="'/images/tools/expand.847c67aa.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                            <svg width="36px" height="37px" viewBox="0 0 36 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                <title>expand</title>
-                                                <desc>Created with Sketch.</desc>
-                                                <defs></defs>
-                                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                    <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-672.000000, -384.000000)">
-                                                        <g id="enlarge" sketch:type="MSLayerGroup" transform="translate(672.000000, 384.500000)" fill="#FFFFFF">
-                                                            <path d="M26,11.4142136 L26,14.9999998 C26,15.5522845 26.4477153,15.9999998 27,15.9999998 C27.5522847,15.9999998 28,15.5522845 28,14.9999998 L28,9 C28,8.44771525 27.5522847,8 27,8 L21,8 C20.4477153,8 20,8.44771525 20,9 C20,9.55228475 20.4477153,10 21,10 L24.5857864,10 L19.2928932,15.2928932 C18.9023689,15.6834175 18.9023689,16.3165825 19.2928932,16.7071068 C19.6834175,17.0976311 20.3165825,17.0976311 20.7071068,16.7071068 L26,11.4142136 L26,11.4142136 Z" id="arrow" sketch:type="MSShapeGroup"></path>
-                                                            <path d="M15,23.4142136 L15,26.9999998 C15,27.5522845 15.4477153,27.9999998 16,27.9999998 C16.5522847,27.9999998 17,27.5522845 17,26.9999998 L17,21 C17,20.4477153 16.5522847,20 16,20 L10,20 C9.44771525,20 9,20.4477153 9,21 C9,21.5522847 9.44771525,22 10,22 L13.5857864,22 L8.29289322,27.2928932 C7.90236893,27.6834175 7.90236893,28.3165825 8.29289322,28.7071068 C8.68341751,29.0976311 9.31658249,29.0976311 9.70710678,28.7071068 L15,23.4142136 L15,23.4142136 Z" id="arrow" sketch:type="MSShapeGroup" transform="translate(12.500000, 24.500000) rotate(-180.000000) translate(-12.500000, -24.500000) "></path>
-                                                        </g>
-                                                        <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                    </g>
-                                                </g>
-                                            </svg></i><!---->
-                                        <!---->
-                                    </div><!---->
-                                </div>
-                            </div>
-
-                            <div class="status-indicators" ng-hide="module.user &amp;&amp; module.user.avatarUrl">
-                                <div class="muteindicator muteindicator-video indicator ng-hide" ng-show="!module.client.isVideoEnabled &amp;&amp; module.client.isAudioInputEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                    <i class="fa fa-volume-up fa-lg"></i>
-                                    <p class="status-text">
-                                        <span class="text">Audio only</span>
-                                    </p>
-                                </div>
-
-                                <div class="muteindicator muteindicator-video indicator ng-hide" ng-show="!module.client.isVideoEnabled &amp;&amp; !module.client.isAudioInputEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                    <i class="fa fa-eye-slash fa-lg"></i>
-                                    <p class="status-text">
-                                        <span class="text">Video off</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="user-name ng-hide" ng-show="module.stream.status === 'connection_successful' &amp;&amp; module.user &amp;&amp; !module.client.isVideoEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                <!---->
-                                <!----><div ng-if="module.client.isLocalClient &amp;&amp; !module.user.displayName ">
-                                    <!---->
-                                    <!----><p ng-if="!module.RoomState.anonymousDisplayName">Guest</p><!---->
-                                    <p class="pointer edit-name-helper" ng-click="module.openAnonymousDisplayNameModal($event)">Edit name</p>
-                                </div><!---->
-                            </div>
-
-                            <!---->
-                        </div>
-                    </video-view><!----><!---->
-                </div><!---->
-                <!----><!----><!---->
-
-                <!----><div ng-repeat="client in clients | clientFilter:RoomState.localClient" class="">
-                    <!----><div ng-repeat="stream in client.streams.slice().reverse()" vc-id="1c4b5c0e-1def-4528-acca-d2c62d2ec7e1-single-stream" vc-splitscreen-supersize-on-register="false" vc-splitscreen="true" vc-splitscreen-dragdrop="true" class="video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable" style="left: 646.492px; top: 24.0654px; width: 646.492px; height: 484.869px; font-size: 12.9298pt;">
-                        <video-view user="client.userData" client="client" stream="stream" enable-super-size-stream="enableSuperSizeStream(client, stream)" disable-super-size-stream="disableSuperSizeStream(client, stream)"><div class="video-box" ng-class="{
-        'local-client': module.client.isLocalClient
-    }" ng-dblclick="module.toggleSuperSize()">
-                                <div style="height: 100%;">
-                                    <div class="video-frame" ng-show="module.stream.isVideoEnabled" style="height: 100%;">
-                                        <!---->
-                                        <!---->
-                                        <!----><div ng-if="module.stream.status === 'connection_successful' || module.stream.status === 'connection_disconnected'" class="wrapper" ng-class="{ 'disconnected': module.stream.status === 'connection_disconnected' }">
-                                            <div class="video-stream-container">
-                                                <video id="my-video" muted="true" autoplay></video>
-                                            </div>
-                                        </div><!---->
-                                    </div>
-                                </div>
-                                <video-sticker client-id="1c4b5c0e-1def-4528-acca-d2c62d2ec7e1"><div class="video-stream-sticker-container">
-                                        <!---->
-                                    </div>
-                                </video-sticker>
-
-                                <!---->
-
-                                <!----><div class="VideoToolbar VideoToolbar--small VideoToolbar--videoView" ng-if="!module.client.isLocalClient">
-                                    <div class="VideoToolbar-container">
-                                        <button class="VideoToolbar-item splitscreen-not-draggable" ng-click="handleClick($event)" ng-dblclick="$event.stopPropagation()" ng-class="{
-        'is-highlighted': isHighlighted !== false &amp;&amp; isActive &amp;&amp; !isDisabled,
-        'is-disabled': isDisabled,
-    }" ng-attr-title="{{ currentText }}" action="module.toggleAudioOutputEnabled()" is-active="!module.client.isAudioOutputEnabled" icon="{
-                    active: '/images/tools/speaker-on.c4062a93.svg',
-                    inactive: '/images/tools/speaker-off.42bf8dae.svg'
-                }" text="{
-                    active: 'Disable sound',
-                    inactive: 'Enable sound'
-                }" title="Disable sound">
-                                            <!----><div class="VideoToolbar-itemIcon" ng-include="currentIcon"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                    <title>speaker-on</title>
-                                                    <desc>Created with Sketch.</desc>
-                                                    <defs></defs>
-                                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-499.000000, -385.000000)">
-                                                            <path d="M514,407 L520,413 L520,394 L514,400 L508.997545,400 C508.446616,400 508,400.437881 508,401.002929 L508,405.997071 C508,406.550973 508.446311,407 508.997545,407 L514,407 L514,407 Z M522.1506,400.062603 C523.20408,400.789797 524,402.175409 524,403.944444 C524,405.10666 523.223224,406.280224 522.188725,406.946085 L520.702406,405.459765 C521.315622,405.278508 522,404.521554 522,403.944444 C522,402.64012 521.330417,401.718093 520.679357,401.533847 L522.1506,400.062603 L522.1506,400.062603 Z M524.834544,397.378659 C526.750004,398.737466 528,400.972757 528,403.5 C528,406.019671 526.757484,408.249136 524.851744,409.609103 L523.410382,408.167741 C524.965486,407.196067 526,405.468846 526,403.5 C526,401.523506 524.957433,399.790517 523.392235,398.820969 L524.834544,397.378659 L524.834544,397.378659 Z" id="speaker-on" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                                            <g id="Oval-8-+-Rectangle-61-+-Oval-8" sketch:type="MSLayerGroup" transform="translate(520.000000, 397.000000)"></g>
-                                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                        </g>
-                                                    </g>
-                                                </svg></div>
-                                            <div class="VideoToolbar-itemText">
-                                                Disable sound
-                                            </div>
-                                        </button>
-                                        <!---->
-                                        <!---->
-                                        <!---->
-                                    </div>
-                                </div><!---->
-
-                                <!----><div class="top-left-corner" ng-if="module.stream.type !== module.STREAM_TYPES.SCREEN_SHARE">
-                                    <div class="badge-column">
-                                        <!---->
-                                        <!---->
-                                        <div class="badge badge-muted ng-hide" ng-class="{'badge-clickable': module.client.isLocalClient}" ng-show="!module.client.isAudioInputEnabled" ng-click="module.client.isLocalClient &amp;&amp; module.enableAudioInput()">
-                                            <!----><i class="svg mic-off" ng-include="'/images/badges/mic-off.2be9fd10.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                    <title>mic-off</title>
-                                                    <desc>Created with Sketch.</desc>
-                                                    <defs></defs>
-                                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-462.000000, -348.000000)">
-                                                            <path d="M476.548605,370.617728 L477.255361,369.910972 C477.971654,370.586166 478.937444,371 480,371 C482.204644,371 484,369.210839 484,367.003797 L484,363.166332 L484,363.166332 L489.207107,357.959225 C489.597631,357.568701 489.597631,356.935536 489.207107,356.545012 C488.816582,356.154487 488.183417,356.154487 487.792893,356.545012 L475.392555,368.945351 C475.139775,368.347393 475,367.690019 475,367 L475,366 C475,365.447715 474.556135,365 474,365 C473.447715,365 473,365.443865 473,366 L473,367 C473,368.249199 473.327221,369.421972 473.900625,370.43728 L470.792893,373.545012 C470.402369,373.935537 470.402369,374.568702 470.792893,374.959226 C471.183418,375.34975 471.816583,375.34975 472.207107,374.959226 L475.134113,372.032219 C476.167501,373.031659 477.507849,373.715676 479,373.929111 L479,377 L479,377 L475.995398,377 C475.455664,377 475,377.447715 475,378 C475,378.556135 475.445655,379 475.995398,379 L484.004602,379 C484.544336,379 485,378.552285 485,378 C485,377.443865 484.554345,377 484.004602,377 L481,377 L481,373.929111 C484.392294,373.443881 487,370.526472 487,367 L487,366 C487,365.447715 486.556135,365 486,365 C485.447715,365 485,365.443865 485,366 L485,367 C485,369.761424 482.761424,372 480,372 C478.661594,372 477.446012,371.474126 476.548605,370.617728 Z M483.953439,358.384466 C483.658763,356.467576 482.000961,355 480,355 C477.795356,355 476,356.789161 476,358.996203 L476,366.337905 L483.953439,358.384466 L483.953439,358.384466 Z" id="mic-off" class="fill" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                        </g>
-                                                    </g>
-                                                </svg>
-                                            </i>
-                                        </div>
-                                        <div class="badge badge-muted badge-clickable ng-hide" ng-show="!module.client.isAudioOutputEnabled" ng-click="module.toggleAudioOutputEnabled()">
-                                            <!----><i class="svg speaker-off" ng-include="'/images/badges/speaker-off.42bf8dae.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                                <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                    <title>speaker-off</title>
-                                                    <desc>Created with Sketch.</desc>
-                                                    <defs></defs>
-                                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-499.000000, -348.000000)">
-                                                            <path d="M520,364.166332 L520,376 L514.083166,370.083166 L509.207107,374.959226 C508.816583,375.34975 508.183418,375.34975 507.792893,374.959226 C507.402369,374.568702 507.402369,373.935537 507.792893,373.545012 L524.792893,356.545012 C525.183417,356.154487 525.816582,356.154487 526.207107,356.545012 C526.597631,356.935536 526.597631,357.568701 526.207107,357.959225 L520,364.166332 Z M520,359.337905 L520,357 L514,363 L508.997545,363 C508.446616,363 508,363.437881 508,364.002929 L508,368.997071 C508,369.550973 508.446311,370 508.997545,370 L509.337905,370 L520,359.337905 L520,359.337905 Z" id="speaker-off" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-                                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                        </g>
-                                                    </g>
-                                                </svg></i>
-                                        </div>
-                                    </div>
-                                    <div class="badge-column">
-                                        <div ng-show="module.isTyping" class="badge badge-typing ng-hide">
-                                            <aside class="dot-dot-dot">
-                                                <span class="dot"></span>
-                                                <span class="dot"></span>
-                                                <span class="dot"></span>
-                                            </aside>
-                                        </div>
-                                    </div>
-                                </div><!---->
-
-                                <div class="top-right-corner">
-                                    <!---->
-
-                                    <div class="badge-actions">
-                                        <!---->
-
-                                        <!---->
-
-                                        <!----><div ng-if="module.shouldShowSuperSizeButton()" class="action-button supersize-toggle-button" ng-click="module.toggleSuperSize()">
-                                            <!----><!----><i ng-if="!module.isSuperSized" class="icon svg" ng-include="'/images/tools/expand.847c67aa.svg'"><!--?xml version="1.0" encoding="UTF-8" standalone="no"?-->
-                                                <svg width="36px" height="37px" viewBox="0 0 36 37" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                                    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-                                                    <title>expand</title>
-                                                    <desc>Created with Sketch.</desc>
-                                                    <defs></defs>
-                                                    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                                                        <g id="assets" sketch:type="MSArtboardGroup" transform="translate(-672.000000, -384.000000)">
-                                                            <g id="enlarge" sketch:type="MSLayerGroup" transform="translate(672.000000, 384.500000)" fill="#FFFFFF">
-                                                                <path d="M26,11.4142136 L26,14.9999998 C26,15.5522845 26.4477153,15.9999998 27,15.9999998 C27.5522847,15.9999998 28,15.5522845 28,14.9999998 L28,9 C28,8.44771525 27.5522847,8 27,8 L21,8 C20.4477153,8 20,8.44771525 20,9 C20,9.55228475 20.4477153,10 21,10 L24.5857864,10 L19.2928932,15.2928932 C18.9023689,15.6834175 18.9023689,16.3165825 19.2928932,16.7071068 C19.6834175,17.0976311 20.3165825,17.0976311 20.7071068,16.7071068 L26,11.4142136 L26,11.4142136 Z" id="arrow" sketch:type="MSShapeGroup"></path>
-                                                                <path d="M15,23.4142136 L15,26.9999998 C15,27.5522845 15.4477153,27.9999998 16,27.9999998 C16.5522847,27.9999998 17,27.5522845 17,26.9999998 L17,21 C17,20.4477153 16.5522847,20 16,20 L10,20 C9.44771525,20 9,20.4477153 9,21 C9,21.5522847 9.44771525,22 10,22 L13.5857864,22 L8.29289322,27.2928932 C7.90236893,27.6834175 7.90236893,28.3165825 8.29289322,28.7071068 C8.68341751,29.0976311 9.31658249,29.0976311 9.70710678,28.7071068 L15,23.4142136 L15,23.4142136 Z" id="arrow" sketch:type="MSShapeGroup" transform="translate(12.500000, 24.500000) rotate(-180.000000) translate(-12.500000, -24.500000) "></path>
-                                                            </g>
-                                                            <g id="slices" sketch:type="MSLayerGroup" transform="translate(425.000000, 348.000000)"></g>
-                                                        </g>
-                                                    </g>
-                                                </svg></i><!---->
-                                            <!---->
-                                        </div><!---->
-                                    </div>
-                                </div>
-
-                                <div class="status-indicators" ng-hide="module.user &amp;&amp; module.user.avatarUrl">
-                                    <div class="muteindicator muteindicator-video indicator ng-hide" ng-show="!module.client.isVideoEnabled &amp;&amp; module.client.isAudioInputEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                        <i class="fa fa-volume-up fa-lg"></i>
-                                        <p class="status-text">
-                                            <span class="text">Audio only</span>
-                                        </p>
-                                    </div>
-
-                                    <div class="muteindicator muteindicator-video indicator ng-hide" ng-show="!module.client.isVideoEnabled &amp;&amp; !module.client.isAudioInputEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                        <i class="fa fa-eye-slash fa-lg"></i>
-                                        <p class="status-text">
-                                            <span class="text">Video off</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="user-name ng-hide" ng-show="module.stream.status === 'connection_successful' &amp;&amp; module.user &amp;&amp; !module.client.isVideoEnabled &amp;&amp; !module.client.isScreenSharingEnabled()">
-                                    <!---->
-                                    <!---->
-                                </div>
-
-                                <!---->
-                            </div>
-                        </video-view>
-                    </div><!---->
-                </div><!---->
-
-                <!---->
-
-                <!---->
-
-                <!---->
-            </div></splitscreen-container>
-    </div>
-
     <div class="bottom-right-button-group screen-element">
         <a class="ui-text-button white" ng-click="clickedHelpButton()">Help</a>
         <a class="ui-text-button white" ng-click="openPopupForType('tos')">Terms of use</a>
     </div>
 
-    <div ng-show="ChatService.isEnabled" class="action-button chat-open-button visible" ng-click="openChat()" ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
+    <div ng-show="ChatService.isEnabled" class="action-button chat-open-button visible" ng-click="openChat()"
+         ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
         <i class="svg bordered" ng-include="'/images/tools/chat-button.2c5ae55e.svg'">
-            <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                <title>chat-button</title>
-                <desc>Created with Sketch.</desc>
-                <defs></defs>
-                <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-                    <g id="chat-notifications" sketch:type="MSArtboardGroup" transform="translate(-951.000000, -671.000000)" fill="#FFFFFF">
+            <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none"
+                   fill-rule="evenodd" sketch:type="MSPage">
+                    <g id="chat-notifications" sketch:type="MSArtboardGroup"
+                       transform="translate(-951.000000, -671.000000)" fill="#FFFFFF">
                         <g id="chat-button" sketch:type="MSLayerGroup" transform="translate(951.000000, 671.000000)">
-                            <path d="M33.4510276,17 L15.5487859,17 C14.696991,17 14,17.6744168 14,18.498479 L14,30.0445536 C14,30.8687999 14.696991,31.5430326 15.5487859,31.5430326 L20.7742597,31.5430326 L28.2233156,36 L28.2233156,31.5430326 L33.4510276,31.5430326 C34.3028225,31.5430326 35,30.8687999 35,30.0445536 L35,18.498479 C35,17.6744168 34.3028225,17 33.4510276,17" id="Fill-15" sketch:type="MSShapeGroup"></path>
+                            <path d="M33.4510276,17 L15.5487859,17 C14.696991,17 14,17.6744168 14,18.498479 L14,30.0445536 C14,30.8687999 14.696991,31.5430326 15.5487859,31.5430326 L20.7742597,31.5430326 L28.2233156,36 L28.2233156,31.5430326 L33.4510276,31.5430326 C34.3028225,31.5430326 35,30.8687999 35,30.0445536 L35,18.498479 C35,17.6744168 34.3028225,17 33.4510276,17"
+                                  id="Fill-15" sketch:type="MSShapeGroup"></path>
                         </g>
                     </g>
                 </g>
-            </svg></i>
-
-        <div class="unread-badge ng-hide" ng-show="ChatService.unreadCount > 0">
-            0
-        </div>
-
-        <div class="message-previews">
-            <ul>
-            </ul>
-        </div>
+            </svg>
+        </i>
     </div>
 </main>
 
-    <footer class="frontpage-footer">
-        A product by <a href="https://twitter.com/TelenorDigital">Telenor Digital AS</a>.
-    </footer>
-
-<script src="https://d1x2efl61akomv.cloudfront.net/libraries/jquery-1.11.3.min.js"></script>
-<!-- Stripe needs to be loaded directly from CDN. See https://stripe.com/docs/stripe.js -->
-<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
-
 <script src="https://d1x2efl61akomv.cloudfront.net/scripts/libs.e90ee866.js"></script>
-<script src="https://d1x2efl61akomv.cloudfront.net/scripts/templates.4b5b83bb.js"></script>
-
-<!-- Application -->
-<script src="https://d1x2efl61akomv.cloudfront.net/scripts/main.5bc2f55f.js"></script>
 
 </body>
 </html>
