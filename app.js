@@ -68,6 +68,7 @@ var translators = require('./routes/translators');
 var login = require('./routes/login');
 require('./routes/login')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./routes/translators')(app);
+require('./routes/translator')(app);
 require('./routes/users')(app);
 
 // all environments
