@@ -1,127 +1,114 @@
-/*
- * GET users listing.
- */
+module.exports = function (app) {
 
-exports.list = function (req, res) {
+    app.post('/users/edit/:id', function (req, res) {
+        var input = JSON.parse(JSON.stringify(req.body));
+        var id = req.params.id;
 
-    req.getConnection(function (err, connection) {
+        req.getConnection(function (err, connection) {
 
-        var query = connection.query('SELECT * FROM user', function (err, rows) {
+            var data = {
 
-            if (err) {
-                console.log("Error Selecting : %s ", err);
-            }
+                name: input.name,
+                address: input.address,
+                email: input.email,
+                phone: input.phone
 
-            res.render('user/users', {page_title: "Users List", data: rows});
+            };
 
-        });
+            connection.query("UPDATE user set ? WHERE id = ? ", [data, id], function (err, rows) {
 
-        //console.log(query.sql);
-    });
+                if (err)
+                    console.log("Error Updating : %s ", err);
 
-};
+                res.redirect('users');
 
-exports.add = function (req, res) {
-    res.render('user/add_user', {page_title: "Add user"});
-};
-
-exports.edit = function (req, res) {
-
-    var id = req.params.id;
-
-    req.getConnection(function (err, connection) {
-
-        var query = connection.query('SELECT * FROM user WHERE id = ?', [id], function (err, rows) {
-
-            if (err)
-                console.log("Error Selecting : %s ", err);
-
-            res.render('user/edit_user', {page_title: "User Edit", data: rows});
-
+            });
 
         });
-
-        //console.log(query.sql);
     });
-};
 
-/*Save the user*/
-exports.save = function (req, res) {
+    app.post('/users/add', function (req, res) {
+        var input = JSON.parse(JSON.stringify(req.body));
 
-    var input = JSON.parse(JSON.stringify(req.body));
+        req.getConnection(function (err, connection) {
 
-    req.getConnection(function (err, connection) {
+            var data = {
 
-        var data = {
+                name: input.name,
+                address: input.address,
+                email: input.email,
+                phone: input.phone,
+                user_type: 'SIMU_TRANSLATER',
+                time_zone: '+2 GMT',
+                country_code: 'EN'
+            };
 
-            name: input.name,
-            address: input.address,
-            email: input.email,
-            phone: input.phone,
-            user_type: 'SIMU_TRANSLATER',
-            time_zone: '+2 GMT',
-            country_code: 'EN'
-        };
+            var query = connection.query("INSERT INTO user set ? ", data, function (err, rows) {
 
-        var query = connection.query("INSERT INTO user set ? ", data, function (err, rows) {
+                if (err)
+                    console.log("Error inserting : %s ", err);
 
-            if (err)
-                console.log("Error inserting : %s ", err);
+                res.redirect('users');
 
-            res.redirect('user/users');
-
+            });
         });
-
-        // console.log(query.sql); get raw query
-
     });
-};
 
-exports.save_edit = function (req, res) {
+    app.get('/users', function (req, res) {
+        req.getConnection(function (err, connection) {
 
-    var input = JSON.parse(JSON.stringify(req.body));
-    var id = req.params.id;
+            var query = connection.query('SELECT * FROM user', function (err, rows) {
 
-    req.getConnection(function (err, connection) {
+                if (err) {
+                    console.log("Error Selecting : %s ", err);
+                }
 
-        var data = {
+                res.render('user/users', {page_title: "Users List", data: rows});
 
-            name: input.name,
-            address: input.address,
-            email: input.email,
-            phone: input.phone
-
-        };
-
-        connection.query("UPDATE user set ? WHERE id = ? ", [data, id], function (err, rows) {
-
-            if (err)
-                console.log("Error Updating : %s ", err);
-
-            res.redirect('user/users');
-
+            });
         });
 
     });
-};
 
+    app.get('/users/add', function (req, res) {
+        res.render('user/add_user', {page_title: "Add user"});
+    });
 
-exports.delete_user = function (req, res) {
+    app.get('/users/delete/:id', function (req, res) {
 
-    var id = req.params.id;
+        var id = req.params.id;
 
-    req.getConnection(function (err, connection) {
+        req.getConnection(function (err, connection) {
 
-        connection.query("DELETE FROM user  WHERE id = ? ", [id], function (err, rows) {
+            connection.query("DELETE FROM user  WHERE id = ? ", [id], function (err, rows) {
 
-            if (err)
-                console.log("Error deleting : %s ", err);
+                if (err)
+                    console.log("Error deleting : %s ", err);
 
-            res.redirect('user/users');
+                res.redirect('users');
+
+            });
 
         });
+    });
 
+    app.get('/users/edit/:id', function (req, res) {
+        var id = req.params.id;
+
+        req.getConnection(function (err, connection) {
+
+            var query = connection.query('SELECT * FROM user WHERE id = ?', [id], function (err, rows) {
+
+                if (err)
+                    console.log("Error Selecting : %s ", err);
+
+                res.render('user/edit_user', {page_title: "User Edit", data: rows});
+
+
+            });
+        });
     });
 };
+
 
 

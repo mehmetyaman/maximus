@@ -3,6 +3,26 @@
  */
 
 var express = require('express');
+var app = express();
+
+// here after for logging and authentication sss
+var mongoose = require('mongoose');
+var passport = require('passport');
+
+// set up our express application
+app.use(express.logger('dev')); // log every request to the console
+app.use(express.cookieParser()); // read cookies (needed for auth)
+app.use(express.bodyParser()); // get information from html forms
+
+app.set('view engine', 'ejs'); // set up ejs for templating
+
+// required for passport
+app.use(express.session({secret: 'ilovescotchscotchyscotchscotch'})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+var flash = require('connect-flash');
+app.use(flash()); // use connect-flash for flash messages stored in session
+
 var routes = require('./routes');
 var http = require('http');
 var path = require('path');
@@ -11,12 +31,44 @@ var fs = require('fs');
 var connection = require('express-myconnection');
 var mysql = require('mysql');
 
+var morgan = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var session = require('express-session');
+
+var configDB = require('./config/database.js');
+
+// configuration ===============================================================
+
+// set up our express application
+app.use(morgan('dev')); // log every request to the console
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser()); // get information from html forms
+
+
+/*------------------------------------------
+ connection peer, register as middleware
+ type koneksi : single,pool and request
+ -------------------------------------------*/
+app.use(
+    connection(mysql, {
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'maxsimus',
+        port: 3306
+    }, 'pool') //or single
+);
+
+// here after for logging and authentication eee
+
 //load users route
 var users = require('./routes/users');
 var translators = require('./routes/translators');
-//var videochat = require('./routes/videochat');
-
-var app = express();
+var login = require('./routes/login');
+require('./routes/login')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./routes/translators')(app);
+require('./routes/users')(app);
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -36,57 +88,24 @@ if ('development' == app.get('env')) {
 }
 console.log(app.get('env') + '=env  ,,  port=' + app.get('port'));
 
+// here after for logging and authentication
 
-/*------------------------------------------
- connection peer, register as middleware
- type koneksi : single,pool and request
- -------------------------------------------*/
-app.use(
-    connection(mysql, {
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'maxsimus',
-        port: 3306
-    }, 'pool') //or single
-);
-
-/*
- var con = mysql.createConnection(config.get('mysql'));
- var sql2 = fs.readFileSync('user.sql').toString() + fs.readFileSync('translator.sql').toString();
- con.query(sql2, function (err, result) {
- if (err) throw err;
- console.log("translator.sql ans user.sql executed");
- });
- */
-
-app.get('/', routes.index);
-
-// user mappings here sss
-app.get('/users', users.list);
-app.get('/users/add', users.add);
-app.post('/users/add', users.save);
-app.get('/users/delete/:id', users.delete_user);
-app.get('/users/edit/:id', users.edit);
-app.post('/users/edit/:id', users.save_edit);
-// user mappings here eee
-
-// translator mappings here sss
-app.get('/translators', translators.list);
-app.get('/translators/add', translators.add);
-app.post('/translators/add', translators.save);
-app.get('/translators/delete/:id', translators.delete_translator);
-app.get('/translators/edit/:id', translators.edit);
-app.post('/translators/edit/:id', translators.save_edit);
-// translator mapping here eee
-
-// videochat mapping start
-//app.get('/peertest/:sessionId', videochat.peertest);
-//app.get('/appear/:sessionId', videochat.appear);
-// videochat mapping end
+mongoose.connect(configDB.url); // connect to our database
+require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
+// route middleware to make sure a user is logged in
+function isLoggedIn(req, res, next) {
+
+    // if user is authenticated in the session, carry on
+    if (req.isAuthenticated())
+        return next();
+
+    // if they aren't redirect them to the home page
+    res.redirect('/');
+}
