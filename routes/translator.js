@@ -24,8 +24,9 @@ module.exports = function (app) {
 
             var query = connection.query(sql, [id],  function (err, rows) {
 
-                if (err)
+                if (err){
                     console.log("Error Selecting : %s ", err);
+                }
 
                 res.render('translator/translator', {page_title: "Translator page", data: rows});
 
