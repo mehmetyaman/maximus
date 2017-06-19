@@ -34,7 +34,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
     app.use(express.errorHandler());
 }
-console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
+console.log(app.get('env') + '=env  ,,  port=' + app.get('port'));
 
 
 /*------------------------------------------
@@ -42,17 +42,23 @@ console.log(app.get('env')+'=env  ,,  port=' + app.get('port'));
  type koneksi : single,pool and request
  -------------------------------------------*/
 app.use(
-    connection(mysql,config.get('mysql') , 'pool') //or single
+    connection(mysql, {
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'maxsimus',
+        port: 3306
+    }, 'pool') //or single
 );
 
-var con = mysql.createConnection(config.get('mysql'));
-var sql2 = fs.readFileSync('user.sql').toString()
-                + fs.readFileSync('translator.sql').toString();
-con.query(sql2, function (err, result) {
-    if (err) throw err;
-    console.log("translator.sql ans user.sql executed");
-});
-
+/*
+ var con = mysql.createConnection(config.get('mysql'));
+ var sql2 = fs.readFileSync('user.sql').toString() + fs.readFileSync('translator.sql').toString();
+ con.query(sql2, function (err, result) {
+ if (err) throw err;
+ console.log("translator.sql ans user.sql executed");
+ });
+ */
 
 app.get('/', routes.index);
 
