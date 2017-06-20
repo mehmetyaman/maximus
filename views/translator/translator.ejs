@@ -4,7 +4,7 @@
          <div class="data-table">
             <table border="1" cellpadding="7" cellspacing="7">
                 <tr>
-                    <th>Id</th>
+
                     <th>Username</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -13,7 +13,7 @@
 
                 <% data.forEach(function (language) { %>
                         <tr>
-                            <td><%=language.id%></td>
+
                             <td><%=language.username%></td>
                             <td><%=language.name%> <%=language.surname%></td>
                             <td><%=language.email%></td>
@@ -23,6 +23,38 @@
                 
             </table>
          </div>
+
+                <div class="data-table">
+                     <table border="1" cellpadding="7" cellspacing="7">
+                         <tr>
+                             <th colspan="5">Sessions </th>
+                          </tr>
+
+                         <tr>
+                             <th>Konu</th>
+                             <th>Sure (dk)</th>
+                             <th>Dil</th>
+                             <th>Baslangic Trh</th>
+                             <th></th>
+                         </tr>
+
+
+
+                         <% lists.forEach(function (items) { %>
+                                 <tr>
+                                     <td><%=items.topic%></td>
+
+                                     <td><%=items.duration%></td>
+                                      <td><%=items.lang1%> > <%=items.lang2%></td>
+
+                                     <td><%=moment(items.start_date).format( 'DD-MM-YYYY')%> </td>
+                                      <td><%=items.start_time%> </td>
+                                 </tr>
+                         <% }) %>
+
+                     </table>
+                  </div>
+
         </div>
         
 <%- include ../layouts/footer.ejs %>

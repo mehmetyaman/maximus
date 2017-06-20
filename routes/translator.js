@@ -1,6 +1,12 @@
 /*
  * GET translators listing.
  */
+
+var moment = require('moment');
+exports.index = function(req, res) {
+    res.render('index', { moment: moment });
+}
+
 module.exports = function (app) {
 
 
@@ -22,13 +28,28 @@ module.exports = function (app) {
                 " GROUP BY t.id) AS JOINRESULT" +
                 " WHERE translators.id = JOINRESULT.id and  translators.id = ?";
 
+
+
+
             var query = connection.query(sql, [id],  function (err, rows) {
 
                 if (err){
-                    console.log("Error Selecting : %s ", err);
+                    console.log(" Query 1 Error Selecting : %s ", err);
                 }
+                //var sessionList = "";
+                var sql2 ="select id,lang1,lang2,topic,duration,start_date,start_time from maxsimus.translation_session where translator_id=? order by start_date,start_time";
 
-                res.render('translator/translator', {page_title: "Translator page", data: rows});
+                var query2 = connection.query(sql2, [id],  function (err2, rows2) {
+                    if (err){
+                        console.log("Query 2 Error Selecting : %s ", err2);
+                    }
+
+
+                    //sessionList=JSON.stringify(rows2);
+                    //console.log(" sonuc2 : "+sessionList);
+                    res.render('translator/translator', {page_title: "Translator page", data: rows,lists:rows2,moment: moment });
+
+                });
 
 
             });
