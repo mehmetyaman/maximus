@@ -3,15 +3,12 @@
  */
 
 var moment = require('moment');
-exports.index = function(req, res) {
-    res.render('index', { moment: moment });
+exports.index = function (req, res) {
+    res.render('index', {moment: moment});
 }
 
 module.exports = function (app) {
 
-
-    // show the home page (will also have our login links)
-    // app.get('/translators', translators.list);
     app.get('/translator/:id', function (req, res) {
         var id = req.params.id;
         req.getConnection(function (err, connection) {
@@ -29,31 +26,27 @@ module.exports = function (app) {
                 " WHERE translators.id = JOINRESULT.id and  translators.id = ?";
 
 
+            var query = connection.query(sql, [id], function (err, rows) {
 
-
-            var query = connection.query(sql, [id],  function (err, rows) {
-
-                if (err){
+                if (err) {
                     console.log(" Query 1 Error Selecting : %s ", err);
                 }
                 //var sessionList = "";
-                var sql2 ="select id,lang1,lang2,topic,duration,start_date,start_time from maxsimus.translation_session where translator_id=? order by start_date,start_time";
+                var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time from maxsimus.translation_session where translator_id=? order by start_date,start_time";
 
-                var query2 = connection.query(sql2, [id],  function (err2, rows2) {
-                    if (err){
+                var query2 = connection.query(sql2, [id], function (err2, rows2) {
+                    if (err) {
                         console.log("Query 2 Error Selecting : %s ", err2);
                     }
 
-
-                    //sessionList=JSON.stringify(rows2);
-                    //console.log(" sonuc2 : "+sessionList);
-                    res.render('translator/translator', {page_title: "Translator page", data: rows,lists:rows2,moment: moment });
-
+                    res.render('translator/translator', {
+                        page_title: "Translator page",
+                        data: rows,
+                        lists: rows2,
+                        moment: moment
+                    });
                 });
-
-
             });
-
         });
     });
 
