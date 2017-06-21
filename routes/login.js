@@ -1,4 +1,5 @@
-module.exports = function (app, passport) {
+module.exports = function (app, passport, winston) {
+
 
 // normal routes ===============================================================
 
@@ -41,9 +42,12 @@ module.exports = function (app, passport) {
             }
             req.logIn(user, function (err) {
                 if (err) {
+                    winston.log('error', 'login error' + err);
                     return next(err);
                 }
                 var email = user.local.email;
+                winston.log('info', 'logged in email:' + user.local.email);
+
                 req.getConnection(function (err, connection) {
 
                     var sql = "SELECT * FROM translators," +
