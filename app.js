@@ -5,6 +5,8 @@
 var express = require('express');
 var app = express();
 
+var winston = require('winston');
+
 // here after for logging and authentication sss
 var mongoose = require('mongoose');
 var passport = require('passport');
@@ -66,9 +68,10 @@ app.use(
 var users = require('./routes/users');
 var translators = require('./routes/translators');
 var login = require('./routes/login');
+require('./routes/login')(app, passport, winston); // load our routes and pass in our app and fully configured passport
 var videochat = require('./routes/videochat');
-require('./routes/login')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./routes/translators')(app);
+require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
 

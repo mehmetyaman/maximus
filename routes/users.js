@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    app.post('/users/edit/:id', function (req, res) {
+    app.post('/users/edit/:id', isLoggedIn, function (req, res) {
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
 
@@ -27,7 +27,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/users/add', function (req, res) {
+    app.post('/users/add', isLoggedIn, function (req, res) {
         var input = JSON.parse(JSON.stringify(req.body));
 
         req.getConnection(function (err, connection) {
@@ -54,7 +54,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/users', function (req, res) {
+    app.get('/users', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
             var query = connection.query('SELECT * FROM user', function (err, rows) {
@@ -74,7 +74,7 @@ module.exports = function (app) {
         res.render('user/add_user', {page_title: "Add user"});
     });
 
-    app.get('/users/delete/:id', function (req, res) {
+    app.get('/users/delete/:id', isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -92,7 +92,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/users/edit/:id', function (req, res) {
+    app.get('/users/edit/:id', isLoggedIn, function (req, res) {
         var id = req.params.id;
 
         req.getConnection(function (err, connection) {
@@ -110,5 +110,13 @@ module.exports = function (app) {
     });
 };
 
+
+// route middleware to ensure user is logged in
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+
+    res.redirect('/');
+}
 
 

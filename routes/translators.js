@@ -3,7 +3,7 @@
  */
 module.exports = function (app) {
 
-    app.post('/translators/edit/:id', function (req, res) {
+    app.post('/translators/edit/:id', isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
@@ -59,7 +59,7 @@ module.exports = function (app) {
     });
 
     //app.post('/translators/add', translators.save);
-    app.post('/translators/add', function (req, res) {
+    app.post('/translators/add', isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
 
@@ -103,7 +103,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/translators/add', function (req, res) {
+    app.post('/translators/add', isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
@@ -158,7 +158,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/translators/edit/:id', function (req, res) {
+    app.get('/translators/edit/:id', isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -196,7 +196,7 @@ module.exports = function (app) {
 
     // show the home page (will also have our login links)
     // app.get('/translators', translators.list);
-    app.get('/translators', function (req, res) {
+    app.get('/translators', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
             var sql = "SELECT * FROM translators," +
@@ -225,7 +225,7 @@ module.exports = function (app) {
     });
 
     // app.get('/translators/add', translators.add);
-    app.get('/translators/add', function (req, res) {
+    app.get('/translators/add', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
             var query = connection.query('select * from languages', function (err, rows) {
@@ -241,7 +241,7 @@ module.exports = function (app) {
     });
 
 
-    app.get('/translators/delete/:id', function (req, res) {
+    app.get('/translators/delete/:id', isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -266,7 +266,10 @@ module.exports = function (app) {
 
 };
 
+// route middleware to ensure user is logged in
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
 
-
-
-
+    res.redirect('/');
+}

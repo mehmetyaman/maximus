@@ -3,6 +3,10 @@
 
 	npm install
 npm install
+for further developments you have to use
+
+	npm update
+
 
 also use start command to see a running application
 

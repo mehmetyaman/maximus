@@ -1,4 +1,5 @@
-module.exports = function (app, passport) {
+module.exports = function (app, passport, winston) {
+
 
 // normal routes ===============================================================
 
@@ -31,12 +32,52 @@ module.exports = function (app, passport) {
         res.render('login.ejs', {message: req.flash('loginMessage')});
     });
 
-    // process the login form
-    app.post('/login', passport.authenticate('local-login', {
-        successRedirect: '/profile', // redirect to the secure profile section
-        failureRedirect: '/login', // redirect back to the signup page if there is an error
-        failureFlash: true // allow flash messages
-    }));
+    app.post('/login', function (req, res, next) {
+        passport.authenticate('local-login', function (err, user, info) {
+            if (err) {
+                return next(err);
+            }
+            if (!user) {
+                return res.redirect('/login');
+            }
+            req.logIn(user, function (err) {
+                if (err) {
+                    winston.log('error', 'login error' + err);
+                    return next(err);
+                }
+                var email = user.local.email;
+                winston.log('info', 'logged in email:' + user.local.email);
+
+                req.getConnection(function (err, connection) {
+
+                    var sql = "SELECT * FROM translators," +
+                        " (SELECT t.id," +
+                        "     GROUP_CONCAT(concat(" +
+                        "         (select lang_desc from languages where lang_short=lang_from),'>')," +
+                        " (select lang_desc from languages where lang_short=lang_to)" +
+                        " ORDER BY lang_from SEPARATOR ' , ') as languages" +
+                        " FROM translators t" +
+                        " LEFT JOIN translator_lang tl" +
+                        " ON t.id=tl.translator_id" +
+                        " GROUP BY t.id) AS JOINRESULT" +
+                        " WHERE translators.id = JOINRESULT.id and  translators.email = ?";
+
+                    var query = connection.query(sql, [email], function (err, rows) {
+
+                        var translator = rows[0];
+
+                        if (err)
+                            console.log("Error Selecting : %s ", err);
+
+                        res.redirect('/translator/' + translator.id);
+
+                    });
+
+                });
+
+            });
+        })(req, res, next);
+    });
 
     // SIGNUP =================================
     // show the signup form
