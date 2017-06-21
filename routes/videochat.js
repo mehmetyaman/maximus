@@ -11,11 +11,11 @@ module.exports = function (app) {
 
     app.get('/videoChat/:id', function (req, res) {
         var sessionId = req.params.id;
-        var p;
-        getPeers(function (p) {
-            console.log("pppp" + p);
-        });
-        res.render('trans_session/appear2', {title: 'Video Conference', sessionID: sessionId, peers: p});
+      //  var p;
+      //  getPeers(function (p) {
+     //       console.log("pppp" + p);
+      //  });
+        res.render('trans_session/appear2', {title: 'Video Conference', sessionID: sessionId});
     });
 
     app.get('/peers/:videoChatId', function (req, res) {
@@ -48,7 +48,7 @@ module.exports = function (app) {
                 res.status(500).send(err);
             } else {
                 videoChats.forEach(function (videoChat) {
-                    Peer.find({}, function (err, peers) {
+                    Peer.find({"videoChatId":videoChat._id}, function (err, peers) {
                         if (err) {
                             console.log("Error /videoChatsPage : %s ", err);
                             res.status(500).send(err);
@@ -107,7 +107,7 @@ module.exports = function (app) {
             }
         });
     });
-
+/*
     function getPeers(videoChatId, callback) {
 
         return http.get({
@@ -155,5 +155,5 @@ module.exports = function (app) {
         });
 
     };
-
+*/
 }

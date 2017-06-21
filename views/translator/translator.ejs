@@ -29,26 +29,42 @@
     <div class="data-table">
         <table border="1" cellpadding="7" cellspacing="7">
             <tr>
-                <th colspan="5">Sessions</th>
+                <th colspan="8">Sessions</th>
             </tr>
 
             <tr>
+                <th>Id</th>
                 <th>Konu</th>
                 <th>Sure (dk)</th>
                 <th>Dil</th>
                 <th>Baslangic Trh</th>
                 <th></th>
+                <th>Connect</th>
+                <th>Peers</th>
             </tr>
 
             <% lists.forEach(function (items) { %>
             <tr>
+                <td><%= items.id %></td>
                 <td><%= items.topic %></td>
-
                 <td><%= items.duration %></td>
                 <td><%= items.lang1 %> > <%= items.lang2 %></td>
 
                 <td><%= moment(items.start_date).format('DD-MM-YYYY') %> </td>
                 <td><%= items.start_time %> </td>
+                <td><a href="/videoChat/<%= items.id %>">Connect</a></td>
+                <td>
+                    <table border="0" style="border: none;">
+                        <% if(items.peers) {
+                                items.peers.forEach(function (peer) { %>
+                                <tr>
+                                    <td class="label"><%=peer._id%></td>
+                                </tr>
+                        <% })
+                        }
+                        %>
+                    </table>
+                </td>
             </tr>
             <% }) %>
 

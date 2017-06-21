@@ -7,12 +7,10 @@ module.exports = function (app) {
         req.getConnection(function (err, connection) {
 
             var data = {
-
                 name: input.name,
                 address: input.address,
                 email: input.email,
                 phone: input.phone
-
             };
 
             connection.query("UPDATE user set ? WHERE id = ? ", [data, id], function (err, rows) {
@@ -33,7 +31,6 @@ module.exports = function (app) {
         req.getConnection(function (err, connection) {
 
             var data = {
-
                 name: input.name,
                 address: input.address,
                 email: input.email,

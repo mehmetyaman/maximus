@@ -58,7 +58,6 @@
             setTimeout(
                 function () {
                     var call = peer.call('<%- sessionID %>', window.localStream);
-                    var peers=split('<%-peers%>',',');
                     step3(call);
                 }, 1000);
         }

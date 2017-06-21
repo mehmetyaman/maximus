@@ -18,11 +18,9 @@ module.exports = function (app) {
             };
 
             connection.query("UPDATE translators set ? WHERE id = ? ", [data, id], function (err, rows) {
-
                 if (err) {
                     console.log("Error Updating translators : %s ", err);
                 } else {
-
                     connection.query("DELETE FROM translator_lang  WHERE translator_id = ? ", [id], function (err2, rows2) {
                         if (err2) {
                             console.log("Error deleting translator_lang : %s ", err2);
@@ -37,18 +35,12 @@ module.exports = function (app) {
                             if (input.langFrom2 != "-1" && input.langTo2 != "-1") {
                                 values.push([id, input.langFrom2, input.langTo2]);
                             }
-
                             var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err3, rows3) {
-
                                 if (err3)
                                     console.log("Error inserting : %s ", err3);
-
                             });
                         }
-
                     });
-
-
                 }
 
                 res.redirect('translators');
@@ -122,7 +114,6 @@ module.exports = function (app) {
                 if (err) {
                     console.log("Error Updating translators : %s ", err);
                 } else {
-
                     connection.query("DELETE FROM translator_lang  WHERE translator_id = ? ", [id], function (err2, rows2) {
                         if (err2) {
                             console.log("Error deleting translator_lang : %s ", err2);
@@ -147,7 +138,6 @@ module.exports = function (app) {
                         }
 
                     });
-
 
                 }
 

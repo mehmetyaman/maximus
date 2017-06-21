@@ -1,8 +1,10 @@
 /*
  * GET translators listing.
  */
-
+var VideoChat = require('../app/models/videochat');
+var Peer = require('../app/models/videochatpeer');
 var moment = require('moment');
+
 exports.index = function (req, res) {
     res.render('index', {moment: moment});
 }
@@ -32,27 +34,39 @@ module.exports = function (app) {
                     console.log(" Query 1 Error Selecting : %s ", err);
                 }
                 //var sessionList = "";
-                var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time from maxsimus.translation_session where translator_id=? order by start_date,start_time";
+                var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time " +
+                    "from translation_session where translator_id=? order by start_date,start_time";
 
                 var query2 = connection.query(sql2, [id], function (err2, rows2) {
                     if (err) {
                         console.log("Query 2 Error Selecting : %s ", err2);
                     }
 
-                    res.render('translator/translator', {
-                        page_title: "Translator page",
-                        data: rows,
-                        lists: rows2,
-                        moment: moment
+                    rows2.forEach(function (videoChat) {
+                        Peer.find({"videoChatId":videoChat._id}, function (err, peers) {
+                            if (err) {
+                                console.log("Error /videoChatsPage : %s ", err);
+                                res.status(500).send(err);
+                            }else{
+                                videoChat.peers=peers;
+                                res.render('translator/translator', {
+                                    page_title: "Translator page",
+                                    data: rows,
+                                    lists: rows2,
+                                    user: req.user,
+                                    moment: moment
+                                });
+                            }
+                        });
                     });
+
+
                 });
             });
         });
     });
 
-
 };
-
 
 
 // route middleware to ensure user is logged in
