@@ -54,10 +54,10 @@ app.use(bodyParser()); // get information from html forms
  -------------------------------------------*/
 app.use(
     connection(mysql, {
-        host: '172.17.0.2',
+        host: 'localhost',
         user: 'root',
-        password: 'admin123',
-        database: 'maximus',
+        password: '',
+        database: 'maxsimus',
         port: 3306
     }, 'pool') //or single
 );
