@@ -1,60 +1,60 @@
 <%- include ../layouts/header.ejs %>
+<div class="page-header text-primary">
+    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+</div>
+<div class="page-data">
+    <div class="data-table">
+        <table border="1" cellpadding="7" cellspacing="7">
+            <tr>
 
-        <div class="page-data">
-         <div class="data-table">
-            <table border="1" cellpadding="7" cellspacing="7">
-                <tr>
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Languages</th>
+            </tr>
 
-                    <th>Username</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Languages</th>
-                </tr>
+            <% data.forEach(function (language) { %>
+            <tr>
 
-                <% data.forEach(function (language) { %>
-                        <tr>
+                <td><%= language.username %></td>
+                <td><%= language.name %> <%= language.surname %></td>
+                <td><%= language.email %></td>
+                <td><%= (language.languages != null) ? language.languages : "" %></td>
+            </tr>
+            <% }) %>
 
-                            <td><%=language.username%></td>
-                            <td><%=language.name%> <%=language.surname%></td>
-                            <td><%=language.email%></td>
-                            <td><%=(language.languages!=null) ? language.languages : ""%></td>
-                        </tr>
-                <% }) %>
-                
-            </table>
-         </div>
+        </table>
+    </div>
 
-                <div class="data-table">
-                     <table border="1" cellpadding="7" cellspacing="7">
-                         <tr>
-                             <th colspan="5">Sessions </th>
-                          </tr>
+    <div class="data-table">
+        <table border="1" cellpadding="7" cellspacing="7">
+            <tr>
+                <th colspan="5">Sessions</th>
+            </tr>
 
-                         <tr>
-                             <th>Konu</th>
-                             <th>Sure (dk)</th>
-                             <th>Dil</th>
-                             <th>Baslangic Trh</th>
-                             <th></th>
-                         </tr>
+            <tr>
+                <th>Konu</th>
+                <th>Sure (dk)</th>
+                <th>Dil</th>
+                <th>Baslangic Trh</th>
+                <th></th>
+            </tr>
 
+            <% lists.forEach(function (items) { %>
+            <tr>
+                <td><%= items.topic %></td>
 
+                <td><%= items.duration %></td>
+                <td><%= items.lang1 %> > <%= items.lang2 %></td>
 
-                         <% lists.forEach(function (items) { %>
-                                 <tr>
-                                     <td><%=items.topic%></td>
+                <td><%= moment(items.start_date).format('DD-MM-YYYY') %> </td>
+                <td><%= items.start_time %> </td>
+            </tr>
+            <% }) %>
 
-                                     <td><%=items.duration%></td>
-                                      <td><%=items.lang1%> > <%=items.lang2%></td>
+        </table>
+    </div>
 
-                                     <td><%=moment(items.start_date).format( 'DD-MM-YYYY')%> </td>
-                                      <td><%=items.start_time%> </td>
-                                 </tr>
-                         <% }) %>
+</div>
 
-                     </table>
-                  </div>
-
-        </div>
-        
 <%- include ../layouts/footer.ejs %>
