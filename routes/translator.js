@@ -9,7 +9,7 @@ exports.index = function (req, res) {
 
 module.exports = function (app) {
 
-    app.get('/translator/:id', function (req, res) {
+    app.get('/translator/:id', isLoggedIn, function (req, res) {
         var id = req.params.id;
         req.getConnection(function (err, connection) {
 
@@ -54,6 +54,14 @@ module.exports = function (app) {
 };
 
 
+
+// route middleware to ensure user is logged in
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+
+    res.redirect('/');
+}
 
 
 
