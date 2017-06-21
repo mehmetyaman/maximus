@@ -44,6 +44,8 @@ heroku ps:scale web=1
 heroku open
 heroku logs --tail
 
+## Installations
 for schedule job module installation
-npm install node-schedule --save
+
+	npm install node-schedule --save
 
