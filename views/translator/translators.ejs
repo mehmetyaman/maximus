@@ -14,17 +14,17 @@
                     <th>Languages</th>
                 </tr>
 
-                <% data.forEach(function (language) { %>
+                <% data.forEach(function (translator) { %>
                         <tr>
-                            <td><%=language.id%></td>
-                            <td><%=language.username%></td>
-                            <td><%=language.name%> <%=language.surname%></td>
-                            <td><%=language.email%></td>
-                            <td><%=(language.languages!=null) ? language.languages : ""%></td>
+                            <td><%=translator.id%></td>
+                            <td><%=translator.username%></td>
+                            <td><%=translator.name%> <%=translator.surname%></td>
+                            <td><%=translator.email%></td>
+                            <td><%=(translator.languages!=null) ? translator.languages : ""%></td>
                             <td>
-                                <a class="a-inside edit" href="../translators/edit/<%=language.id%>">Edit</a>
+                                <a class="a-inside edit" href="../translators/edit/<%=translator.id%>">Edit</a>
 
-                                <a class="a-inside delete" href="../translators/delete/<%=language.id%>">Delete</a>
+                                <a class="a-inside delete" href="../translators/delete/<%=translator.id%>">Delete</a>
 
                             </td>
                         </tr>

@@ -52,10 +52,10 @@ app.use(bodyParser()); // get information from html forms
  -------------------------------------------*/
 app.use(
     connection(mysql, {
-        host: 'localhost',
+        host: '172.17.0.2',
         user: 'root',
-        password: '',
-        database: 'maxsimus',
+        password: 'admin123',
+        database: 'maximus',
         port: 3306
     }, 'pool') //or single
 );
@@ -66,12 +66,14 @@ app.use(
 var users = require('./routes/users');
 var translators = require('./routes/translators');
 var login = require('./routes/login');
+var videochat = require('./routes/videochat');
 require('./routes/login')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./routes/translators')(app);
 require('./routes/users')(app);
+require('./routes/videochat')(app);
 
 // all environments
-app.set('port', process.env.PORT || config.get('app.port'));
+app.set('port', process.env.PORT || 4300);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.use(express.favicon());
