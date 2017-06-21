@@ -43,3 +43,7 @@ git push heroku HEAD:master
 heroku ps:scale web=1
 heroku open
 heroku logs --tail
+
+for schedule job module installation
+npm install node-schedule --save
+
