@@ -3,7 +3,7 @@ var http = require('http');
 exports.peertest = function(req, res){
     var sessionId = req.params.sessionId;
     console.log(sessionId);
-    res.render('peer_test', { title: 'YAMANIZM CORP', sessionID: sessionId });
+    res.render('peer_test', { title: 'Simultanes Technic CORP', sessionID: sessionId });
 };
 
 exports.appear = function(req, res){
@@ -12,7 +12,7 @@ exports.appear = function(req, res){
     getPeers(function (p) {
         console.log("pppp"+p);
     });
-    res.render('appear2', { title: 'YAMANIZM CORP', sessionID: sessionId, peers: p});
+    res.render('appear2', { title: 'Simultanes Technic CORP', sessionID: sessionId, peers: p});
 };
 
 
