@@ -38,6 +38,9 @@ heroku mysql add-on install
 heroku addons:create jawsdb
 heroku config:get JAWSDB_URL  // to learn host,username,pass..
 
+heroku addons:create mongolab
+heroku config:get MONGODB_URI
+
 git commit -a
 git push heroku HEAD:master
 heroku ps:scale web=1

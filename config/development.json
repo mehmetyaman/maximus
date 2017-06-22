@@ -10,5 +10,9 @@
     "port": 3306,
     "database":"maximus",
     "multipleStatements": "true"
+  },
+  "mongo": {
+    "url" : "mongodb://localhost/passport" // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   }
+
 }

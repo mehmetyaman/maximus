@@ -10,5 +10,9 @@
     "port": 3306,
     "database": "h0y7e5c72s6xg7xw",
     "multipleStatements": "true"
+  },
+  "mongo": {
+    "url" : "mongodb://heroku_nc0gzlh0:s7i9lq2ec1umu290loc3i3h36a@ds133932.mlab.com:33932/heroku_nc0gzlh0"
+     // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   }
 }

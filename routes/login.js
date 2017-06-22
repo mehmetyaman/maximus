@@ -50,17 +50,8 @@ module.exports = function (app, passport, winston) {
 
                 req.getConnection(function (err, connection) {
 
-                    var sql = "SELECT * FROM translators," +
-                        " (SELECT t.id," +
-                        "     GROUP_CONCAT(concat(" +
-                        "         (select lang_desc from languages where lang_short=lang_from),'>')," +
-                        " (select lang_desc from languages where lang_short=lang_to)" +
-                        " ORDER BY lang_from SEPARATOR ' , ') as languages" +
-                        " FROM translators t" +
-                        " LEFT JOIN translator_lang tl" +
-                        " ON t.id=tl.translator_id" +
-                        " GROUP BY t.id) AS JOINRESULT" +
-                        " WHERE translators.id = JOINRESULT.id and  translators.email = ?";
+                    var sql = "SELECT id FROM translators" +
+                       " WHERE  translators.email = ?";
 
                     var query = connection.query(sql, [email], function (err, rows) {
 
