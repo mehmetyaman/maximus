@@ -45,7 +45,12 @@ heroku open
 heroku logs --tail
 
 ## Installations
-for schedule job module installation
+install passport
+
+	npm install passport --save
+
+install schedule job support
 
 	npm install node-schedule --save
+
 
