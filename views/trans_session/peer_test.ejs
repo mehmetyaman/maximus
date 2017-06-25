@@ -8,7 +8,7 @@
 
         // Compatibility shim
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 80, path: '/'});
+        var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 443, path: '/'});
         peer.on('open', function () {
             $('#my-id').text(peer.id);
         });
