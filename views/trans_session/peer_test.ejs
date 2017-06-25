@@ -2,13 +2,13 @@
 <head>
     <title>Translation Session</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
     <script src="/../js/peer.min.0.3.js"></script>
     <script>
 
         // Compatibility shim
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-        var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 443, path: '/'});
+        var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 80, path: '/'});
         peer.on('open', function () {
             $('#my-id').text(peer.id);
         });
