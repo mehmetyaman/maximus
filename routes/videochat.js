@@ -3,11 +3,11 @@ var Peer = require('../app/models/videochatpeer');
 
 module.exports = function (app) {
 
-    /*exports.peertest = function (req, res) {
+    app.get('/peertest/:sessionId', function (req, res) {
         var sessionId = req.params.sessionId;
         console.log(sessionId);
-        res.render('peer_test', {title: 'YAMANIZM CORP', sessionID: sessionId});
-    };*/
+        res.render('trans_session/peer_test', {title: 'YAMANIZM CORP', sessionID: sessionId});
+    });
 
     app.get('/videoChat/:id', function (req, res) {
         var videoChatId = req.params.id;
