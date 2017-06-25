@@ -32,7 +32,8 @@ module.exports = function (app, passport, winston) {
         res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer});
     });
 
-    app.post('/login', function (req, res) {
+
+    app.post('/login', function (req, res, next) {
         var isCustomer = req.query.customer;
         passport.authenticate('local-login', function (err, user, info) {
             if (err) {
@@ -46,9 +47,9 @@ module.exports = function (app, passport, winston) {
                     winston.log('error', 'login error' + err);
                     return next(err);
                 }
-                var email = user.local.email;
-                winston.log('info', 'logged in email:' + user.local.email);
-                if (isCustomer) {
+                var email = user.username;
+                winston.log('info', 'logged in email:' + user.username);
+                if (!isCustomer) {
                     req.getConnection(function (err, connection) {
 
                         var sql = "SELECT * FROM translators," +
@@ -64,22 +65,20 @@ module.exports = function (app, passport, winston) {
                             " WHERE translators.id = JOINRESULT.id and  translators.email = ?";
 
                         var query = connection.query(sql, [email], function (err, rows) {
-
                             var translator = rows[0];
 
-                            if (err)
+                            if (err) {
                                 console.log("Error Selecting : %s ", err);
-
+                            }
                             res.redirect('/translator/' + translator.id);
 
                         });
-
                     });
-
+                } else {
+                    res.redirect('/profile');
                 }
-
             });
-        })(err, user, info);
+        })(req, res, next);
     });
 
     // SIGNUP =================================

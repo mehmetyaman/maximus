@@ -4,7 +4,7 @@
 
 var express = require('express');
 var app = express();
-
+var env = require('dotenv').load();
 var winston = require('winston');
 
 // here after for logging and authentication sss
@@ -93,7 +93,6 @@ console.log(app.get('env') + '=env  ,,  port=' + app.get('port'));
 
 // here after for logging and authentication
 
-mongoose.connect(configDB.url); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);

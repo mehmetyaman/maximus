@@ -8,7 +8,7 @@
     "user": "root",
     "password" : "admin123",
     "port": 3306,
-    "database":"maximus",
+    "database":"maxsimus",
     "multipleStatements": "true"
   }
 }

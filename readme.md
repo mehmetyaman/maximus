@@ -53,4 +53,5 @@ install schedule job support
 
 	npm install node-schedule --save
 
+npm install --save dotenv
 
