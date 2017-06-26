@@ -2,8 +2,16 @@
 <html>
 <head>
     <title>For your translater needs</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
     <style>
         body {
             padding-top: 80px;
@@ -12,36 +20,145 @@
     </style>
 </head>
 <body>
-<div class="container">
+<form id="plan-form">
+    <div class="container">
 
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-    </div>
-
-    <div class="row">
-
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
-
-                <% if (user.username) { %>
-                <p>
-                    <strong>id</strong>: <%= user._id %><br>
-                    <strong>email</strong>: <%= user.username %><br>
-                    <strong>password</strong>: <%= user.password %>
-                </p>
-
-                <a href="/unlink/local" class="btn btn-default">Unlink</a>
-                <% } else { %>
-                <a href="/connect/local" class="btn btn-default">Connect Local</a>
-                <% } %>
-
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header text-center">
+                    <% if (user.username) { %>
+                    <p>
+                        <strong>id</strong>: <%= user._id %><br>
+                        <strong>email</strong>: <%= user.username %><br>
+                        <strong>password</strong>: <%= user.password %>
+                    </p>
+                    <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                    <% } %>
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+                    <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+                </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary" type="button" onclick="planner();">Do Plan</button>
+            </div>
+        </div>
+        <div id="plannerDiv" style="display: none">
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-4">
+                    <h4>Select Languages</h4>
+                </div>
+            </div>
 
-
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class="col-md-2">
+                    <h4>Language</h4>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                                Language
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">TR</a></li>
+                                <li><a href="#">EN</a></li>
+                                <li><a href="#">JA</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <h4>Language</h4>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                                Language
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">TR</a></li>
+                                <li><a href="#">EN</a></li>
+                                <li><a href="#">JA</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <span class="caret"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                </div>
+                <div class='col-sm-2'>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                                Interval
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">30 min</a></li>
+                                <li><a href="#">60</a></li>
+                                <li><a href="#">90</a></li>
+                                <li><a href="#">120</a></li>
+                                <li><a href="#">150</a></li>
+                                <li><a href="#">180</a></li>
+                                <li><a href="#">210</a></li>
+                                <li><a href="#">240</a></li>
+                                <li><a href="#">270</a></li>
+                                <li><a href="#">300</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-sm-2'>
+                    <div class="form-group">
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                </div>
+                <div class='col-sm-2'>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="button" id="post-btn">Create</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
+    $(".dropdown-menu li a").click(function () {
+        var selText = $(this).text();
+        $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
+    });
+    function planner() {
+        $("#plannerDiv").toggle();
+    }
+    $("#post-btn").click(function () {
+        var formdata = {name: "John", time: "2pm"} // this will replace with form values
+        $.post("/plan", formdata, function (data) {
+            $("#plannerDiv").toggle();
+        });
+    });
+</script>
 </body>
 </html>

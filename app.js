@@ -72,6 +72,7 @@ require('./routes/login')(app, passport, winston); // load our routes and pass i
 require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
+require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -84,6 +85,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 
 // development only
 if ('development' == app.get('env')) {
