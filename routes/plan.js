@@ -6,8 +6,8 @@ module.exports = function (app, winston) {
         req.getConnection(function (err, connection) {
 
             var data = {
-                lang1: getLang(input.lang1),
-                lang2: getLang(input.lang2),
+                lang1: input.lang1,
+                lang2: input.lang2,
                 start_date: new Date(input.plandate),
                 end_date: new Date(input.plandate),
                 duration: input.interval
@@ -36,14 +36,3 @@ function isLoggedIn(req, res, next) {
     res.redirect('/');
 }
 
-function getLang(param) {
-
-    if ("Turkish" == param) {
-        return "tr";
-    } else if ("English" == param) {
-        return "en";
-    } else if ("Japanese" == param) {
-        return "jp";
-    }
-
-}

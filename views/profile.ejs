@@ -67,9 +67,9 @@
                                 Language
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="lang1">
-                                <li><a href="#">Turkish</a></li>
-                                <li><a href="#">English</a></li>
-                                <li><a href="#">Japanese</a></li>
+                                <% langs.forEach(function (language) { %>
+                                <li><a href="#" langval="<%=language.lang_short%>"><%=language.lang_desc%></a></li>
+                                <% }) %>
                             </ul>
                         </div>
                     </div>
@@ -82,9 +82,9 @@
                                 Language
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="lang2">
-                                <li><a href="#">Turkish</a></li>
-                                <li><a href="#">English</a></li>
-                                <li><a href="#">Japanese</a></li>
+                                <% langs.forEach(function (language) { %>
+                                    <li><a href="#" langval="<%=language.lang_short%>"><%=language.lang_desc%></a></li>
+                                <% }) %>
                             </ul>
                         </div>
                     </div>
@@ -148,10 +148,10 @@
         intervalval = $(this).text();
     });
     $('#lang1 li').on('click', function(){
-        lang1 = $(this).text();
+        lang1 = $('a', this).attr('langval');
     });
     $('#lang2 li').on('click', function(){
-        lang2 = $(this).text();
+        lang2 = $('a', this).attr('langval');
     });
     $(document).ready(function () {
         $('#plandate').datetimepicker();

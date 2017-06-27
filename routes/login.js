@@ -10,9 +10,19 @@ module.exports = function (app, passport, winston) {
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function (req, res) {
-        res.render('profile.ejs', {
-            user: req.user
+        req.getConnection(function (err, connection) {
+            var query = connection.query('select * from languages', function (err, rows) {
+
+                if (err)
+                    console.log("Error Selecting : %s ", err);
+                res.render('profile.ejs', {
+                    user: req.user,
+                    langs: rows
+                });
+
+            });
         });
+
     });
 
     // LOGOUT ==============================
@@ -154,7 +164,17 @@ module.exports = function (app, passport, winston) {
                         });
                     });
                 } else {
-                    res.redirect('profile?customer=true');
+                    req.getConnection(function (err, connection) {
+                        var query = connection.query('select * from languages', function (err, rows) {
+
+                            if (err)
+                                console.log("Error Selecting : %s ", err);
+
+                            res.redirect('profile?customer=true', {langs: rows});
+                        });
+
+                    });
+
                 }
             });
         })(req, res, next);
