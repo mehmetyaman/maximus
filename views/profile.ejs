@@ -165,7 +165,22 @@
         $("#plannerDiv").toggle();
     }
     $("#post-btn").click(function () {
-
+        if(lang1 === undefined){
+            alert("Lütfen dil seçiniz");
+            return false;
+        }
+        if(lang2 === undefined){
+            alert("Lütfen dil seçiniz");
+            return false;
+        }
+        if(lang1 === lang2){
+            alert("İki dil birbirinden farklı olmalıdır!");
+            return false;
+        }
+        if(intervalval === undefined){
+            alert("Lütfen süre belirletiniz");
+            return false;
+        }
         var formdata = {
             plandate: $("#plandate").data("DateTimePicker").date().toISOString(),
             interval: intervalval,
