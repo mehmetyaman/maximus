@@ -14,15 +14,17 @@ module.exports = function (app, winston) {
             }
             if (err) {
                 console.log("Error inserting : %s ", err);
+                res.status(500).json({error: err});
             }
             var query2 = connection.query("INSERT INTO `translation_session` set ?", [data], function (err2, rows2) {
 
                 if (err2) {
                     console.log("Error inserting : %s ", err2);
+                    res.status(500).json({error: err});
                 }
             });
 
-            console.log(input);
+            res.send(200);
         });
     })
 }
