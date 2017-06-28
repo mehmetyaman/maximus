@@ -30,6 +30,8 @@
     "passport-local": "~0.1.6",
     "passport-twitter": "~1.0.2",
     "winston": "^2.3.1",
-    "finalhandler": "0.2.0"
+    "finalhandler": "0.2.0",
+    "debug": "2.0.0",
+    "escape-html": "1.0.1"
   }
 }
