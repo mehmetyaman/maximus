@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "npm install express mongo finalhandler content-type http-errors destroy mime-types bluebird stream-counter"
+    "postinstall": "npm install express mongo debug"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
