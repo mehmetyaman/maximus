@@ -26,131 +26,164 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header text-center">
-                    <% if (user.username) { %>
+                    <% if (user.email) { %>
                     <p>
-                        <strong>id</strong>: <%= user._id %><br>
-                        <strong>email</strong>: <%= user.username %><br>
+                        <strong>id</strong>: <%= user.id %><br>
+                        <strong>email</strong>: <%= user.email %><br>
                         <strong>password</strong>: <%= user.password %>
                     </p>
                     <% } else { %>
                     <a href="/connect/local" class="btn btn-default">Connect Local</a>
                     <% } %>
                     <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-                    <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+                    <h1><span class="fa fa-anchor"></span></h1>
                 </div>
+            </div>
+        </div>
+        <% if (lists) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span>Konu</span>
+            </div>
+            <div class="col-md-3">
+                <span>Sure (dk)</span>
+            </div>
+            <div class="col-md-3">
+                <span>Dil</span>
+            </div>
+            <div class="col-md-3">
+                <span>Baslangic Trh</span>
+            </div>
+        </div>
+        <% lists.forEach(function (items) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span><%= items.topic %></span>
+            </div>
+            <div class="col-md-3">
+                <span><%= items.duration %></span>
+            </div>
+            <div class="col-md-3">
+                <span><%= items.lang1 %> > <%= items.lang2 %></span>
+            </div>
+            <div class="col-md-3">
+                <span> <%= items.start_time %></span>
+            </div>
+        </div>
+        <% }) %>
+    </div>
+    <% } %>
+    <div class="row">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary" type="button" onclick="planner();">Do Plan</button>
+        </div>
+    </div>
+    <div id="plannerDiv" style="display: none">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+                <h4>Select Languages</h4>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang1">
+                            <% langs.forEach(function (language) { %>
+                            <li><a href="#" langval="<%= language.lang_short %>"><%= language.lang_desc %></a></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang2">
+                            <% langs.forEach(function (language) { %>
+                            <li><a href="#" langval="<%= language.lang_short %>"><%= language.lang_desc %></a></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <span class="caret"></span>
             </div>
         </div>
         <div class="row">
             <div class="col-md-8">
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary" type="button" onclick="planner();">Do Plan</button>
-            </div>
-        </div>
-        <div id="plannerDiv" style="display: none">
-            <div class="row">
-                <div class="col-md-8">
-                </div>
-                <div class="col-md-4">
-                    <h4>Select Languages</h4>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-8">
-                </div>
-                <div class="col-md-2">
-                    <h4>Language</h4>
-                    <div class="form-group">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
-                                Language
-                                <span class="caret"></span></button>
-                            <ul class="dropdown-menu" id="lang1">
-                                <% langs.forEach(function (language) { %>
-                                <li><a href="#" langval="<%=language.lang_short%>"><%=language.lang_desc%></a></li>
-                                <% }) %>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <h4>Language</h4>
-                    <div class="form-group">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
-                                Language
-                                <span class="caret"></span></button>
-                            <ul class="dropdown-menu" id="lang2">
-                                <% langs.forEach(function (language) { %>
-                                    <li><a href="#" langval="<%=language.lang_short%>"><%=language.lang_desc%></a></li>
-                                <% }) %>
-                            </ul>
-                        </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            Interval in Min
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="interval">
+                            <li><a href="#">30</a></li>
+                            <li><a href="#">60</a></li>
+                            <li><a href="#">90</a></li>
+                            <li><a href="#">120</a></li>
+                            <li><a href="#">150</a></li>
+                            <li><a href="#">180</a></li>
+                            <li><a href="#">210</a></li>
+                            <li><a href="#">240</a></li>
+                            <li><a href="#">270</a></li>
+                            <li><a href="#">300</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <span class="caret"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8">
-                </div>
-                <div class='col-sm-2'>
-                    <div class="form-group">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                Interval in Min
-                                <span class="caret"></span></button>
-                            <ul class="dropdown-menu" id="interval">
-                                <li><a href="#">30</a></li>
-                                <li><a href="#">60</a></li>
-                                <li><a href="#">90</a></li>
-                                <li><a href="#">120</a></li>
-                                <li><a href="#">150</a></li>
-                                <li><a href="#">180</a></li>
-                                <li><a href="#">210</a></li>
-                                <li><a href="#">240</a></li>
-                                <li><a href="#">270</a></li>
-                                <li><a href="#">300</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class='col-sm-2'>
-                    <div class="form-group">
-                        <div class='input-group date' id='plandate'>
-                            <input type='text' class="form-control"/>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date' id='plandate'>
+                        <input type='text' class="form-control"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-10">
-                </div>
-                <div class='col-sm-2'>
-                    <div class="form-group">
-                        <button class="btn btn-primary" type="button" id="post-btn">Create</button>
-                    </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="button" id="post-btn">Create</button>
                 </div>
             </div>
         </div>
     </div>
+    </div>
 </form>
 <script type="text/javascript">
     var intervalval, lang1, lang2;
-    $('#interval li').on('click', function(){
+    $('#interval li').on('click', function () {
         intervalval = $(this).text();
     });
-    $('#lang1 li').on('click', function(){
+    $('#lang1 li').on('click', function () {
         lang1 = $('a', this).attr('langval');
     });
-    $('#lang2 li').on('click', function(){
+    $('#lang2 li').on('click', function () {
         lang2 = $('a', this).attr('langval');
     });
     $(document).ready(function () {
@@ -165,19 +198,19 @@
         $("#plannerDiv").toggle();
     }
     $("#post-btn").click(function () {
-        if(lang1 === undefined){
+        if (lang1 === undefined) {
             alert("Lütfen dil seçiniz");
             return false;
         }
-        if(lang2 === undefined){
+        if (lang2 === undefined) {
             alert("Lütfen dil seçiniz");
             return false;
         }
-        if(lang1 === lang2){
+        if (lang1 === lang2) {
             alert("İki dil birbirinden farklı olmalıdır!");
             return false;
         }
-        if(intervalval === undefined){
+        if (intervalval === undefined) {
             alert("Lütfen süre belirletiniz");
             return false;
         }
@@ -189,6 +222,9 @@
         } // this will replace with form values
         $.post("/plan", formdata, function (data) {
             $("#plannerDiv").toggle();
+            $.get("/plan/<%= user.id %>", function (data) {
+                lists = data;
+            });
         });
     });
 </script>

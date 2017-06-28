@@ -13,13 +13,23 @@ module.exports = function (app, passport, winston) {
         req.getConnection(function (err, connection) {
             var query = connection.query('select * from languages', function (err, rows) {
 
-                if (err)
+                if (err) {
                     console.log("Error Selecting : %s ", err);
-                res.render('profile.ejs', {
-                    user: req.user,
-                    langs: rows
-                });
+                }
+                req.getConnection(function (err, connection) {
+                    var query = connection.query('select ts.* from translation_session_users tu, translation_session ts' +
+                        '  where tu.user_id = ? and tu.id = ts.id ', req.user.id, function (err, rows2) {
 
+                        if (err) {
+                            console.log("Error Selecting : %s ", err);
+                        }
+                        res.render('profile.ejs', {
+                            user: req.user,
+                            langs: rows,
+                            lists: rows2
+                        });
+                    });
+                });
             });
         });
 
@@ -57,8 +67,8 @@ module.exports = function (app, passport, winston) {
                     winston.log('error', 'login error' + err);
                     return next(err);
                 }
-                var email = user.username;
-                winston.log('info', 'logged in email:' + user.username);
+                var email = user.email;
+                winston.log('info', 'logged in email:' + user.email);
                 if (!isCustomer) {
                     req.getConnection(function (err, connection) {
 
