@@ -222,9 +222,7 @@
         } // this will replace with form values
         $.post("/plan", formdata, function (data) {
             $("#plannerDiv").toggle();
-            $.get("/plan/<%= user.id %>", function (data) {
-                lists = data;
-            });
+            location.reload();
         });
     });
 </script>
