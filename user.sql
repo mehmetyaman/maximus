@@ -1,3 +1,4 @@
+# noinspection SqlNoDataSourceInspectionForFile
 DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
@@ -5,7 +6,7 @@ DROP TABLE IF EXISTS `languages`;
 DROP TABLE IF EXISTS `translators`;
 DROP TABLE IF EXISTS `user`;
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `address` text NOT NULL,
@@ -17,7 +18,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
-INSERT INTO `user` VALUES (2,'Nadya Eka','Jl. Ciwidey no 20','nadya@yahoo.com','086454743743',
+INSERT INTO `users` VALUES (2,'Nadya Eka','Jl. Ciwidey no 20','nadya@yahoo.com','086454743743',
 '','',''),(3,'Amali','Jl. kemandoran no 10 Jakarta','amalia@langit.com','03937263623','','',''),
 (4,'Angel ','Jl. Ciledug no 45A. tanggerang','angel@gmail.com','082271626121','','',''),
 (5,'Ujang','Jl. ribut no 90 A','ujang@gmail.com','07846352532','','',''),

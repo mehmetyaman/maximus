@@ -57,7 +57,7 @@ module.exports = function (app) {
     app.get('/users', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
-            var query = connection.query('SELECT * FROM user', function (err, rows) {
+            var query = connection.query('SELECT * FROM users ', function (err, rows) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
@@ -97,7 +97,7 @@ module.exports = function (app) {
 
         req.getConnection(function (err, connection) {
 
-            var query = connection.query('SELECT * FROM user WHERE id = ?', [id], function (err, rows) {
+            var query = connection.query('SELECT * FROM users WHERE id = ?', [id], function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
