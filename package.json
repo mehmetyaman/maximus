@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "npm install finalhandler content-type http-errors destroy mime-types bluebird"
+    "postinstall": "npm install finalhandler content-type http-errors destroy mime-types bluebird stream-counter"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
