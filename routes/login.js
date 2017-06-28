@@ -170,7 +170,7 @@ module.exports = function (app, passport, winston) {
                             if (err)
                                 console.log("Error Selecting : %s ", err);
 
-                            res.redirect('profile?customer=true', {langs: rows});
+                            res.redirect('/profile?customer=true');
                         });
 
                     });

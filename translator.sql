@@ -41,13 +41,30 @@ INSERT INTO `translator_lang` VALUES (1,'ch','ar'),(1,'ar','ch'),(2,'ru','tr');
 
 
 CREATE TABLE `translation_session_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_users_1_idx` (`user_id`),
   CONSTRAINT `fk_translation_session_users_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION
     ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+/*
+CREATE TABLE `maxsimus`.`users` ( \
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT, \
+    `password` CHAR(60) NOT NULL, \
+        PRIMARY KEY (`id`), \
+     `name` varchar(200) , \
+    `address` text , \
+    `email` varchar(200) NOT NULL, \
+    `phone` varchar(20) , \
+    `country_code` varchar(5) , \
+    `time_zone` varchar(10) , \
+    `user_type` varchar(20) , \
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
+    UNIQUE INDEX `email_UNIQUE` (`email` ASC) \
+)
+ */
 
 INSERT INTO `translation_session_users` VALUES (2,2),(1,3),(3,5);
 
