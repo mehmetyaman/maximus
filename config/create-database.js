@@ -15,6 +15,13 @@ CREATE TABLE `' + dbconfig.database + '`.`' + dbconfig.users_table + '` ( \
     `username` VARCHAR(20) NOT NULL, \
     `password` CHAR(60) NOT NULL, \
         PRIMARY KEY (`id`), \
+     `name` varchar(200) NOT NULL, \
+    `address` text NOT NULL, \
+    `email` varchar(200) NOT NULL, \
+    `phone` varchar(20) NOT NULL, \
+    `country_code` varchar(5) NOT NULL, \
+    `time_zone` varchar(10) NOT NULL, \
+    `user_type` varchar(20) NOT NULL, \
     UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
     UNIQUE INDEX `username_UNIQUE` (`username` ASC) \
 )');
