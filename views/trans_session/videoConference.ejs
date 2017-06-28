@@ -9,7 +9,7 @@
     <script>
         $( document ).ready(function() {
             var config = {
-                targetPeerId:"xxx",
+                userId:"<%=peerId%>",
                 openSocket: function (config) {
                     var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
                         defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
@@ -92,10 +92,6 @@
                 });
             }
 
-//      peer.on('open', function () {
-//          $('#my-id').text(peer.id);
-//      });
-
             <%if(isRoomCreated) { %>
                 createRoom();
             <%} %>
@@ -118,10 +114,12 @@
         }
 
         function removeVideoBox(peerId) {
-            if ($("#video-wrapper > div").length > 2) {
-                $('#targetVideo_' + peerId).remove();
+         //   if ($("#video-wrapper > div").length > 2) {
+         //       $('#targetVideo_' + peerId).remove();
+            var video = document.getElementById('myVideoContainer_'+peerId);
+            if (video) video.parentNode.removeChild(video);
                 setUpVideoBoxesCss();
-            }
+         //   }
         }
 
         function setUpVideoBoxesCss() {
@@ -224,10 +222,6 @@
                         Log in
                     </button>
 
-                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
-                            class="ui-button topbar-signup-button topbar-small-button">
-                        Sign up
-                    </button>
                 </div>
             </div>
 
