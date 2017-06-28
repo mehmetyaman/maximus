@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "npm install mongo"
+    "postinstall": "npm install express mongo"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
