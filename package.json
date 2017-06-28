@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "npm install finalhandler content-type"
+    "postinstall": "npm install finalhandler content-type http-errors"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
