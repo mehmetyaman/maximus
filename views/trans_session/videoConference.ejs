@@ -1,0 +1,283 @@
+<html>
+<head>
+    <title>Translation Session</title>
+    <link href="/../css/appear2.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script src="https://cdn.webrtc-experiment.com/socket.io.js"> </script>
+    <script src="https://cdn.webrtc-experiment.com/RTCPeerConnection-v1.5.js"> </script>
+    <script src="../js/conference.js"> </script>
+    <script>
+        $( document ).ready(function() {
+            var config = {
+                targetPeerId:"xxx",
+                openSocket: function (config) {
+                    var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
+                        defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
+
+                    var channel = config.channel || defaultChannel;
+                    var sender = "<%=peerId%>";
+
+                    io.connect(SIGNALING_SERVER).emit('new-channel', {
+                        channel: channel,
+                        sender: sender
+                    });
+
+                    var socket = io.connect(SIGNALING_SERVER + channel);
+                    socket.channel = channel;
+                    socket.on('connect', function () {
+                        if (config.callback) config.callback(socket);
+                    });
+
+                    socket.send = function (message) {
+                        socket.emit('message', {
+                            sender: sender,
+                            data: message
+                        });
+                    };
+
+                    socket.on('message', config.onmessage);
+                },
+                onRemoteStream: function (media) {
+                    var video = media.video;
+                    video.setAttribute('controls', true);
+                    video.setAttribute('id', media.stream.id);
+                    addNewVideoBox(video, media.stream.id);
+                    video.play();
+                },
+                onRemoteStreamEnded: function (stream) {
+                    var video = document.getElementById('myVideoContainer_'+stream.id);
+                    if (video) video.parentNode.removeChild(video);
+                },
+                onRoomFound: function (room) {
+
+                    var alreadyExist = document.querySelector('button[data-broadcaster="' + room.broadcaster + '"]');
+                    if (alreadyExist) return;
+
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = '<td><strong>' + room.roomName + '</strong> shared a conferencing room with you!</td>';
+                    roomsList.insertBefore(tr, roomsList.firstChild);
+
+                    captureUserMedia(function () {
+                        conferenceUI.joinRoom({
+                            roomToken: room.broadcaster,
+                            joinUser: room.broadcaster
+                        }, room.broadcaster);
+                    });
+                }
+            };
+
+            var conferenceUI = conference(config);
+            var roomsList = document.getElementById('rooms-list');
+
+            var createRoom = function () {
+                captureUserMedia(function () {
+                    conferenceUI.createRoom({
+                        roomName: "Anonymous"
+                    });
+                },"<%=peerId%>");
+            };
+
+            function captureUserMedia(callback, peerId) {
+                var video = document.createElement('video');
+                video.setAttribute('autoplay', true);
+                video.setAttribute('controls', true);
+                addNewVideoBox(video, peerId);
+                getUserMedia({
+                    video: video,
+                    onsuccess: function (stream) {
+                        config.attachStream = stream;
+                        video.setAttribute('muted', true);
+                        callback();
+                    }
+                });
+            }
+
+//      peer.on('open', function () {
+//          $('#my-id').text(peer.id);
+//      });
+
+            <%if(isRoomCreated) { %>
+                createRoom();
+            <%} %>
+
+
+        function addNewVideoBox(video, id) {
+            var divHtml = $("#video-wrapper").html() +
+                "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"myVideoFrame\">"+
+                "<div class=\"video-box\"> "+
+                "<div class=\"video-frame\" > "+
+                "<div class=\"video-stream-container\" id=\"myVideoContainer_" + id + "\" >" +
+                "</div></div></div>"+
+                "</div>";
+
+            $("#video-wrapper").html(divHtml);
+
+            var videosContainer = document.getElementById('myVideoContainer_'+id) || document.body;
+            videosContainer.insertBefore(video, videosContainer.firstChild);
+            setUpVideoBoxesCss();
+        }
+
+        function removeVideoBox(peerId) {
+            if ($("#video-wrapper > div").length > 2) {
+                $('#targetVideo_' + peerId).remove();
+                setUpVideoBoxesCss();
+            }
+        }
+
+        function setUpVideoBoxesCss() {
+            var i = 0;
+            $("#video-wrapper > div").each(function () {
+                i++;
+                var lastClass = $(this).attr("class").split(" ").pop();
+                $(this).removeClass(lastClass);
+                $(this).addClass('_' + i);
+            });
+
+            if(i>1){
+                $("#video-wrapper").attr("class","div" + i);
+            }
+        }
+        });
+    </script>
+    <title>Video Conference</title>
+
+    <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
+
+</head>
+<body>
+
+<main class="video-space" ng-class="{alone: getNumberOfConnectedClients() == 1 }" ng-style="backgroundStyle">
+    <header class="video-space-header screen-element">
+        <div class="content-wrapper">
+            <div ng-click="toggleRoomActivity()" ng-class="{'selected': roomActivityService.isOpen}"
+                 class="top-bar-button roomactivity">
+                <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
+                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title>room-icon</title>
+                        <desc>Created with Sketch.</desc>
+                        <defs></defs>
+                        <g id="Page-1-Copy-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="room-presence-b1---expanded-copy-3" transform="translate(-28.000000, -23.000000)"
+                               fill="#FFFFFF">
+                                <g id="room-icon" transform="translate(28.000000, 23.000000)">
+                                    <g id="rooms-icon">
+                                        <circle id="Oval-153" cx="2" cy="2" r="2"></circle>
+                                        <circle id="Oval-153-Copy-3" cx="2" cy="9" r="2"></circle>
+                                        <circle id="Oval-153-Copy-6" cx="2" cy="16" r="2"></circle>
+                                        <circle id="Oval-153-Copy" cx="9" cy="2" r="2"></circle>
+                                        <circle id="Oval-153-Copy-4" cx="9" cy="9" r="2"></circle>
+                                        <circle id="Oval-153-Copy-2" cx="16" cy="2" r="2"></circle>
+                                        <circle id="Oval-153-Copy-5" cx="16" cy="9" r="2"></circle>
+                                        <circle id="Oval-153-Copy-8" cx="16" cy="16" r="2"></circle>
+                                        <circle id="Oval-153-Copy-7" cx="9" cy="16" r="2"></circle>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                </i>
+            </div>
+            <div class="logo-wrapper ng-hide" ng-show="RoomState.logoUrl">
+                <img class="custom-logo ng-hide" ng-show="RoomState.logoUrl">
+            </div>
+            <div class="room-url-wrapper" analytics-event="copyUrlAnalyticsEvent">
+                <div class="room-url">
+                    <p class="text user-select-all" id="my-id"></p>
+                    <table style="width: 100%;" id="rooms-list"></table>
+                </div>
+            </div>
+            <div class="room-control-buttons control-button-group">
+                <div ng-click="openMediaSelectorModal()" class="top-bar-button contacts-button" title="Cam/Mic">
+                    <i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'">
+                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1"
+                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <defs></defs>
+                            <g id="fb-messenger-invite" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)"
+                                   fill="#FFFFFF">
+                                    <g id="room" transform="translate(-1.000000, 0.000000)">
+                                        <g id="top-bar-icons" transform="translate(472.000000, 14.000000)">
+                                            <g id="cam-/-mic">
+                                                <g id="cam-/-mic-icon-icon">
+                                                    <path d="M9,14.9953976 C9,14.4456547 9.44748943,14 9.99850233,14 L21.0014977,14 C21.5529553,14 22,14.4556644 22,14.9953976 L22,23.0046024 C22,23.5543453 21.5525106,24 21.0014977,24 L9.99850233,24 C9.44704472,24 9,23.5443356 9,23.0046024 L9,14.9953976 Z M23,17 L26,14 L27,14 L27,24 L26,24 L23,21 L23,17 Z"
+                                                          id="camera"></path>
+                                                </g>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </i>video-
+                    <span class="desc">
+                    <span>Cam/Mic</span>
+                </span>
+                </div>
+
+
+            </div>
+            <div class="user-control-buttons control-button-group ng-hide" ng-show="Rvideo-oomState.isClaimed">
+                <div class="flex-button-wrapper">
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedLoginButton()"
+                            class="ui-button-invis topbar-login-button topbar-small-button">
+                        Log in
+                    </button>
+
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
+                            class="ui-button topbar-signup-button topbar-small-button">
+                        Sign up
+                    </button>
+                </div>
+            </div>
+
+            <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
+                <div class="flex-button-wrapper">
+                    <button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()"
+                            class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
+                        Claim this room
+                    </button>
+
+                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
+                            class="ui-text-button white jstest-signup-button">
+                        Or <strong>Sign up</strong>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+
+    <div class="video-wrapper screen-element" >
+        <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">
+        </div>
+    </div>
+    <div class="bottom-right-button-group screen-element">
+        <a class="ui-text-button white" ng-click="clickedHelpButton()">Help</a>
+        <a class="ui-text-button white" ng-click="openPopupForType('tos')">Terms of use</a>
+    </div>
+
+    <div ng-show="ChatService.isEnabled" class="action-button chat-open-button visible" ng-click="openChat()"
+         ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
+        <i class="svg bordered" ng-include="'/images/tools/chat-button.2c5ae55e.svg'">
+            <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none"
+                   fill-rule="evenodd" sketch:type="MSPage">
+                    <g id="chat-notifications" sketch:type="MSArtboardGroup"
+                       transform="translate(-951.000000, -671.000000)" fill="#FFFFFF">
+                        <g id="chat-button" sketch:type="MSLayerGroup" transform="translate(951.000000, 671.000000)">
+                            <path d="M33.4510276,17 L15.5487859,17 C14.696991,17 14,17.6744168 14,18.498479 L14,30.0445536 C14,30.8687999 14.696991,31.5430326 15.5487859,31.5430326 L20.7742597,31.5430326 L28.2233156,36 L28.2233156,31.5430326 L33.4510276,31.5430326 C34.3028225,31.5430326 35,30.8687999 35,30.0445536 L35,18.498479 C35,17.6744168 34.3028225,17 33.4510276,17"
+                                  id="Fill-15" sketch:type="MSShapeGroup"></path>
+                        </g>
+                    </g>
+                </g>
+            </svg>
+        </i>
+    </div>
+</main>
+
+
+</body>
+</html>

@@ -12,6 +12,12 @@
 .div2 {
     position: absolute;
 }
+
+video{
+    height: 100%;
+    width: 100%;
+}
+
 .div2 ._1 { /*left*/
 
     left: 0px;

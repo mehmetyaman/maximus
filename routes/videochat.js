@@ -1,7 +1,54 @@
 var VideoChat = require('../app/models/videochat');
 var Peer = require('../app/models/videochatpeer');
+var path = require('path');
 
 module.exports = function (app) {
+
+
+    app.get('/videoConference/:id', function (req, res) {
+        var videoChatId = req.params.id;
+        var peerId = req.user.id;
+        var username=req.user.local.email;
+        var videoChat;
+        var isRoomCreated=false;
+        VideoChat.find({"_id":videoChatId}, function (err, videoChat) {
+            if (videoChat.length==0) {
+                createVideoChat(videoChatId, function (err) {
+                    if (err) {
+                        console.log("Error /videoChat/:id : %s ", err);
+                        res.status(500).send(err);
+                    }else{
+                        isRoomCreated=true;
+                    }
+                });
+            }
+            Peer.find({"videoChatId": videoChatId, "id": peerId}, function (err, peer) {
+                if (peer.length==0) {
+
+                    createPeer(videoChatId, peerId, username, function () {
+                        if (err) {
+                            console.log("Error /videoChat/:id : %s ", err);
+                            res.status(500).send(err);
+                        }
+                    });
+                }else{
+                    console.log("Error /videoChat/:id : %s ", err);
+                    res.status(500).send("You already have an active session!");
+                }
+            });
+
+            Peer.find({"videoChatId": videoChatId, "id" : { $nin: [peerId] }}, function (err, peers) {
+                if (err) {
+                    console.log("Error /videoChat/:id : %s ", err);
+                    res.status(500).send(err);
+                }
+                res.render('trans_session/videoConference', {title: 'Video Conference', isRoomCreated:isRoomCreated, roomId:videoChatId, peerId:peerId, peers: peers});
+            });
+
+        });
+
+
+    });
 
     app.get('/peertest/:sessionId', function (req, res) {
         var sessionId = req.params.sessionId;
@@ -47,8 +94,6 @@ module.exports = function (app) {
             });
 
         });
-
-
 
     });
 
