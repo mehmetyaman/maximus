@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "postinstall": "npm install body-parser mongo config"
+    "postinstall": "npm install body-parser mongo config finalhandler"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
