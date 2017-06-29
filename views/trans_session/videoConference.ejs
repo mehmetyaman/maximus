@@ -1,6 +1,7 @@
 <html>
 <head>
-    <title>Translation Session</title>
+    <title>Video Conference</title>
+    <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
     <link href="/../css/appear2.css" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
     <script src="https://cdn.webrtc-experiment.com/socket.io.js"> </script>
@@ -9,13 +10,14 @@
     <script>
         $( document ).ready(function() {
             var config = {
-                userId:"<%=peerId%>",
+                userToken:"",
+                video:"",
                 openSocket: function (config) {
                     var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
                         defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
 
                     var channel = config.channel || defaultChannel;
-                    var sender = "<%=peerId%>";
+                    var sender = Math.round(Math.random() * 999999999) + 999999999;
 
                     io.connect(SIGNALING_SERVER).emit('new-channel', {
                         channel: channel,
@@ -38,30 +40,80 @@
                     socket.on('message', config.onmessage);
                 },
                 onRemoteStream: function (media) {
-                    var video = media.video;
-                    video.setAttribute('controls', true);
-                    video.setAttribute('id', media.stream.id);
-                    addNewVideoBox(video, media.stream.id);
-                    video.play();
+                    this.video = media.video;
+                    this.video.setAttribute('controls', true);
+                    this.video.setAttribute('id', this.userToken);
+
+                //    this.video=video;
+                //    this.userToken=media.stream.id;
+                    this.addNewVideoBox("onRemoteStream -  media.stream.id="+media.stream.id+"  ---------------  ");
+
+                    this.video.play();
                 },
                 onRemoteStreamEnded: function (stream) {
-                    var video = document.getElementById('myVideoContainer_'+stream.id);
-                    if (video) video.parentNode.removeChild(video);
+                    var videoFrame = document.getElementById('videoFrame_' + stream.id);
+                    if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
+                    setUpVideoBoxesCss();
                 },
                 onRoomFound: function (room) {
-
                     var alreadyExist = document.querySelector('button[data-broadcaster="' + room.broadcaster + '"]');
-                    if (alreadyExist) return;
+                    if (alreadyExist) {
+                        alert("alreadyExist");
+                        return;
+                    }
 
                     var tr = document.createElement('tr');
                     tr.innerHTML = '<td><strong>' + room.roomName + '</strong> shared a conferencing room with you!</td>';
                     roomsList.insertBefore(tr, roomsList.firstChild);
 
-                    captureUserMedia(function () {
+                    this.userToken =room.broadcaster;
+                    alert("onroomfound usertoken="+this.userToken);
+
+                    this.captureUserMedia(function () {
                         conferenceUI.joinRoom({
                             roomToken: room.broadcaster,
                             joinUser: room.broadcaster
-                        }, room.broadcaster);
+                        });
+                        config.addNewVideoBox("captureUserMedia");
+                    });
+                },
+                onRoomClosed: function (response) {
+                    alert("sss"+response);
+                },
+                removeVideoBox: function () {
+                    var videoFrame = document.getElementById('videoFrame_'+config.userToken);
+                    if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
+                    setUpVideoBoxesCss();
+                    alert("removeVideoBox="+config.userToken);
+                },
+                addNewVideoBox: function (s) {
+                    var divHtml = $("#video-wrapper").html() +
+                        "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + this.userToken + "\" >"+
+                        "<div class=\"video-box\"> "+
+                        "<div class=\"video-frame\" > "+
+                        "<div class=\"video-stream-container\" id=\"myVideoContainer_" + this.userToken + "\" >" +
+                        "</div></div></div>"+
+                        "</div>";
+
+                    $("#video-wrapper").html(divHtml);
+                    alert("addNewVideoBox="+this.userToken+"  s="+s);
+
+                    var videosContainer = document.getElementById('myVideoContainer_'+this.userToken) || document.body;
+                    videosContainer.insertBefore(this.video, videosContainer.firstChild);
+                    setUpVideoBoxesCss();
+                },
+                captureUserMedia: function (callback) {
+                    this.video = document.createElement('video');
+                    this.video.setAttribute('autoplay', true);
+                    this.video.setAttribute('controls', true);
+
+                    getUserMedia({
+                        video: this.video,
+                        onsuccess: function (stream) {
+                            config.attachStream = stream;
+                            this.video.setAttribute('muted', true);
+                            callback();
+                        }
                     });
                 }
             };
@@ -70,57 +122,21 @@
             var roomsList = document.getElementById('rooms-list');
 
             var createRoom = function () {
-                captureUserMedia(function () {
+                config.captureUserMedia(function () {
                     conferenceUI.createRoom({
                         roomName: "Anonymous"
                     });
-                },"<%=peerId%>");
-            };
-
-            function captureUserMedia(callback, peerId) {
-                var video = document.createElement('video');
-                video.setAttribute('autoplay', true);
-                video.setAttribute('controls', true);
-                addNewVideoBox(video, peerId);
-                getUserMedia({
-                    video: video,
-                    onsuccess: function (stream) {
-                        config.attachStream = stream;
-                        video.setAttribute('muted', true);
-                        callback();
-                    }
+                    config.addNewVideoBox("createroom");
                 });
-            }
+            };
 
             <%if(isRoomCreated) { %>
                 createRoom();
-            <%} %>
+                alert("createRoom");
+            <%} else{%>
+                alert("did not create room");
+            <%}%>
 
-
-        function addNewVideoBox(video, id) {
-            var divHtml = $("#video-wrapper").html() +
-                "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"myVideoFrame\">"+
-                "<div class=\"video-box\"> "+
-                "<div class=\"video-frame\" > "+
-                "<div class=\"video-stream-container\" id=\"myVideoContainer_" + id + "\" >" +
-                "</div></div></div>"+
-                "</div>";
-
-            $("#video-wrapper").html(divHtml);
-
-            var videosContainer = document.getElementById('myVideoContainer_'+id) || document.body;
-            videosContainer.insertBefore(video, videosContainer.firstChild);
-            setUpVideoBoxesCss();
-        }
-
-        function removeVideoBox(peerId) {
-         //   if ($("#video-wrapper > div").length > 2) {
-         //       $('#targetVideo_' + peerId).remove();
-            var video = document.getElementById('myVideoContainer_'+peerId);
-            if (video) video.parentNode.removeChild(video);
-                setUpVideoBoxesCss();
-         //   }
-        }
 
         function setUpVideoBoxesCss() {
             var i = 0;
@@ -137,9 +153,6 @@
         }
         });
     </script>
-    <title>Video Conference</title>
-
-    <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
 
 </head>
 <body>

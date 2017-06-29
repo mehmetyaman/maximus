@@ -23,12 +23,15 @@ var conference = function(config) {
     function onDefaultSocketResponse(response) {
         if (response.userToken == self.userToken) return;
 
+        config.userToken=response.userToken;
+
         if (isGetNewRoom && response.roomToken && response.broadcaster) config.onRoomFound(response);
 
         if (response.newParticipant && self.joinedARoom && self.broadcasterid == response.userToken) onNewParticipant(response.newParticipant);
 
         if (response.userToken && response.joinUser == self.userToken && response.participant && channels.indexOf(response.userToken) == -1) {
             channels += response.userToken + '--';
+
             openSubSocket({
                 isofferer: true,
                 channel: response.channel || response.userToken
@@ -155,6 +158,8 @@ var conference = function(config) {
 
             if (response.left) {
                 if (peer && peer.peer) {
+                    alert("socketResponse response.left"+response.userToken);
+                    config.removeVideoBox(response.userToken);
                     peer.peer.close();
                     peer.peer = null;
                 }
@@ -174,6 +179,7 @@ var conference = function(config) {
     }
 
     function leave() {
+        alert("leave");
         var length = sockets.length;
         for (var i = 0; i < length; i++) {
             var socket = sockets[i];
@@ -246,6 +252,7 @@ var conference = function(config) {
             self.roomName = _config.roomName || 'Anonymous';
             self.roomToken = uniqueToken();
 
+            config.userToken=self.userToken;
             isbroadcaster = true;
             isGetNewRoom = false;
             startBroadcasting();
@@ -260,6 +267,8 @@ var conference = function(config) {
             openSubSocket({
                 channel: self.userToken
             });
+
+            config.userToken=self.userToken;
 
             defaultSocket.send({
                 participant: true,

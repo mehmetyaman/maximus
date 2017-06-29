@@ -50,4 +50,4 @@ heroku logs --tail
 heroku addons:create mongolab
 heroku config:get MONGODB_URI
 MONGODB_URI => mongodb://heroku_12345678:random_password@ds029017.mLab.com:29017/heroku_12345678
-heroku addons:open mongolab
+    heroku addons:open mongolab
