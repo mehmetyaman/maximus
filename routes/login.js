@@ -1,3 +1,5 @@
+var http = require('http');
+
 module.exports = function (app, passport, winston) {
 
 
@@ -50,17 +52,8 @@ module.exports = function (app, passport, winston) {
 
                 req.getConnection(function (err, connection) {
 
-                    var sql = "SELECT * FROM translators," +
-                        " (SELECT t.id," +
-                        "     GROUP_CONCAT(concat(" +
-                        "         (select lang_desc from languages where lang_short=lang_from),'>')," +
-                        " (select lang_desc from languages where lang_short=lang_to)" +
-                        " ORDER BY lang_from SEPARATOR ' , ') as languages" +
-                        " FROM translators t" +
-                        " LEFT JOIN translator_lang tl" +
-                        " ON t.id=tl.translator_id" +
-                        " GROUP BY t.id) AS JOINRESULT" +
-                        " WHERE translators.id = JOINRESULT.id and  translators.email = ?";
+                    var sql = "SELECT id FROM translators" +
+                       " WHERE  translators.email = ?";
 
                     var query = connection.query(sql, [email], function (err, rows) {
 
@@ -69,7 +62,25 @@ module.exports = function (app, passport, winston) {
                         if (err)
                             console.log("Error Selecting : %s ", err);
 
-                        res.redirect('/translator/' + translator.id);
+                        if(rows.length>0)
+                           return res.redirect('/translator/' + translator.id);
+                        else {   // if user is not translator then check if is it user
+                            var usersql = "SELECT id FROM user" +
+                                " WHERE  email = ?";
+
+                            var query = connection.query(usersql, [email], function (err, rows) {
+
+                                var user = rows[0];
+
+                                if (err)
+                                    console.log("Error Selecting : %s ", err);
+
+                                if(rows.length>0)
+                                    return res.redirect('/user/' + user.id);
+                                else
+                                    return res.redirect('/login');
+                            });
+                        }
 
                     });
 
@@ -86,11 +97,47 @@ module.exports = function (app, passport, winston) {
     });
 
     // process the signup form
-    app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/profile', // redirect to the secure profile section
-        failureRedirect: '/signup', // redirect back to the signup page if there is an error
-        failureFlash: true // allow flash messages
-    }));
+    app.post('/signup',
+        passport.authenticate('local-signup', {
+            successRedirect: '/profile', // redirect to the secure profile section
+            failureRedirect: '/signup', // redirect back to the signup page if there is an error
+            failureFlash: true // allow flash messages
+        }
+        /*
+        ,
+            function (err, user, info) {
+                var post_data = {
+                    name: 'aa',
+                    address: '',
+                    email: user.local.email,
+                    phone: '',
+                    user_type: 'SIMU_TRANSLATER',
+                    time_zone: '+2 GMT',
+                    country_code: 'EN'
+                };
+
+                var options = {
+                    host: 'localhost',
+                    port: 4300,
+                    path: '/users/add',
+                    method: 'POST'
+                };
+
+                var post_req = http.request(options, function(res) {
+                    console.log('STATUS: ' + res.statusCode);
+                    console.log('HEADERS: ' + JSON.stringify(res.headers));
+                    res.setEncoding('utf8');
+                    res.on('data', function (chunk) {
+                        console.log('BODY: ' + chunk);
+                    });
+                });
+                // post the data
+                post_req.write(post_data);
+                post_req.end();
+            }
+            */
+        )
+    );
 
     // facebook -------------------------------
 

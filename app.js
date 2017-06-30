@@ -38,7 +38,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
-var configDB = require('./config/database.js');
+//var configDB = require('./config/database.js');
 
 // configuration ===============================================================
 
@@ -53,13 +53,7 @@ app.use(bodyParser()); // get information from html forms
  type koneksi : single,pool and request
  -------------------------------------------*/
 app.use(
-    connection(mysql, {
-        host: '172.17.0.2',
-        user: 'root',
-        password: 'admin123',
-        database: 'maximus',
-        port: 3306
-    }, 'pool') //or single
+    connection(mysql, config.get('mysql') , 'pool') //or single
 );
 
 // here after for logging and authentication eee
@@ -76,7 +70,7 @@ require('./routes/users')(app);
 require('./routes/videochat')(app);
 
 // all environments
-app.set('port', process.env.PORT || 4300);
+app.set('port', process.env.PORT || config.get('app.port'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 //app.use(express.favicon());
@@ -95,7 +89,7 @@ console.log(app.get('env') + '=env  ,,  port=' + app.get('port'));
 
 // here after for logging and authentication
 
-mongoose.connect(configDB.url); // connect to our database
+mongoose.connect(config.get('mongo.url')); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
