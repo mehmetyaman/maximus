@@ -84,7 +84,7 @@ CREATE TABLE `translation_session` (
   `description` varchar(45) DEFAULT NULL,
   `topic` varchar(25) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
-  `category_id` VARCHAR(20) DEFAULT NULL,
+  `category_id` INT UNSIGNED NOT NULL,
   `save_record` int(11) NOT NULL DEFAULT '0',
   `video_chat_id` varchar(45) DEFAULT NULL,
   `translator_id` int(11) DEFAULT NULL,
@@ -97,7 +97,8 @@ CREATE TABLE `translation_session` (
   KEY `fk_translation_session_4_idx` (`category_id`),
   CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`id`) ON DELETE NO
+  ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
