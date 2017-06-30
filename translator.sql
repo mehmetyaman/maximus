@@ -16,7 +16,6 @@ CREATE TABLE `languages` (
 INSERT INTO `languages` VALUES ('ar','Arabic'),('ch','Chinese'),('en','English'),
 ('es','Spanish'),('gr','German'),('ru','Russian'),('tr','Turkish');
 
-
 CREATE TABLE `translators` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
@@ -28,8 +27,6 @@ CREATE TABLE `translators` (
 
 INSERT INTO `translators` VALUES (1,'myaman','mehmet','yaman','myaman@gmail.com'),
 (2,'ekaplan','erbil','kaplan','ekaplan@gmail.com');
-
-
 
 CREATE TABLE `translator_lang` (
   `translator_id` int(11) NOT NULL,
@@ -45,7 +42,6 @@ CREATE TABLE `translator_lang` (
 
 INSERT INTO `translator_lang` VALUES (1,'ch','ar'),(1,'ar','ch'),(2,'ru','tr');
 
-
 CREATE TABLE `translation_session_users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
@@ -55,26 +51,6 @@ CREATE TABLE `translation_session_users` (
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
-/*
-CREATE TABLE `maxsimus`.`users` ( \
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT, \
-    `password` CHAR(60) NOT NULL, \
-        PRIMARY KEY (`id`), \
-     `name` varchar(200) , \
-    `address` text , \
-    `email` varchar(200) NOT NULL, \
-    `phone` varchar(20) , \
-    `country_code` varchar(5) , \
-    `time_zone` varchar(10) , \
-    `user_type` varchar(20) , \
-    UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
-    UNIQUE INDEX `email_UNIQUE` (`email` ASC) \
-)
- */
-
-INSERT INTO `translation_session_users` VALUES (2,2),(1,3),(3,5);
-
-
 CREATE TABLE `translation_session` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `lang1` varchar(5) NOT NULL,
@@ -82,7 +58,6 @@ CREATE TABLE `translation_session` (
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `description` varchar(45) DEFAULT NULL,
-  `topic` varchar(25) DEFAULT NULL,
   `duration` int(11) DEFAULT NULL,
   `category_id` INT UNSIGNED NOT NULL,
   `save_record` int(11) NOT NULL DEFAULT '0',

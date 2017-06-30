@@ -26,7 +26,7 @@ module.exports = function (app, winston) {
                 end_date: new Date(input.plandate),
                 duration: input.interval,
                 description: input.desc,
-                catval:input.catval
+                category_id:input.catval
             }
             if (err) {
                 connection.rollback(function () {
