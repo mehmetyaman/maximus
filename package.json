@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "preinstall": "npm install config bower",
-    "preinstall": "bower install bootstrap"
+    "preinstall": "bower install bootstrap jquery"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
@@ -16,6 +16,7 @@
     "dotenv": "^4.0.0",
     "ejs": "^1.0.0",
     "ejs-html": "^4.0.3",
+    "emailjs": "^1.0.10",
     "express": "^3.21.2",
     "express-myconnection": "1.0.4",
     "express-session": "~1.0.0",
