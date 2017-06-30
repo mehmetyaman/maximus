@@ -1,142 +1,172 @@
 <html>
-<head>
-    <title>Video Conference</title>
-    <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
-    <link href="/../css/appear2.css" rel="stylesheet">
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-    <script src="https://cdn.webrtc-experiment.com/socket.io.js"> </script>
-    <script src="https://cdn.webrtc-experiment.com/RTCPeerConnection-v1.5.js"> </script>
-    <script src="../js/conference.js"> </script>
-    <script>
-        $( document ).ready(function() {
-            var config = {
-                userToken:"",
-                video:"",
-                openSocket: function (config) {
-                    var SIGNALING_SERVER = 'https://webrtcweb.com:9559/',
-                        defaultChannel = location.href.replace(/\/|:|#|%|\.|\[|\]/g, '');
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+        <title>Video Conference</title>
+        <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
+        <link href="/../css/appear2.css" rel="stylesheet">
+        <link href="/../css/getMediaElement.css" rel="stylesheet">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+        <script src="/../js/RTCMultiConnection.min.js"></script>
+        <script src="/../js/socket.io.js"></script>
 
-                    var channel = config.channel || defaultChannel;
-                    var sender = Math.round(Math.random() * 999999999) + 999999999;
+        <!-- custom layout for HTML5 audio/video elements -->
+        <script src="/../js/getMediaElement.js"></script>
+    </head>
 
-                    io.connect(SIGNALING_SERVER).emit('new-channel', {
-                        channel: channel,
-                        sender: sender
-                    });
+<script>
+    $( document ).ready(function() {
+        disableInputButtons();
+        connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
+            if (!isRoomExists) {
+                //  showRoomURL(roomid);
+            }
+        });
+    });
 
-                    var socket = io.connect(SIGNALING_SERVER + channel);
-                    socket.channel = channel;
-                    socket.on('connect', function () {
-                        if (config.callback) config.callback(socket);
-                    });
+    var connection = new RTCMultiConnection();
 
-                    socket.send = function (message) {
-                        socket.emit('message', {
-                            sender: sender,
-                            data: message
-                        });
-                    };
+    // by default, socket.io server is assumed to be deployed on your own URL
+  //  connection.socketURL = '/';
 
-                    socket.on('message', config.onmessage);
-                },
-                onRemoteStream: function (media) {
-                    this.video = media.video;
-                    this.video.setAttribute('controls', true);
-                    this.video.setAttribute('id', this.userToken);
+    // comment-out below line if you do not have your own socket.io server
+     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
-                //    this.video=video;
-                //    this.userToken=media.stream.id;
-                    this.addNewVideoBox("onRemoteStream -  media.stream.id="+media.stream.id+"  ---------------  ");
+    connection.socketMessageEvent = 'video-conference-demo';
 
-                    this.video.play();
-                },
-                onRemoteStreamEnded: function (stream) {
-                    var videoFrame = document.getElementById('videoFrame_' + stream.id);
-                    if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
-                    setUpVideoBoxesCss();
-                },
-                onRoomFound: function (room) {
-                    var alreadyExist = document.querySelector('button[data-broadcaster="' + room.broadcaster + '"]');
-                    if (alreadyExist) {
-                        alert("alreadyExist");
-                        return;
-                    }
+    connection.session = {
+        audio: true,
+        video: true
+    };
 
-                    var tr = document.createElement('tr');
-                    tr.innerHTML = '<td><strong>' + room.roomName + '</strong> shared a conferencing room with you!</td>';
-                    roomsList.insertBefore(tr, roomsList.firstChild);
+    connection.sdpConstraints.mandatory = {
+        OfferToReceiveAudio: true,
+        OfferToReceiveVideo: true
+    };
 
-                    this.userToken =room.broadcaster;
-                    alert("onroomfound usertoken="+this.userToken);
+    connection.videosContainer = document.getElementById('video-wrapper');
+    connection.onstream = function(event) {
+     //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
+        var mediaElement = getMediaElement(event.mediaElement, {
+            title: event.userid,
+        //    buttons: ['full-screen'],
+        //    width: width,
+            showOnMouseEnter: false
+        });
+        addNewVideoBox(event.userid,mediaElement);
+    //    connection.videosContainer.appendChild(mediaElement);
 
-                    this.captureUserMedia(function () {
-                        conferenceUI.joinRoom({
-                            roomToken: room.broadcaster,
-                            joinUser: room.broadcaster
-                        });
-                        config.addNewVideoBox("captureUserMedia");
-                    });
-                },
-                onRoomClosed: function (response) {
-                    alert("sss"+response);
-                },
-                removeVideoBox: function () {
-                    var videoFrame = document.getElementById('videoFrame_'+config.userToken);
-                    if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
-                    setUpVideoBoxesCss();
-                    alert("removeVideoBox="+config.userToken);
-                },
-                addNewVideoBox: function (s) {
-                    var divHtml = $("#video-wrapper").html() +
-                        "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + this.userToken + "\" >"+
-                        "<div class=\"video-box\"> "+
-                        "<div class=\"video-frame\" > "+
-                        "<div class=\"video-stream-container\" id=\"myVideoContainer_" + this.userToken + "\" >" +
-                        "</div></div></div>"+
-                        "</div>";
+        setTimeout(function() {
+            mediaElement.media.play();
+        }, 5000);
 
-                    $("#video-wrapper").html(divHtml);
-                    alert("addNewVideoBox="+this.userToken+"  s="+s);
+        mediaElement.id = event.streamid;
+    };
 
-                    var videosContainer = document.getElementById('myVideoContainer_'+this.userToken) || document.body;
-                    videosContainer.insertBefore(this.video, videosContainer.firstChild);
-                    setUpVideoBoxesCss();
-                },
-                captureUserMedia: function (callback) {
-                    this.video = document.createElement('video');
-                    this.video.setAttribute('autoplay', true);
-                    this.video.setAttribute('controls', true);
+    connection.onstreamended = function(event) {
+        var mediaElement = document.getElementById(event.streamid);
+        if (mediaElement) {
+           // mediaElement.parentNode.removeChild(mediaElement);
+            removeVideoBox(event.userid);
+        }
+    };
 
-                    getUserMedia({
-                        video: this.video,
-                        onsuccess: function (stream) {
-                            config.attachStream = stream;
-                            this.video.setAttribute('muted', true);
-                            callback();
-                        }
-                    });
+    function disableInputButtons() {
+        document.getElementById('room-id').disabled = true;
+    }
+
+    /*
+    function showRoomURL(roomid) {
+        var roomHashURL = '#' + roomid;
+        var roomQueryStringURL = '?roomid=' + roomid;
+
+        var html = '<h2>Unique URL for your room:</h2><br>';
+
+        html += 'Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a>';
+        html += '<br>';
+        html += 'QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
+
+        var roomURLsDiv = document.getElementById('room-urls');
+        roomURLsDiv.innerHTML = html;
+
+        roomURLsDiv.style.display = 'block';
+    }
+*/
+    (function() {
+        var params = {},
+            r = /([^&=]+)=?([^&]*)/g;
+
+        function d(s) {
+            return decodeURIComponent(s.replace(/\+/g, ' '));
+        }
+        var match, search = window.location.search;
+        while (match = r.exec(search.substring(1)))
+            params[d(match[1])] = d(match[2]);
+        window.params = params;
+    })();
+
+    var roomid = '';
+    if (localStorage.getItem(connection.socketMessageEvent)) {
+        roomid = localStorage.getItem(connection.socketMessageEvent);
+    } else {
+        roomid = connection.token();
+    }
+    document.getElementById('room-id').value = roomid;
+    document.getElementById('room-id').onkeyup = function() {
+        localStorage.setItem(connection.socketMessageEvent, this.value);
+    };
+
+    var hashString = location.hash.replace('#', '');
+    if (hashString.length && hashString.indexOf('comment-') == 0) {
+        hashString = '';
+    }
+
+    var roomid = params.roomid;
+    if (!roomid && hashString.length) {
+        roomid = hashString;
+    }
+
+    if (roomid && roomid.length) {
+        document.getElementById('room-id').value = roomid;
+        localStorage.setItem(connection.socketMessageEvent, roomid);
+
+        // auto-join-room
+        (function reCheckRoomPresence() {
+            connection.checkPresence(roomid, function(isRoomExists) {
+                if (isRoomExists) {
+                    connection.join(roomid);
+                    return;
                 }
-            };
 
-            var conferenceUI = conference(config);
-            var roomsList = document.getElementById('rooms-list');
+                setTimeout(reCheckRoomPresence, 5000);
+            });
+        })();
 
-            var createRoom = function () {
-                config.captureUserMedia(function () {
-                    conferenceUI.createRoom({
-                        roomName: "Anonymous"
-                    });
-                    config.addNewVideoBox("createroom");
-                });
-            };
+        disableInputButtons();
+    }
 
-            <%if(isRoomCreated) { %>
-                createRoom();
-                alert("createRoom");
-            <%} else{%>
-                alert("did not create room");
-            <%}%>
+        function addNewVideoBox (userId, video) {
+            var divHtml = $("#video-wrapper").html() +
+                "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + userId + "\" >"+
+//                "<span>"+this.userToken+"</span>"+
+                "<div class=\"video-box\"> "+
+                "<div class=\"video-frame\" > "+
+                "<div class=\"video-stream-container\" id=\"myVideoContainer_" + userId + "\" >" +
+                "</div></div></div>"+
+                "</div>";
 
+            $("#video-wrapper").html(divHtml);
+
+            var videosContainer = document.getElementById('myVideoContainer_'+ userId) || document.body;
+            videosContainer.insertBefore(video, videosContainer.firstChild);
+            setUpVideoBoxesCss();
+        }
+
+        function removeVideoBox(userId) {
+            var videoFrame = document.getElementById('videoFrame_' + userId);
+            if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
+            setUpVideoBoxesCss();
+        }
 
         function setUpVideoBoxesCss() {
             var i = 0;
@@ -151,8 +181,16 @@
                 $("#video-wrapper").attr("class","div" + i);
             }
         }
-        });
-    </script>
+
+
+</script>
+
+<footer>
+    <small id="send-message"></small>
+</footer>
+
+<script src="https://cdn.webrtc-experiment.com/common.js"></script>
+
 
 </head>
 <body>
@@ -194,8 +232,7 @@
             </div>
             <div class="room-url-wrapper" analytics-event="copyUrlAnalyticsEvent">
                 <div class="room-url">
-                    <p class="text user-select-all" id="my-id"></p>
-                    <table style="width: 100%;" id="rooms-list"></table>
+                    <p id="room-id">Room Id: <%=roomId%></p>
                 </div>
             </div>
             <div class="room-control-buttons control-button-group">

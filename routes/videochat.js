@@ -4,7 +4,6 @@ var path = require('path');
 
 module.exports = function (app) {
 
-
     app.get('/videoConference/:id', function (req, res) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
@@ -42,12 +41,9 @@ module.exports = function (app) {
                     console.log("Error /videoChat/:id : %s ", err);
                     res.status(500).send(err);
                 }
-                res.render('trans_session/videoConference', {title: 'Video Conference', isRoomCreated:isRoomCreated, roomId:videoChatId, peerId:peerId, peers: peers});
+                res.render('trans_session/videoConference', {title: 'Video Conference', roomId:videoChatId, peerId:peerId, peers: peers});
             });
-
         });
-
-
     });
 
     app.get('/peertest/:sessionId', function (req, res) {
