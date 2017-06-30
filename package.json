@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node app.js",
     "preinstall": "npm install config bower",
-    "preinstall": "bower install bootstrap jquery"
+    "preinstall": "bower install bootstrap jquery",
+    "preinstall": "bower install eonasdan-bootstrap-datetimepicker#latest"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",

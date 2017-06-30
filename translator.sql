@@ -1,5 +1,11 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
+DROP TABLE IF EXISTS `translation_session_users`;
+DROP TABLE IF EXISTS `translation_session`;
+DROP TABLE IF EXISTS `translator_lang`;
+DROP TABLE IF EXISTS `languages`;
+DROP TABLE IF EXISTS `translators`;
+DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `languages` (
   `lang_short` varchar(5) NOT NULL,
