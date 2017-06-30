@@ -69,7 +69,7 @@ module.exports = function (passport) {
                         var insertQuery = "INSERT INTO users ( email, password) values (?,?)";
 
                         connection.query(insertQuery, [newUserMysql.username, newUserMysql.password], function (err, rows) {
-                            if (err){
+                            if (err) {
                                 return done(err);
                             }
 
@@ -339,12 +339,8 @@ module.exports = function (passport) {
 
                         return done(null, user);
                     });
-
                 }
-
             });
-
         }));
-
 };
 
