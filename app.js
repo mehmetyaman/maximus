@@ -4,7 +4,7 @@
 
 var express = require('express');
 var app = express();
-
+var env = require('dotenv').load();
 var winston = require('winston');
 
 // here after for logging and authentication sss
@@ -68,6 +68,7 @@ require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
+require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -80,6 +81,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 
 // development only
 if ('development' == app.get('env')) {
@@ -93,6 +95,9 @@ mongoose.connect(config.get('mongo.url')); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
+
+var scheduler = require('./scheduler/schedule-master.js');
+scheduler.init();
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));

@@ -2,8 +2,16 @@
 <html>
 <head>
     <title>For your translater needs</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
     <style>
         body {
             padding-top: 80px;
@@ -12,103 +20,211 @@
     </style>
 </head>
 <body>
-<div class="container">
+<form id="plan-form">
+    <div class="container">
 
-    <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
-        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header text-center">
+                    <% if (user.email) { %>
+                    <p>
+                        <strong>id</strong>: <%= user.id %><br>
+                        <strong>email</strong>: <%= user.email %><br>
+                        <strong>password</strong>: <%= user.password %>
+                    </p>
+                    <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                    <% } %>
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+                    <h1><span class="fa fa-anchor"></span></h1>
+                </div>
+            </div>
+        </div>
+        <% if (lists) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span>Konu</span>
+            </div>
+            <div class="col-md-3">
+                <span>Sure (dk)</span>
+            </div>
+            <div class="col-md-3">
+                <span>Dil</span>
+            </div>
+            <div class="col-md-3">
+                <span>Baslangic Trh</span>
+            </div>
+        </div>
+        <% lists.forEach(function (items) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span><%= items.topic %></span>
+            </div>
+            <div class="col-md-3">
+                <span><%= items.duration %></span>
+            </div>
+            <div class="col-md-3">
+                <span><%= items.lang1 %> > <%= items.lang2 %></span>
+            </div>
+            <div class="col-md-3">
+                <span> <%= items.start_time %></span>
+            </div>
+        </div>
+        <% }) %>
     </div>
-
+    <% } %>
     <div class="row">
-
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3><span class="fa fa-user"></span> Local</h3>
-
-                <% if (user.local.email) { %>
-                <p>
-                    <strong>id</strong>: <%= user._id %><br>
-                    <strong>email</strong>: <%= user.local.email %><br>
-                    <strong>password</strong>: <%= user.local.password %>
-                </p>
-
-                <a href="/unlink/local" class="btn btn-default">Unlink</a>
-                <% } else { %>
-                <a href="/connect/local" class="btn btn-default">Connect Local</a>
-                <% } %>
-
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+            <button class="btn btn-primary" type="button" onclick="planner();">Do Plan</button>
+        </div>
+    </div>
+    <div id="plannerDiv" style="display: none">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+                <h4>Select Languages</h4>
             </div>
         </div>
 
-        <!-- FACEBOOK INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-primary"><span class="fa fa-facebook"></span> Facebook</h3>
-
-                <!-- check if the user has this token (is the user authenticated with this social account) -->
-                <% if (user.facebook.token) { %>
-                <p>
-                    <strong>id</strong>: <%= user.facebook.id %><br>
-                    <strong>token</strong>: <%= user.facebook.token %><br>
-                    <strong>email</strong>: <%= user.facebook.email %><br>
-                    <strong>name</strong>: <%= user.facebook.name %><br>
-                </p>
-
-                <a href="/unlink/facebook" class="btn btn-primary">Unlink</a>
-                <% } else { %>
-                <a href="/connect/facebook" class="btn btn-primary">Connect Facebook</a>
-                <% } %>
-
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang1">
+                            <% langs.forEach(function (language) { %>
+                            <li><a href="#" langval="<%= language.lang_short %>"><%= language.lang_desc %></a></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang2">
+                            <% langs.forEach(function (language) { %>
+                            <li><a href="#" langval="<%= language.lang_short %>"><%= language.lang_desc %></a></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <span class="caret"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            Interval in Min
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="interval">
+                            <li><a href="#">30</a></li>
+                            <li><a href="#">60</a></li>
+                            <li><a href="#">90</a></li>
+                            <li><a href="#">120</a></li>
+                            <li><a href="#">150</a></li>
+                            <li><a href="#">180</a></li>
+                            <li><a href="#">210</a></li>
+                            <li><a href="#">240</a></li>
+                            <li><a href="#">270</a></li>
+                            <li><a href="#">300</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <div class='input-group date' id='plandate'>
+                        <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="button" id="post-btn">Create</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="row">
-
-        <!-- TWITTER INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
-
-                <% if (user.twitter.token) { %>
-                <p>
-                    <strong>id</strong>: <%= user.twitter.id %><br>
-                    <strong>token</strong>: <%= user.twitter.token %><br>
-                    <strong>display name</strong>: <%= user.twitter.displayName %><br>
-                    <strong>username</strong>: <%= user.twitter.username %>
-                </p>
-
-                <a href="/unlink/twitter" class="btn btn-info">Unlink</a>
-                <% } else { %>
-                <a href="/connect/twitter" class="btn btn-info">Connect Twitter</a>
-                <% } %>
-
-            </div>
-        </div>
-
-        <!-- GOOGLE INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-                <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google+</h3>
-
-                <% if (user.google.token) { %>
-                <p>
-                    <strong>id</strong>: <%= user.google.id %><br>
-                    <strong>token</strong>: <%= user.google.token %><br>
-                    <strong>email</strong>: <%= user.google.email %><br>
-                    <strong>name</strong>: <%= user.google.name %>
-                </p>
-
-                <a href="/unlink/google" class="btn btn-danger">Unlink</a>
-                <% } else { %>
-                <a href="/connect/google" class="btn btn-danger">Connect Google</a>
-                <% } %>
-
-            </div>
-        </div>
     </div>
+</form>
+<script type="text/javascript">
+    var intervalval, lang1, lang2;
+    $('#interval li').on('click', function () {
+        intervalval = $(this).text();
+    });
+    $('#lang1 li').on('click', function () {
+        lang1 = $('a', this).attr('langval');
+    });
+    $('#lang2 li').on('click', function () {
+        lang2 = $('a', this).attr('langval');
+    });
+    $(document).ready(function () {
+        $('#plandate').datetimepicker();
+    });
+    $(".dropdown-menu li a").click(function () {
+        var selText = $(this).text();
+        $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
+    });
 
-
-</div>
+    function planner() {
+        $("#plannerDiv").toggle();
+    }
+    $("#post-btn").click(function () {
+        if (lang1 === undefined) {
+            alert("Lütfen dil seçiniz");
+            return false;
+        }
+        if (lang2 === undefined) {
+            alert("Lütfen dil seçiniz");
+            return false;
+        }
+        if (lang1 === lang2) {
+            alert("İki dil birbirinden farklı olmalıdır!");
+            return false;
+        }
+        if (intervalval === undefined) {
+            alert("Lütfen süre belirletiniz");
+            return false;
+        }
+        var formdata = {
+            plandate: $("#plandate").data("DateTimePicker").date().toISOString(),
+            interval: intervalval,
+            lang1: lang1,
+            lang2: lang2
+        } // this will replace with form values
+        $.post("/plan", formdata, function (data) {
+            $("#plannerDiv").toggle();
+            location.reload();
+        });
+    });
+</script>
 </body>
 </html>
