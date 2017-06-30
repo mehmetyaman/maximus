@@ -4,12 +4,30 @@
 
 var express = require('express');
 var app = express();
-
+var env = require('dotenv').load();
 var winston = require('winston');
 
 // here after for logging and authentication sss
 var mongoose = require('mongoose');
 var passport = require('passport');
+
+var email 	= require("emailjs");
+var server 	= email.server.connect({
+    user:    "linpretinfo",
+    password:"Hede9902",
+    host:    "smtp.gmail.com",
+    ssl:     true
+});
+
+// send the message and get a callback with an error or details of the message that was sent
+server.send({
+    text:    "i hope this works",
+    from:    "you linpretinfo@gmail.com",
+    to:      "someone mehmetyaman@gmail.com",
+    cc:      "else kaplanerbil@gmail.com",
+    subject: "testing emailjs"
+}, function(err, message) { console.log(err || message); });
+
 
 // set up our express application
 app.use(express.logger('dev')); // log every request to the console
@@ -68,6 +86,7 @@ require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
+require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -80,6 +99,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/bower_components',  express.static(__dirname + '/bower_components'));
 
 // development only
 if ('development' == app.get('env')) {
@@ -93,6 +113,9 @@ mongoose.connect(config.get('mongo.url')); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
+
+var scheduler = require('./scheduler/schedule-master.js');
+scheduler.init();
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));

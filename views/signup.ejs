@@ -1,48 +1,137 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <style>
-        body         { padding-top:80px; }
+        body {
+            padding-top: 80px;
+        }
     </style>
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
 </head>
 <body>
 <div class="container">
-<div class="col-sm-6 col-sm-offset-3">
+    <div class="col-sm-6 col-sm-offset-3">
 
-    <h1><span class="fa fa-sign-in"></span> Signup</h1>
+        <h1><span class="fa fa-sign-in"></span> Signup</h1>
 
-    <% if (message.length > 0) { %>
+        <% if (message.length > 0) { %>
         <div class="alert alert-danger"><%= message %></div>
-    <% } %>
+        <% } %>
 
-    <!-- LOGIN FORM -->
-    <form action="/signup" method="post">
-        <div class="form-group">
-            <label>Email</label>
-            <input type="text" class="form-control" name="email">
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password">
-        </div>
+        <!-- LOGIN FORM -->
+        <form action="/signup<% if (customer) { %>?customer=true<% } %>" method="post">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" class="form-control" name="name">
+            </div>
+            <div class="form-group">
+                <label>SurName</label>
+                <input type="text" class="form-control" name="surname">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" name="email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <% if (!customer) { %>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#langListCarrier").val("");
+                    $(".add-row").click(function () {
+                        if ($("#langFrom option:selected").val() == -1 || $("#langTo option:selected").val() == -1) {
+                            return false;
+                        }
 
-        <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-    </form>
+                        if ($("#langFrom option:selected").val() == $("#langTo option:selected").val()) {
+                            return false;
+                        }
 
-    <hr>
+                        var langFrom = $("#langFrom option:selected").text();
+                        var langTo = $("#langTo option:selected").text();
+                        var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + langFrom + "</td><td>" + langTo + "</td></tr>";
 
-    <p>Already have an account? <a href="/login">Login</a></p>
-    <p>Or go <a href="/">home</a>.</p>
+                        $("#langListCarrier").val($("#langListCarrier").val() + ($("#langFrom option:selected").val() + "," + "" + $("#langTo option:selected").val()) + ';');
+                        $(".langTableBody").append(markup);
+                    });
 
-    <div class="text-center">
-        <p>A demo by <a href="http://scotch.io">Scotch</a>.</p>
-        <p>Visit the <a href="http://scotch.io/tutorials/javascript/easy-node-authentication-setup-and-local">tutorial</a>.</p>
+                    // Find and remove selected table rows
+                    $(".delete-row").click(function () {
+                        $(".langTableBody").find('input[name="record"]').each(function () {
+                            if ($(this).is(":checked")) {
+                                $(this).parents("tr").remove();
+                            }
+                        });
+                    });
+                });
+            </script>
+
+            <div class="form-group">
+                <table id="langTable">
+                    <tr id="langRow">
+                        <td class="label">From:</td>
+                        <td>
+                            <div class="styled-select blue semi-square">
+                                <select id="langFrom">
+                                    <option value="-1" selected="selected">Choose</option>
+                                    <% dataLang.forEach(function (langObj) { %>
+                                    <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        <td class="label">To:</td>
+                        <td>
+                            <div class="styled-select blue semi-square">
+                                <select id="langTo">
+                                    <option value="-1" selected="selected">Choose</option>
+                                    <% dataLang.forEach(function (langObj) { %>
+                                    <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </td>
+                        <td><input type="button" class="add-row" value="Add Row"></td>
+                    <tr/>
+                </table>
+                </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <table class="langTable">
+                            <thead>
+                            <tr>
+                                <th>Language</th>
+                                <th>From</th>
+                                <th>To</th>
+                            </tr>
+                            </thead>
+                            <tbody class="langTableBody">
+                            <input type="hidden" id="langListCarrier" name="langListCarrier"/>
+                            </tbody>
+                        </table>
+                        <button type="button" class="delete-row">Delete Row</button>
+                    </td>
+                    <td></td>
+                </tr>
+                </table>
+            </div>
+            <% } %>
+
+            <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+        </form>
+
+        <hr>
+
+        <p>Already have an account? <a href="/login">Login</a></p>
+        <p>Or go <a href="/">home</a>.</p>
+
     </div>
-
-</div>
 </div>
 </body>
 </html>
