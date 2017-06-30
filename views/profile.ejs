@@ -102,6 +102,30 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-3">
+                    <h4>Category</h4>
+                    <div class="form-group">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                                Category
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id="cat">
+                                <% cats.forEach(function (category) { %>
+                                <li><a href="#" catval="<%= category.category_short_desc %>"><%= category
+                                                .category_long_desc %></a></li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <span class="caret"></span>
@@ -188,7 +212,7 @@
     </div>
 </form>
 <script type="text/javascript">
-    var intervalval, lang1, lang2;
+    var intervalval, lang1, lang2, catval;
     $('#interval li').on('click', function () {
         intervalval = $(this).text();
     });
@@ -197,6 +221,9 @@
     });
     $('#lang2 li').on('click', function () {
         lang2 = $('a', this).attr('langval');
+    });
+    $('#cat li').on('click', function () {
+        catval = $('a', this).attr('catval');
     });
     $(document).ready(function () {
         $('#plandate').datetimepicker();
@@ -235,7 +262,8 @@
             interval: intervalval,
             lang1: lang1,
             lang2: lang2,
-            desc: $("#desc").val()
+            desc: $("#desc").val(),
+            catval: catval
         } // this will replace with form values
         $.post("/plan", formdata, function (data) {
             $("#plannerDiv").toggle();

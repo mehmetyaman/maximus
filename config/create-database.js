@@ -8,6 +8,7 @@ var connection = mysql.createConnection(dbconfig.connection);
 
 //connection.query('CREATE DATABASE ' + dbconfig.database);
 
+
 connection.query('\
 CREATE TABLE `' + config.get("database") + '`.`' + config.get("users_table") + '` ( \
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT, \
@@ -24,6 +25,15 @@ CREATE TABLE `' + config.get("database") + '`.`' + config.get("users_table") + '
     UNIQUE INDEX `email_UNIQUE` (`email` ASC) \
 )');
 
+
+connection.query('\
+CREATE TABLE `' + dbconfig.database + '`.`' + dbconfig.categories_table + '` ( \
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT, \
+    `category_short_desc` CHAR(20) NOT NULL, \
+        PRIMARY KEY (`id`), \
+     `category_long_desc` varchar(100) ,\
+    UNIQUE INDEX `id_UNIQUE` (`id` ASC)\
+)');
 
 
 
