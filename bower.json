@@ -1,0 +1,21 @@
+{
+  "name": "maximus",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Mehmet Yaman"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/mehmetyaman/maximus",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "bootstrap": "^3.3.7"
+  }
+}
