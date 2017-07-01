@@ -15,8 +15,8 @@ module.exports = function (app) {
         var id = req.params.id;
         req.getConnection(function (err, connection) {
 
-            do_queries( connection, id, function(err, rows, rows2) {
-                if(err)
+            do_queries(connection, id, function (err, rows, rows2) {
+                if (err)
                     console.log(err);
                 else
                     res.render('translator/translator', {
@@ -32,7 +32,7 @@ module.exports = function (app) {
 };
 
 
-function do_queries( connection, id, callback ){
+function do_queries(connection, id, callback) {
     var sql1 = "SELECT * FROM users," +
         " (SELECT t.id," +
         "     GROUP_CONCAT(concat(" +
@@ -59,24 +59,27 @@ function do_queries( connection, id, callback ){
                 return;
             }
 
-            i=0;
-            if(rows2.length > 0){
+            i = 0;
+            if (rows2.length > 0) {
                 rows2.forEach(function (videoChat) {
                     var peers;
-                    Peer.find({"videoChatId":videoChat.id}, function (err, peers) {
+                    Peer.find({"videoChatId": videoChat.id}, function (err, peers) {
                         if (err) {
                             callback(err);
                             return;
                         }
-                        videoChat.peers=peers;
+                        videoChat.peers = peers;
                         i++;
-                        if(i==rows2.length){
+                        if (i == rows2.length) {
                             callback(null, rows, rows2);
                             return;
                         }
                     });
                 });
+            } else {
+                callback(null, [], []);
             }
+
         });
     });
 }
