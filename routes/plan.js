@@ -25,7 +25,9 @@ module.exports = function (app, winston) {
                 start_date: new Date(input.plandate),
                 end_date: new Date(input.plandate),
                 duration: input.interval,
-                description: input.desc
+                description: input.desc,
+                category_id:input.catval,
+                translator_id: req.user.id
             }
             if (err) {
                 connection.rollback(function () {
@@ -43,6 +45,21 @@ module.exports = function (app, winston) {
                     console.log("Error inserting : %s ", err2);
                     res.status(500).json({error: err2});
                 }
+                /*
+                 `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+                 `lang1` varchar(5) NOT NULL,
+                 `lang2` varchar(5) NOT NULL,
+                 `start_date` date DEFAULT NULL,
+                 `end_date` date DEFAULT NULL,
+                 `description` varchar(45) DEFAULT NULL,
+                 `duration` int(4) DEFAULT NULL,
+                 `category_id` int(11) UNSIGNED NOT NULL,
+                 `save_record` int(11) NOT NULL DEFAULT '0',
+                 `video_chat_id` varchar(45) DEFAULT NULL,
+                 `translator_id` int(11) UNSIGNED NOT NULL,
+                 `start_time` time DEFAULT NULL,
+                 `end_time` time DEFAULT NULL,
+                 */
                 var sessionId = rows2.insertId;
                 var data = {
                     id: sessionId,

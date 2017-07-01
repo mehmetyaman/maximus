@@ -17,7 +17,7 @@ module.exports = function (app) {
 
             do_queries( connection, id, function(err, rows, rows2) {
                 if(err)
-                    report_error(err);
+                    console.log(err);
                 else
                     res.render('translator/translator', {
                         page_title: "Translator page",
@@ -27,30 +27,26 @@ module.exports = function (app) {
                         moment: moment,
                     });
             });
-
-
         });
     });
-
 };
 
 
 function do_queries( connection, id, callback ){
-    var sql1 = "SELECT * FROM translators," +
+    var sql1 = "SELECT * FROM users," +
         " (SELECT t.id," +
         "     GROUP_CONCAT(concat(" +
         "         (select lang_desc from languages where lang_short=lang_from),'>')," +
         " (select lang_desc from languages where lang_short=lang_to)" +
         " ORDER BY lang_from SEPARATOR ' , ') as languages" +
-        " FROM translators t" +
+        " FROM users t" +
         " LEFT JOIN translator_lang tl" +
         " ON t.id=tl.translator_id" +
         " GROUP BY t.id) AS JOINRESULT" +
-        " WHERE translators.id = JOINRESULT.id and  translators.id = ?";
+        " WHERE users.id = JOINRESULT.id and  users.id = ?";
 
     //var sessionList = "";
-    var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time " +
-        "from translation_session where translator_id=? order by start_date,start_time";
+    var sql2 = "select * from translation_session where translator_id=? order by start_date,start_time";
 
     var query = connection.query(sql1, [id], function (err, rows) {
         if (err) {
@@ -64,24 +60,23 @@ function do_queries( connection, id, callback ){
             }
 
             i=0;
-            rows2.forEach(function (videoChat) {
-                var peers;
-                Peer.find({"videoChatId":videoChat.id}, function (err, peers) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-                    videoChat.peers=peers;
-                    i++;
-                    if(i==rows2.length){
-                        callback(null, rows, rows2);
-                        return;
-                    }
+            if(rows2.length > 0){
+                rows2.forEach(function (videoChat) {
+                    var peers;
+                    Peer.find({"videoChatId":videoChat.id}, function (err, peers) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        videoChat.peers=peers;
+                        i++;
+                        if(i==rows2.length){
+                            callback(null, rows, rows2);
+                            return;
+                        }
+                    });
                 });
-
-            });
-
-
+            }
         });
     });
 }
