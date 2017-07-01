@@ -17,7 +17,7 @@ module.exports = function (app) {
 
             do_queries( connection, id, function(err, rows, rows2) {
                 if(err)
-                    report_error(err);
+                    console.log(err);
                 else
                     res.render('translator/translator', {
                         page_title: "Translator page",
@@ -27,11 +27,8 @@ module.exports = function (app) {
                         moment: moment,
                     });
             });
-
-
         });
     });
-
 };
 
 
@@ -49,8 +46,7 @@ function do_queries( connection, id, callback ){
         " WHERE users.id = JOINRESULT.id and  users.id = ?";
 
     //var sessionList = "";
-    var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time " +
-        "from translation_session where translator_id=? order by start_date,start_time";
+    var sql2 = "select * from translation_session where translator_id=? order by start_date,start_time";
 
     var query = connection.query(sql1, [id], function (err, rows) {
         if (err) {
