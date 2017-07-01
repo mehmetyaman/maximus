@@ -36,17 +36,17 @@ module.exports = function (app) {
 
 
 function do_queries( connection, id, callback ){
-    var sql1 = "SELECT * FROM translators," +
+    var sql1 = "SELECT * FROM users," +
         " (SELECT t.id," +
         "     GROUP_CONCAT(concat(" +
         "         (select lang_desc from languages where lang_short=lang_from),'>')," +
         " (select lang_desc from languages where lang_short=lang_to)" +
         " ORDER BY lang_from SEPARATOR ' , ') as languages" +
-        " FROM translators t" +
+        " FROM users t" +
         " LEFT JOIN translator_lang tl" +
         " ON t.id=tl.translator_id" +
         " GROUP BY t.id) AS JOINRESULT" +
-        " WHERE translators.id = JOINRESULT.id and  translators.id = ?";
+        " WHERE users.id = JOINRESULT.id and  users.id = ?";
 
     //var sessionList = "";
     var sql2 = "select id,lang1,lang2,topic,duration,start_date,start_time " +

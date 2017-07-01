@@ -7,10 +7,10 @@ module.exports = function (app, passport, winston) {
 
     // show the home page (will also have our login links)
     app.get('/', function (req, res) {
-        if(req.user){
-            if(req.customer){
+        if (req.user) {
+            if (req.user.is_customer) {
                 res.render('/profile');
-            } else {
+            } else if (req.user.is_translator) {
                 res.render('/translator');
             }
         } else {
@@ -70,7 +70,6 @@ module.exports = function (app, passport, winston) {
 
 
     app.post('/login', function (req, res, next) {
-        var isCustomer = req.query.customer;
         passport.authenticate('local-login', function (err, user, info) {
             if (err) {
                 return next(err);
@@ -85,40 +84,8 @@ module.exports = function (app, passport, winston) {
                 }
                 var email = user.email;
                 winston.log('info', 'logged in email:' + user.email);
-                if (!isCustomer) {
-                    req.getConnection(function (err, connection) {
-
-                        var sql = "SELECT id FROM translators WHERE  translators.email = ?";
-
-                        var query = connection.query(sql, [email], function (err, rows) {
-
-                            var translator = rows[0];
-
-                            if (err)
-                                console.log("Error Selecting : %s ", err);
-
-                            if (rows.length > 0)
-                                return res.redirect('/translator/' + translator.id);
-                            else {   // if user is not translator then check if is it user
-                                var usersql = "SELECT id FROM user WHERE  email = ?";
-
-                                var query = connection.query(usersql, [email], function (err, rows) {
-
-                                    var user = rows[0];
-
-                                    if (err)
-                                        console.log("Error Selecting : %s ", err);
-
-                                    if (rows.length > 0)
-                                        return res.redirect('/user/' + user.id);
-                                    else
-                                        return res.redirect('/login');
-                                });
-                            }
-
-                        });
-
-                    });
+                if (user.is_translator) {
+                    return res.redirect('/translator/' + user.id);
                 } else {
                     res.redirect('/profile');
                 }
@@ -129,8 +96,8 @@ module.exports = function (app, passport, winston) {
     // SIGNUP =================================
     // show the signup form
     app.get('/signup', function (req, res) {
-                    var sql = "SELECT id FROM translators" +
-                       " WHERE  translators.email = ?";
+        var sql = "SELECT id FROM translators" +
+            " WHERE  translators.email = ?";
 
         if (!req.query.customer) {
             req.getConnection(function (err, connection) {
@@ -153,117 +120,72 @@ module.exports = function (app, passport, winston) {
 
     });
 
-                        
+
     // process the signup form
     app.post('/signup', function (req, res, next) {
         passport.authenticate('local-signup', function (err, user, info) {
 
-            if (err) {
-                return next(err);
-            }
-            if (!user) {
-                return res.redirect('/signup');
-            }
-            req.logIn(user, function (err) {
-                if (!req.query.customer) {
-                    var input = JSON.parse(JSON.stringify(req.body));
+                if (err) {
+                    return next(err);
+                }
+                if (!user) {
+                    return res.redirect('/signup');
+                }
+                req.logIn(user, function (err) {
+                    if (user.is_translator) {
+                        var input = JSON.parse(JSON.stringify(req.body));
 
-                    req.getConnection(function (err, connection) {
+                        req.getConnection(function (err, connection) {
 
-                        var data = {
-                            username: input.username,
-                            name: input.name,
-                            surname: input.surname,
-                            email: input.email
-                        };
+                                var data = {
+                                    name: input.name,
+                                    surname: input.surname,
+                                    email: input.email
+                                };
 
-                        var query = connection.query("INSERT INTO translators set ? ", data, function (err, results, rows) {
-
-                            if (err) {
-                                console.log("Error inserting : %s ", err);
-                            } else {
-                                var insertId = results.insertId;
-                                console.log(insertId);
                                 langListCarrier = input.langListCarrier;
                                 var values = [];
                                 langListCarrier.split(";").filter(function (e) {
                                     return e
                                 }).forEach(function (item) {
-                                    values.push([insertId, item.split(",")[0], item.split(",")[1]]);
+                                    values.push([user.id, item.split(",")[0], item.split(",")[1]]);
                                 });
                                 var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
-
                                     if (err2) {
                                         console.log("Error inserting : %s ", err2);
                                     }
+
+                                    res.redirect('/translator/' + user.id);
                                 });
+
                             }
-                            res.redirect('profile');
-                        });
-                    });
-                } else {
-                    req.getConnection(function (err, connection) {
-                        var query = connection.query('select * from languages', function (err, rows) {
+                        );
+                    }
+                    else if (user.is_customer) {
+                        {
+                            res.redirect('/profile');
+                        }
+                    }
+                });
+            }
+        )
+        (req, res, next);
+    })
+    ;
 
-                            if (err)
-                                console.log("Error Selecting : %s ", err);
-
-                            res.redirect('/profile?customer=true');
-                        });
-
-                    });
-
-                }
-            });
-        })(req, res, next);
-    });
-
-    // SIGNUP =================================
-    // show the signup form
+// SIGNUP =================================
+// show the signup form
     app.get('/signup', function (req, res) {
         res.render('signup.ejs', {message: req.flash('signupMessage')});
     });
 
-    // process the signup form
+// process the signup form
     app.post('/signup',
         passport.authenticate('local-signup', {
-            successRedirect: '/profile', // redirect to the secure profile section
-            failureRedirect: '/signup', // redirect back to the signup page if there is an error
-            failureFlash: true // allow flash messages
-        }
-        /*
-        ,
-            function (err, user, info) {
-                var post_data = {
-                    name: 'aa',
-                    address: '',
-                    email: user.local.email,
-                    phone: '',
-                    user_type: 'SIMU_TRANSLATER',
-                    time_zone: '+2 GMT',
-                    country_code: 'EN'
-                };
-
-                var options = {
-                    host: 'localhost',
-                    port: 4300,
-                    path: '/users/add',
-                    method: 'POST'
-                };
-
-                var post_req = http.request(options, function(res) {
-                    console.log('STATUS: ' + res.statusCode);
-                    console.log('HEADERS: ' + JSON.stringify(res.headers));
-                    res.setEncoding('utf8');
-                    res.on('data', function (chunk) {
-                        console.log('BODY: ' + chunk);
-                    });
-                });
-                // post the data
-                post_req.write(post_data);
-                post_req.end();
+                successRedirect: '/profile', // redirect to the secure profile section
+                failureRedirect: '/signup', // redirect back to the signup page if there is an error
+                failureFlash: true // allow flash messages
             }
-            */
         )
     );
 

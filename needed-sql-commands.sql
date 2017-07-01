@@ -4,7 +4,6 @@ DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
 DROP TABLE IF EXISTS `languages`;
-DROP TABLE IF EXISTS `translators`;
 DROP TABLE IF EXISTS `users`;
 drop table if EXISTS `categories`;
 
@@ -12,7 +11,8 @@ CREATE TABLE `users` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `password` CHAR(60) NOT NULL,
 PRIMARY KEY (`id`),
-  `name` varchar(200) ,
+  `name` varchar(45)  NOT NULL,
+  `surname` varchar(45) NOT NULL,
   `address` text ,
   `email` varchar(200) NOT NULL,
   `phone` varchar(20) ,
@@ -34,16 +34,7 @@ CREATE TABLE `languages` (
 INSERT INTO `languages` VALUES ('ar','Arabic'),('ch','Chinese'),('en','English'),
 ('es','Spanish'),('gr','German'),('ru','Russian'),('tr','Turkish');
 
-CREATE TABLE `translators` (
-  `id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `username` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `surname` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
-
-CREATE TABLE `categories` ( 
+CREATE TABLE `categories` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, 
   `category_short_desc` CHAR(20) NOT NULL, 
 PRIMARY KEY (`id`), 
@@ -58,7 +49,8 @@ CREATE TABLE `translator_lang` (
   KEY `fk_translator_lang_1_idx` (`translator_id`),
   KEY `fk_translator_lang_2_idx` (`lang_from`),
   KEY `fk_translator_lang_3_idx` (`lang_to`),
-  CONSTRAINT `fk_translator_lang_1` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translator_lang_1` FOREIGN KEY (`translator_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON
+  UPDATE NO ACTION,
   CONSTRAINT `fk_translator_lang_2` FOREIGN KEY (`lang_from`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translator_lang_3` FOREIGN KEY (`lang_to`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -94,7 +86,7 @@ CREATE TABLE `translation_session` (
   KEY `fk_translation_session_4_idx` (`category_id`),
   CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`id`) ON DELETE NO
+  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `users` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION
