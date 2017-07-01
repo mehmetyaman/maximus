@@ -5,31 +5,29 @@ DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
 DROP TABLE IF EXISTS `languages`;
 DROP TABLE IF EXISTS `translators`;
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `users`;
+drop table if EXISTS `categories`;
 
 CREATE TABLE `languages` (
   `lang_short` varchar(5) NOT NULL,
   `lang_desc` varchar(45) NOT NULL,
   PRIMARY KEY (`lang_short`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `languages` VALUES ('ar','Arabic'),('ch','Chinese'),('en','English'),
 ('es','Spanish'),('gr','German'),('ru','Russian'),('tr','Turkish');
 
 CREATE TABLE `translators` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `name` varchar(45) NOT NULL,
   `surname` varchar(45) NOT NULL,
   `email` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
-
-INSERT INTO `translators` VALUES (1,'myaman','mehmet','yaman','myaman@gmail.com'),
-(2,'ekaplan','erbil','kaplan','ekaplan@gmail.com');
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `translator_lang` (
-  `translator_id` int(11) NOT NULL,
+  `translator_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lang_from` varchar(5) DEFAULT NULL,
   `lang_to` varchar(5) DEFAULT NULL,
   KEY `fk_translator_lang_1_idx` (`translator_id`),
@@ -38,12 +36,11 @@ CREATE TABLE `translator_lang` (
   CONSTRAINT `fk_translator_lang_1` FOREIGN KEY (`translator_id`) REFERENCES `translators` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translator_lang_2` FOREIGN KEY (`lang_from`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translator_lang_3` FOREIGN KEY (`lang_to`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `translator_lang` VALUES (1,'ch','ar'),(1,'ar','ch'),(2,'ru','tr');
 
 CREATE TABLE `translation_session_users` (
-  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_users_1_idx` (`user_id`),
@@ -52,17 +49,17 @@ CREATE TABLE `translation_session_users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `translation_session` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lang1` varchar(5) NOT NULL,
   `lang2` varchar(5) NOT NULL,
   `start_date` date DEFAULT NULL,
   `end_date` date DEFAULT NULL,
   `description` varchar(45) DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL,
-  `category_id` INT UNSIGNED NOT NULL,
+  `duration` int(4) DEFAULT NULL,
+  `category_id` int(11) UNSIGNED NOT NULL,
   `save_record` int(11) NOT NULL DEFAULT '0',
   `video_chat_id` varchar(45) DEFAULT NULL,
-  `translator_id` int(11) DEFAULT NULL,
+  `translator_id` int(11) UNSIGNED NOT NULL,
   `start_time` time DEFAULT NULL,
   `end_time` time DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -76,9 +73,5 @@ CREATE TABLE `translation_session` (
   ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-INSERT INTO `translation_session` VALUES (1,'en','tr','2017-11-23','2017-11-23',
-'about technologies. four attendees...','tech',120,0,'123456',NULL,'10:00:00','12:00:00'),
-(2,'ru','tr','2017-10-20','2017-10-11','software tender','tech',
-30,1,'123477',NULL,'03:00:00','03:30:00');
