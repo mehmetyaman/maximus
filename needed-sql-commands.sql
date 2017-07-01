@@ -41,7 +41,10 @@ PRIMARY KEY (`id`),
   `category_long_desc` varchar(100) ,
 UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
-  
+
+INSERT INTO `categories` VALUES (1,'Medical', 'Medical'),(2,'Science','Science'),(3,'Entertainment','Entertainment'),
+  (4,'Education','Education'),(5,'Engineering','Engineering');
+
 CREATE TABLE `translator_lang` (
   `translator_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lang_from` varchar(5) DEFAULT NULL,
