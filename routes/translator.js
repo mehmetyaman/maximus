@@ -60,24 +60,23 @@ function do_queries( connection, id, callback ){
             }
 
             i=0;
-            rows2.forEach(function (videoChat) {
-                var peers;
-                Peer.find({"videoChatId":videoChat.id}, function (err, peers) {
-                    if (err) {
-                        callback(err);
-                        return;
-                    }
-                    videoChat.peers=peers;
-                    i++;
-                    if(i==rows2.length){
-                        callback(null, rows, rows2);
-                        return;
-                    }
+            if(rows2.length > 0){
+                rows2.forEach(function (videoChat) {
+                    var peers;
+                    Peer.find({"videoChatId":videoChat.id}, function (err, peers) {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        videoChat.peers=peers;
+                        i++;
+                        if(i==rows2.length){
+                            callback(null, rows, rows2);
+                            return;
+                        }
+                    });
                 });
-
-            });
-
-
+            }
         });
     });
 }
