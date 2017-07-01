@@ -8,6 +8,23 @@ DROP TABLE IF EXISTS `translators`;
 DROP TABLE IF EXISTS `users`;
 drop table if EXISTS `categories`;
 
+CREATE TABLE `users` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `password` CHAR(60) NOT NULL,
+PRIMARY KEY (`id`),
+  `name` varchar(200) ,
+  `address` text ,
+  `email` varchar(200) NOT NULL,
+  `phone` varchar(20) ,
+  `country_code` varchar(5) ,
+  `time_zone` varchar(10) ,
+  `user_type` varchar(20) ,
+  `is_customer` boolean default false,
+  `is_translator` boolean default false,
+UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+UNIQUE INDEX `email_UNIQUE` (`email` ASC)
+);
+
 CREATE TABLE `languages` (
   `lang_short` varchar(5) NOT NULL,
   `lang_desc` varchar(45) NOT NULL,
@@ -26,6 +43,14 @@ CREATE TABLE `translators` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `categories` ( 
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, 
+  `category_short_desc` CHAR(20) NOT NULL, 
+PRIMARY KEY (`id`), 
+  `category_long_desc` varchar(100) ,
+UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+);
+  
 CREATE TABLE `translator_lang` (
   `translator_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `lang_from` varchar(5) DEFAULT NULL,
