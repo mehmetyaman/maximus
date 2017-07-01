@@ -65,13 +65,19 @@ module.exports = function (passport) {
                         var newUserMysql = {
                             username: username,
                             password: bcrypt.hashSync(password, null, null),
-                            is_customer: req.query.customer ? 1 : 0 ,
-                            is_translator: !req.query.customer  ? 1 : 0
+                            is_customer: req.query.customer ? 1 : 0,
+                            is_translator: !req.query.customer ? 1 : 0,
+                            name: req.body.name,
+                            surname:req.body.surname
                         };
 
-                        var insertQuery = "INSERT INTO users ( email, password, is_customer, is_translator) values (?,?,?,?)";
+                        var insertQuery = "INSERT INTO users (email, password, is_customer, is_translator, name," +
+                            " surname)" +
+                            " values" +
+                            " (?,?,?,?,?,?) ";
 
-                        connection.query(insertQuery, [newUserMysql.username, newUserMysql.password,  newUserMysql.is_customer,  newUserMysql.is_translator], function (err, rows) {
+                        connection.query(insertQuery, [newUserMysql.username, newUserMysql.password,
+                            newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname], function (err, rows) {
                             if (err) {
                                 return done(err);
                             }

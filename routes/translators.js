@@ -11,15 +11,14 @@ module.exports = function (app) {
         req.getConnection(function (err, connection) {
 
             var data = {
-                username: input.username,
                 name: input.name,
                 surname: input.surname,
                 email: input.email
             };
 
-            connection.query("UPDATE translators set ? WHERE id = ? ", [data, id], function (err, rows) {
+            connection.query("UPDATE users set ? WHERE id = ? ", [data, id], function (err, rows) {
                 if (err) {
-                    console.log("Error Updating translators : %s ", err);
+                    console.log("Error Updating users : %s ", err);
                 } else {
                     connection.query("DELETE FROM translator_lang  WHERE translator_id = ? ", [id], function (err2, rows2) {
                         if (err2) {
@@ -58,13 +57,12 @@ module.exports = function (app) {
         req.getConnection(function (err, connection) {
 
             var data = {
-                username: input.username,
                 name: input.name,
                 surname: input.surname,
                 email: input.email
             };
 
-            var query = connection.query("INSERT INTO translators set ? ", data, function (err, results, rows) {
+            var query = connection.query("INSERT INTO users set ? ", data, function (err, results, rows) {
 
                 if (err) {
                     console.log("Error inserting : %s ", err);
@@ -103,16 +101,15 @@ module.exports = function (app) {
         req.getConnection(function (err, connection) {
 
             var data = {
-                username: input.username,
                 name: input.name,
                 surname: input.surname,
                 email: input.email
             };
 
-            connection.query("UPDATE translators set ? WHERE id = ? ", [data, id], function (err, rows) {
+            connection.query("UPDATE users set ? WHERE id = ? ", [data, id], function (err, rows) {
 
                 if (err) {
-                    console.log("Error Updating translators : %s ", err);
+                    console.log("Error Updating users : %s ", err);
                 } else {
                     connection.query("DELETE FROM translator_lang  WHERE translator_id = ? ", [id], function (err2, rows2) {
                         if (err2) {
@@ -154,10 +151,10 @@ module.exports = function (app) {
 
         req.getConnection(function (err, connection) {
 
-            var sql = "SELECT * FROM translators,(SELECT t.id, " +
+            var sql = "SELECT * FROM users,(SELECT t.id, " +
                 "GROUP_CONCAT(concat(lang_from,'>'),lang_to ORDER BY lang_from SEPARATOR ',') as languages " +
-                "FROM translators t LEFT JOIN translator_lang tl ON t.id=tl.translator_id GROUP BY t.id) AS JOINRESULT " +
-                "WHERE translators.id = JOINRESULT.id and  translators.id = ?";
+                "FROM users t LEFT JOIN translator_lang tl ON t.id=tl.translator_id GROUP BY t.id) AS JOINRESULT " +
+                "WHERE users.id = JOINRESULT.id and  users.id = ?";
 
             var query = connection.query(sql, [id], function (err, rows) {
                 console.log(" Selecting : %s ", rows);
@@ -189,17 +186,17 @@ module.exports = function (app) {
     app.get('/translators', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
-            var sql = "SELECT * FROM translators," +
+            var sql = "SELECT * FROM users," +
                 " (SELECT t.id," +
                 "     GROUP_CONCAT(concat(" +
                 "         (select lang_desc from languages where lang_short=lang_from),'>')," +
                 " (select lang_desc from languages where lang_short=lang_to)" +
                 " ORDER BY lang_from SEPARATOR ' , ') as languages" +
-                " FROM translators t" +
+                " FROM users t" +
                 " LEFT JOIN translator_lang tl" +
                 " ON t.id=tl.translator_id" +
                 " GROUP BY t.id) AS JOINRESULT" +
-                " WHERE translators.id = JOINRESULT.id";
+                " WHERE users.id = JOINRESULT.id";
 
             var query = connection.query(sql, function (err, rows) {
 
@@ -244,7 +241,7 @@ module.exports = function (app) {
 
             });
 
-            connection.query("DELETE FROM translators  WHERE id = ? ", [id], function (err2, rows2) {
+            connection.query("DELETE FROM users  WHERE id = ? ", [id], function (err2, rows2) {
                 if (err2)
                     console.log("Error deleting translator : %s ", err2);
             });
