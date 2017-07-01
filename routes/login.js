@@ -7,7 +7,15 @@ module.exports = function (app, passport, winston) {
 
     // show the home page (will also have our login links)
     app.get('/', function (req, res) {
-        res.render('index.ejs');
+        if(req.user){
+            if(req.customer){
+                res.render('/profile');
+            } else {
+                res.render('/translator');
+            }
+        } else {
+            res.render('index.ejs');
+        }
     });
 
     // PROFILE SECTION =========================
@@ -80,8 +88,7 @@ module.exports = function (app, passport, winston) {
                 if (!isCustomer) {
                     req.getConnection(function (err, connection) {
 
-                        var sql = "SELECT id FROM translators" +
-                            " WHERE  translators.email = ?";
+                        var sql = "SELECT id FROM translators WHERE  translators.email = ?";
 
                         var query = connection.query(sql, [email], function (err, rows) {
 
@@ -93,8 +100,7 @@ module.exports = function (app, passport, winston) {
                             if (rows.length > 0)
                                 return res.redirect('/translator/' + translator.id);
                             else {   // if user is not translator then check if is it user
-                                var usersql = "SELECT id FROM user" +
-                                    " WHERE  email = ?";
+                                var usersql = "SELECT id FROM user WHERE  email = ?";
 
                                 var query = connection.query(usersql, [email], function (err, rows) {
 
