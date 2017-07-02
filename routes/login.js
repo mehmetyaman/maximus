@@ -12,7 +12,7 @@ module.exports = function (app, passport, winston) {
             if (req.user.is_customer) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
-                res.redirect('/profilet/'+req.user.id);
+                res.redirect('/profilet/' + req.user.id);
             }
         } else {
             res.render('index.ejs');
@@ -28,8 +28,8 @@ module.exports = function (app, passport, winston) {
                     console.log("Error Selecting : %s ", err);
                 }
                 req.getConnection(function (err1, connection) {
-                    var query = connection.query('select ts.* from translation_session_users tu, translation_session ts' +
-                        '  where tu.user_id = ? and tu.id = ts.id ', req.user.id, function (err1, rows2) {
+                    var query = connection.query('select ts.* from translation_session_users tu, translation_session' +
+                        ' ts  where tu.user_id = ? and tu.translation_session_id = ts.id', req.user.id, function (err1, rows2) {
 
                         if (err1) {
                             console.log("Error Selecting : %s ", err1);
