@@ -95,3 +95,7 @@ CREATE TABLE `translation_session` (
   ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
+ALTER TABLE `maximus`.`translation_session`
+DROP FOREIGN KEY `fk_translation_session_3`;
+ALTER TABLE `maximus`.`translation_session`
+DROP INDEX `fk_translation_session_3_idx` ;

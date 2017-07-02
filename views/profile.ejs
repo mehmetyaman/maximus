@@ -47,6 +47,7 @@
                 <button class="btn btn-primary" type="button" onclick="planner();">New Translation Session Plan</button>
             </div>
         </div>
+        <br/>
         <div id="plannerDiv" style="display: none">
             <div class="row">
                 <div class="col-md-8">
@@ -71,7 +72,7 @@
             <div class="row">
                 <div class="col-md-6">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4>Language</h4>
                     <div class="form-group">
                         <div class="dropdown">
@@ -86,7 +87,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4>Language</h4>
                     <div class="form-group">
                         <div class="dropdown">
@@ -106,7 +107,7 @@
             <div class="row">
                 <div class="col-md-6">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4>Category</h4>
                     <div class="form-group">
                         <div class="dropdown">
@@ -122,7 +123,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                 </div>
             </div>
 
@@ -178,32 +179,38 @@
         </div>
         <% if (lists) { %>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span>Konu</span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span>Sure (dk)</span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span>Diller</span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span>Baslangic Trh</span>
+            </div>
+            <div>
+                <span>Connect</span>
             </div>
         </div>
         <% lists.forEach(function (items) { %>
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span><%= items.description %></span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span><%= items.duration %></span>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <span><%= items.lang1 %> > <%= items.lang2 %></span>
             </div>
-            <div class="col-md-3">
-                <span> <%= items.start_time %></span>
+            <div class="col-md-2">
+                <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+            </div>
+            <div class="col-md-2">
+                <span><a href="/videoConference/<%=items.id%>" >Connect</a></span>
             </div>
         </div>
         <% }) %>
