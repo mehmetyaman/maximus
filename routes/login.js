@@ -1,4 +1,5 @@
 var http = require('http');
+var moment = require('moment');
 
 module.exports = function (app, passport, winston) {
 
@@ -9,9 +10,9 @@ module.exports = function (app, passport, winston) {
     app.get('/', function (req, res) {
         if (req.user) {
             if (req.user.is_customer) {
-                res.render('/profile');
+                res.redirect('/profile');
             } else if (req.user.is_translator) {
-                res.render('/translator');
+                res.redirect('/profilet/'+req.user.id);
             }
         } else {
             res.render('index.ejs');
@@ -40,7 +41,8 @@ module.exports = function (app, passport, winston) {
                                     user: req.user,
                                     langs: rows,
                                     lists: rows2,
-                                    cats: rows3
+                                    cats: rows3,
+                                    moment: moment
                                 });
                             })
                         })
@@ -85,7 +87,7 @@ module.exports = function (app, passport, winston) {
                 var email = user.email;
                 winston.log('info', 'logged in email:' + user.email);
                 if (user.is_translator) {
-                    return res.redirect('/translator/' + user.id);
+                    return res.redirect('/profilet');
                 } else {
                     res.redirect('/profile');
                 }

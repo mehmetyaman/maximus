@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+    <title>For your translater needs</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <style>
+        body {
+            padding-top: 80px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<form id="plan-form">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header text-center">
+                    <% if (user.email) { %>
+                    <p>
+                        <strong>id</strong>: <%= user.id %><br>
+                        <strong>email</strong>: <%= user.email %><br>
+                        <strong>password</strong>: <%= user.password %>
+                    </p>
+                    <% } else { %>
+                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                    <% } %>
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+                    <h1><span class="fa fa-anchor"></span></h1>
+                </div>
+            </div>
+        </div>
+
+        <% if (lists) { %>
+        <div class="row">
+            <div class="col-md-2">
+                <span>Konu</span>
+            </div>
+            <div class="col-md-2">
+                <span>Sure (dk)</span>
+            </div>
+            <div class="col-md-2">
+                <span>Diller</span>
+            </div>
+            <div class="col-md-2">
+                <span>Baslangic Trh</span>
+            </div>
+            <div class="col-md-2">
+                <span>Translator Id</span>
+            </div>
+        </div>
+        <% lists.forEach(function (items) { %>
+        <div class="row">
+            <div class="col-md-2">
+                <span><%= items.description %></span>
+            </div>
+            <div class="col-md-2">
+                <span><%= items.duration %></span>
+            </div>
+            <div class="col-md-2">
+                <span><%= items.lang1 %> > <%= items.lang2 %></span>
+            </div>
+            <div class="col-md-2">
+                <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+            </div>
+            <%if(items.translator_id==0){%>
+            <div class="col-md-2">
+                <a href="#" onclick="assign(<%=items.id%>);">Assign To Me</a>
+            </div>
+            <%}else{%>
+            <div class="col-md-2">
+                <span><%= items.translator_id %></span>
+                <span><a href="/videoConference/<%=items.id%>" >Connect</a></span>
+            </div>
+            <%}%>
+        </div>
+        <% }) %>
+    </div>
+    <% } %>
+    </div>
+</form>
+<script type="text/javascript">
+   function assign(id) {
+        $.post("assignSession/"+id, function (data) {
+            location.reload();
+        });
+    }
+</script>
+</body>
+</html>
