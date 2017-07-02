@@ -89,13 +89,7 @@ CREATE TABLE `translation_session` (
   KEY `fk_translation_session_4_idx` (`category_id`),
   CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `users` (`id`) ON DELETE NO
-  ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-ALTER TABLE `maximus`.`translation_session`
-DROP FOREIGN KEY `fk_translation_session_3`;
-ALTER TABLE `maximus`.`translation_session`
-DROP INDEX `fk_translation_session_3_idx` ;
