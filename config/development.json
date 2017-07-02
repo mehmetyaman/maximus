@@ -8,13 +8,13 @@
     "user": "root",
     "password" : "",
     "port": 3306,
-    "database":"maxsimus",
+    "database":"maximus",
     "multipleStatements": "true"
   },
   "mongo": {
     "url" : "mongodb://localhost/passport" // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   },
-  "database": "maxsimus",
+  "database": "maximus",
   "users_table": "users"
 
 }

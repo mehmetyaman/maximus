@@ -7,7 +7,7 @@ module.exports = function (app) {
     app.get('/videoConference/:id', isLoggedIn, function (req, res) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
-        var username=req.user.local.email;
+        var username=req.user.email;
         var videoChat;
         var isRoomCreated=false;
         VideoChat.find({"_id":videoChatId}, function (err, videoChat) {
@@ -55,7 +55,7 @@ module.exports = function (app) {
     app.get('/videoChat/:id', function (req, res) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
-        var username=req.user.local.email;
+        var username=req.user.email;
         var videoChat;
         VideoChat.find({"_id":videoChatId}, function (err, videoChat) {
             if (videoChat.length==0) {

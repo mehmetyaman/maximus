@@ -20,6 +20,7 @@ var server 	= email.server.connect({
 });
 
 // send the message and get a callback with an error or details of the message that was sent
+/*
 server.send({
     text:    "i hope this works",
     from:    "you linpretinfo@gmail.com",
@@ -27,7 +28,7 @@ server.send({
     cc:      "else kaplanerbil@gmail.com",
     subject: "testing emailjs"
 }, function(err, message) { console.log(err || message); });
-
+*/
 
 // set up our express application
 app.use(express.logger('dev')); // log every request to the console
