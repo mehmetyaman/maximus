@@ -1,21 +1,21 @@
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <title>Video Conference</title>
-        <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
-        <link href="/../css/appear2.css" rel="stylesheet">
-        <link href="/../css/getMediaElement.css" rel="stylesheet">
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-        <script src="/../js/RTCMultiConnection.min.js"></script>
-        <script src="/../js/socket.io.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Video Conference</title>
+    <link rel="stylesheet" href="https://d1x2efl61akomv.cloudfront.net/styles/main.5e44cee8.css">
+    <link href="/../css/appear2.css" rel="stylesheet">
+    <link href="/../css/getMediaElement.css" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script src="/../js/RTCMultiConnection.min.js"></script>
+    <script src="/../js/socket.io.js"></script>
 
-        <!-- custom layout for HTML5 audio/video elements -->
-        <script src="/../js/getMediaElement.js"></script>
-    </head>
+    <!-- custom layout for HTML5 audio/video elements -->
+    <script src="/../js/getMediaElement.js"></script>
+</head>
 
 <script>
-    $( document ).ready(function() {
+    $(document).ready(function () {
         disableInputButtons();
         connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
             if (!isRoomExists) {
@@ -27,10 +27,10 @@
     var connection = new RTCMultiConnection();
 
     // by default, socket.io server is assumed to be deployed on your own URL
-  //  connection.socketURL = '/';
+    //  connection.socketURL = '/';
 
     // comment-out below line if you do not have your own socket.io server
-     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     connection.socketMessageEvent = 'video-conference-demo';
 
@@ -45,28 +45,28 @@
     };
 
     connection.videosContainer = document.getElementById('video-wrapper');
-    connection.onstream = function(event) {
-     //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
+    connection.onstream = function (event) {
+        //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
-        //    buttons: ['full-screen'],
-        //    width: width,
+            //    buttons: ['full-screen'],
+            //    width: width,
             showOnMouseEnter: false
         });
-        addNewVideoBox(event.userid,mediaElement);
-    //    connection.videosContainer.appendChild(mediaElement);
+        addNewVideoBox(event.userid, mediaElement);
+        //    connection.videosContainer.appendChild(mediaElement);
 
-        setTimeout(function() {
+        setTimeout(function () {
             mediaElement.media.play();
         }, 5000);
 
         mediaElement.id = event.streamid;
     };
 
-    connection.onstreamended = function(event) {
+    connection.onstreamended = function (event) {
         var mediaElement = document.getElementById(event.streamid);
         if (mediaElement) {
-           // mediaElement.parentNode.removeChild(mediaElement);
+            // mediaElement.parentNode.removeChild(mediaElement);
             removeVideoBox(event.userid);
         }
     };
@@ -76,29 +76,30 @@
     }
 
     /*
-    function showRoomURL(roomid) {
-        var roomHashURL = '#' + roomid;
-        var roomQueryStringURL = '?roomid=' + roomid;
+     function showRoomURL(roomid) {
+     var roomHashURL = '#' + roomid;
+     var roomQueryStringURL = '?roomid=' + roomid;
 
-        var html = '<h2>Unique URL for your room:</h2><br>';
+     var html = '<h2>Unique URL for your room:</h2><br>';
 
-        html += 'Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a>';
-        html += '<br>';
-        html += 'QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
+     html += 'Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a>';
+     html += '<br>';
+     html += 'QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
 
-        var roomURLsDiv = document.getElementById('room-urls');
-        roomURLsDiv.innerHTML = html;
+     var roomURLsDiv = document.getElementById('room-urls');
+     roomURLsDiv.innerHTML = html;
 
-        roomURLsDiv.style.display = 'block';
-    }
-*/
-    (function() {
+     roomURLsDiv.style.display = 'block';
+     }
+     */
+    (function () {
         var params = {},
-            r = /([^&=]+)=?([^&]*)/g;
+                r = /([^&=]+)=?([^&]*)/g;
 
         function d(s) {
             return decodeURIComponent(s.replace(/\+/g, ' '));
         }
+
         var match, search = window.location.search;
         while (match = r.exec(search.substring(1)))
             params[d(match[1])] = d(match[2]);
@@ -112,7 +113,7 @@
         roomid = connection.token();
     }
     document.getElementById('room-id').value = roomid;
-    document.getElementById('room-id').onkeyup = function() {
+    document.getElementById('room-id').onkeyup = function () {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
 
@@ -132,7 +133,7 @@
 
         // auto-join-room
         (function reCheckRoomPresence() {
-            connection.checkPresence(roomid, function(isRoomExists) {
+            connection.checkPresence(roomid, function (isRoomExists) {
                 if (isRoomExists) {
                     connection.join(roomid);
                     return;
@@ -145,42 +146,42 @@
         disableInputButtons();
     }
 
-        function addNewVideoBox (userId, video) {
-            var divHtml = $("#video-wrapper").html() +
-                "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + userId + "\" >"+
+    function addNewVideoBox(userId, video) {
+        var divHtml = $("#video-wrapper").html() +
+                "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + userId + "\" >" +
 //                "<span>"+this.userToken+"</span>"+
-                "<div class=\"video-box\"> "+
-                "<div class=\"video-frame\" > "+
+                "<div class=\"video-box\"> " +
+                "<div class=\"video-frame\" > " +
                 "<div class=\"video-stream-container\" id=\"myVideoContainer_" + userId + "\" >" +
-                "</div></div></div>"+
+                "</div></div></div>" +
                 "</div>";
 
-            $("#video-wrapper").html(divHtml);
+        $("#video-wrapper").html(divHtml);
 
-            var videosContainer = document.getElementById('myVideoContainer_'+ userId) || document.body;
-            videosContainer.insertBefore(video, videosContainer.firstChild);
-            setUpVideoBoxesCss();
+        var videosContainer = document.getElementById('myVideoContainer_' + userId) || document.body;
+        videosContainer.insertBefore(video, videosContainer.firstChild);
+        setUpVideoBoxesCss();
+    }
+
+    function removeVideoBox(userId) {
+        var videoFrame = document.getElementById('videoFrame_' + userId);
+        if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
+        setUpVideoBoxesCss();
+    }
+
+    function setUpVideoBoxesCss() {
+        var i = 0;
+        $("#video-wrapper > div").each(function () {
+            i++;
+            var lastClass = $(this).attr("class").split(" ").pop();
+            $(this).removeClass(lastClass);
+            $(this).addClass('_' + i);
+        });
+
+        if (i > 1) {
+            $("#video-wrapper").attr("class", "div" + i);
         }
-
-        function removeVideoBox(userId) {
-            var videoFrame = document.getElementById('videoFrame_' + userId);
-            if (videoFrame) videoFrame.parentNode.removeChild(videoFrame);
-            setUpVideoBoxesCss();
-        }
-
-        function setUpVideoBoxesCss() {
-            var i = 0;
-            $("#video-wrapper > div").each(function () {
-                i++;
-                var lastClass = $(this).attr("class").split(" ").pop();
-                $(this).removeClass(lastClass);
-                $(this).addClass('_' + i);
-            });
-
-            if(i>1){
-                $("#video-wrapper").attr("class","div" + i);
-            }
-        }
+    }
 
 
 </script>
@@ -202,7 +203,7 @@
                  class="top-bar-button roomactivity">
                 <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
                     <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                         xmlns:xlink="http://www.w3.org/1999/xlink">
+                    >
                         <title>room-icon</title>
                         <desc>Created with Sketch.</desc>
                         <defs></defs>
@@ -232,14 +233,14 @@
             </div>
             <div class="room-url-wrapper" analytics-event="copyUrlAnalyticsEvent">
                 <div class="room-url">
-                    <p id="room-id">Room Id: <%=roomId%></p>
+                    <p id="room-id">Room Id: <%= roomId %></p>
                 </div>
             </div>
             <div class="room-control-buttons control-button-group">
                 <div ng-click="openMediaSelectorModal()" class="top-bar-button contacts-button" title="Cam/Mic">
                     <i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'">
                         <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1"
-                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                             xmlns="http://www.w3.org/2000/svg">
                             <defs></defs>
                             <g id="fb-messenger-invite" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                                 <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)"
@@ -265,26 +266,12 @@
 
 
             </div>
-            <div class="user-control-buttons control-button-group ng-hide" ng-show="Rvideo-oomState.isClaimed">
-                <div class="flex-button-wrapper">
-                    <button ng-if="!User.isLoggedIn" ng-click="clickedLoginButton()"
-                            class="ui-button-invis topbar-login-button topbar-small-button">
-                        Log in
-                    </button>
-
-                </div>
-            </div>
 
             <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
                 <div class="flex-button-wrapper">
                     <button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()"
                             class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
                         Claim this room
-                    </button>
-
-                    <button ng-if="!User.isLoggedIn" ng-click="clickedSignupButton()"
-                            class="ui-text-button white jstest-signup-button">
-                        Or <strong>Sign up</strong>
                     </button>
                 </div>
             </div>
@@ -293,7 +280,7 @@
     </header>
 
 
-    <div class="video-wrapper screen-element" >
+    <div class="video-wrapper screen-element">
         <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">
         </div>
     </div>
@@ -306,7 +293,7 @@
          ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
         <i class="svg bordered" ng-include="'/images/tools/chat-button.2c5ae55e.svg'">
             <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                 xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none"
                    fill-rule="evenodd" sketch:type="MSPage">
                     <g id="chat-notifications" sketch:type="MSArtboardGroup"

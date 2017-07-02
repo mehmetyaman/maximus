@@ -47,7 +47,7 @@ module.exports = function (app, winston) {
                 }
                 var sessionId = rows2.insertId;
                 var data = {
-                    id: sessionId,
+                    translation_session_id: sessionId,
                     user_id: req.user.id
                 }
                 var query3 = connection.query("INSERT INTO `translation_session_users` set ?", [data], function (err3, rows3) {
