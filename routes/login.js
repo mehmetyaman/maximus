@@ -157,7 +157,7 @@ module.exports = function (app, passport, winston) {
                                         console.log("Error inserting : %s ", err2);
                                     }
 
-                                    res.redirect('/translator/' + user.id);
+                                    res.redirect('/profilet');
                                 });
 
                             }
