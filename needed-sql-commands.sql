@@ -1,4 +1,5 @@
 # noinspection SqlNoDataSourceInspectionForFile
+use h0y7e5c72s6xg7xw;
 
 DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
@@ -35,9 +36,9 @@ INSERT INTO `languages` VALUES ('ar','Arabic'),('ch','Chinese'),('en','English')
 ('es','Spanish'),('gr','German'),('ru','Russian'),('tr','Turkish');
 
 CREATE TABLE `categories` (
-  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, 
-  `category_short_desc` CHAR(20) NOT NULL, 
-PRIMARY KEY (`id`), 
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `category_short_desc` CHAR(20) NOT NULL,
+PRIMARY KEY (`id`),
   `category_long_desc` varchar(100) ,
 UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
@@ -89,13 +90,7 @@ CREATE TABLE `translation_session` (
   KEY `fk_translation_session_4_idx` (`category_id`),
   CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_3` FOREIGN KEY (`translator_id`) REFERENCES `users` (`id`) ON DELETE NO
-  ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO
   ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-ALTER TABLE `maximus`.`translation_session`
-DROP FOREIGN KEY `fk_translation_session_3`;
-ALTER TABLE `maximus`.`translation_session`
-DROP INDEX `fk_translation_session_3_idx` ;
