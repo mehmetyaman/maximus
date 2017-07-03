@@ -222,10 +222,17 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Candidate Translators</h4>
+                            <h4 class="modal-title">Demanded Translators</h4>
                         </div>
                         <div class="modal-body">
-                            <h2><!-- some thing will be here --></h2>
+                            <%
+                                var exist = false;
+                            demandedTranslators.forEach(function (demand) {
+                            if(demand.session_id == items.id){
+                                exist = true;
+                            }});
+                            %>
+                            <% if(exist) { %>
                             <div id="carousel<%= items.id %>" class="carousel slide" data-ride="carousel">
                                 <!-- Indicators -->
                                 <ol class="carousel-indicators">
@@ -272,6 +279,9 @@
                                     <span class="sr-only">Next</span>
                                 </a>
                             </div>
+                            <% } else  {%>
+                              <h2>No translator has been demanded</h2>
+                            <% } %>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -310,6 +320,13 @@
     function planner() {
         $("#plannerDiv").toggle();
     }
+
+    function assignSession(translator_id, session_id) {
+        $.post("assign/translator/" + translator_id + "/session/" + session_id, function (data) {
+            location.reload();
+        });
+    }
+
     $("#post-btn").click(function () {
         if ($("#desc").val() === undefined) {
             alert("Lütfen tanımlama giriniz");
@@ -343,11 +360,6 @@
             $("#plannerDiv").toggle();
             location.reload();
         });
-        function assignSession(translator_id, session_id) {
-            $.post("assign/translator/" + translator_id + "/session/" + session_id, function (data) {
-                location.reload();
-            });
-        }
     });
 </script>
 </body>
