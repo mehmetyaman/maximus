@@ -22,27 +22,36 @@ module.exports = function (app, passport, winston) {
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, rows) {
+            var query = connection.query('select * from languages', function (err, languages) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
                 }
                 req.getConnection(function (err1, connection) {
                     var query = connection.query('select ts.* from translation_session_users tu, translation_session' +
-                        ' ts  where tu.user_id = ? and tu.translation_session_id = ts.id', req.user.id, function (err1, rows2) {
+                        ' ts  where tu.user_id = ? and tu.translation_session_id = ts.id', req.user.id, function (err1, sessions) {
 
                         if (err1) {
                             console.log("Error Selecting : %s ", err1);
                         }
 
                         req.getConnection(function (err3, connection) {
-                            var query = connection.query('select * from categories', function (err3, rows3) {
-                                res.render('profile.ejs', {
-                                    user: req.user,
-                                    langs: rows,
-                                    lists: rows2,
-                                    cats: rows3,
-                                    moment: moment
+                            var query = connection.query('select * from categories', function (err3, categories) {
+
+                                var query = connection.query('select u.*, ts.id as session_id from' +
+                                    ' translation_session ts, translation_session_users tsu, translation_session_demands tsd , users u where ' +
+                                    'ts.id = tsu.translation_session_id and ' +
+                                    'tsu.user_id = ? and ' +
+                                    'tsd.translation_session_id=ts.id and ' +
+                                    'tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
+                                    res.render('profile.ejs', {
+                                        user: req.user,
+                                        langs: languages,
+                                        lists: sessions,
+                                        cats: categories,
+                                        demandedTranslators: demandedTranslators,
+                                        moment: moment
+                                    });
                                 });
                             })
                         })
