@@ -4,11 +4,11 @@
     "port": 4300
   },
   "mysql": {
-    "host": "localhost",
+    "host": "172.17.0.2",
     "user": "root",
-    "password" : "",
+    "password" : "admin123",
     "port": 3306,
-    "database":"maxsimus",
+    "database":"maximus",
     "multipleStatements": "true"
   },
   "mongo": {
