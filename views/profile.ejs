@@ -234,25 +234,32 @@
                                     demandedTranslators.forEach(function (demand) {
                                     if(demand.session_id == items.id){
                                     %>
-                                    <li data-target="#carousel<%= items.id %>" data-slide-to="0" <% if (first) {%> class="active" <%}%>
-                                       ></li>
+                                    <li data-target="#carousel<%= items.id %>" data-slide-to="0"
+                                            <% if (first) { %>
+                                        class="active"
+                                            <% } %>
+                                    ></li>
                                     <% first = false; }}) %>
                                 </ol>
 
                                 <!-- Wrapper for slides -->
-                                <div class="carousel-inner">
+                                <div class="carousel-inner" role="listbox">
                                     <%
                                         first = true;
                                     demandedTranslators.forEach(function (demand) {
                                     if(demand.session_id == items.id){
                                     %>
-                                    <div class="item <% if (first) {%>active<%}%>">
+                                    <div class="item <% if (first) { %>active<% } %>">
                                         <h4>user <%= demand.id %></h4>
                                         <h4>name <%= demand.name %></h4>
                                         <h4>surname <%= demand.surname %></h4>
                                         <h4>email <%= demand.email %></h4>
                                     </div>
-                                    <%first = false;  }}) %>
+
+                                    <button type="button" class="btn btn-default"
+                                            onclick="assignSession(<%= demand.id %>,<%= demand.session_id %>)">Assign
+                                    </button>
+                                    <% first = false;  }}) %>
                                 </div>
 
                                 <!-- Left and right controls -->
@@ -336,6 +343,11 @@
             $("#plannerDiv").toggle();
             location.reload();
         });
+        function assignSession(translator_id, session_id) {
+            $.post("assign/translator/" + translator_id + "/session/" + session_id, function (data) {
+                location.reload();
+            });
+        }
     });
 </script>
 </body>
