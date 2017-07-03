@@ -122,3 +122,21 @@ CREATE TABLE `translation_session_users` (
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
+
+CREATE TABLE `translation_session_demands` (
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
+  `user_id`                INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translation_session_demands_1_idx` (`user_id`),
+  KEY `fk_translation_session_demands_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translation_session_demands_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translation_session_demands_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 4
+  DEFAULT CHARSET = utf8;
