@@ -56,3 +56,19 @@ video{
 .div4 ._3{ /*right top*/
     left: 792.072px; top: 0px; width: 355.333px; height: 266.5px; font-size: 7.10667pt;
 }
+
+@media screen and (max-width: 280px) {
+    .div2 ._1 { /*left*/
+        left: 0px;
+        top: 24.0654px;
+        width: 120px;
+        height: 284.869px;
+    }
+    .div2 ._2 { /*right*/
+        left: 145px;
+        top: 24.0654px;
+        width: 120px;
+        height: 284.869px;
+    }
+
+}
