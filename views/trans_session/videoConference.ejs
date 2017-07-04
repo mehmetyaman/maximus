@@ -55,14 +55,16 @@
             //    width: width,
             showOnMouseEnter: false
         });
-        addNewVideoBox(event.userid, mediaElement);
-        //    connection.videosContainer.appendChild(mediaElement);
+        $("#connect2").click(function () {
+            addNewVideoBox(event.userid, mediaElement);
+            //    connection.videosContainer.appendChild(mediaElement);
 
-        setTimeout(function () {
-            $("#connect2").click(function () {
-                mediaElement.media.play();
-            });
-        }, 5000);
+            setTimeout(function () {
+                $("#connect2").click(function () {
+                    mediaElement.media.play();
+                });
+            }, 5000);
+        });
 
         mediaElement.id = event.streamid;
     };
