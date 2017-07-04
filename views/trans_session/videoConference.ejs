@@ -17,12 +17,10 @@
 <script>
     $(document).ready(function () {
         disableInputButtons();
-        $("#connect").click(function () {
-            connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
-                if (!isRoomExists) {
-                    //  showRoomURL(roomid);
-                }
-            });
+        connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
+            if (!isRoomExists) {
+                //  showRoomURL(roomid);
+            }
         });
     });
 
@@ -55,16 +53,12 @@
             //    width: width,
             showOnMouseEnter: false
         });
-        $("#connect2").click(function () {
-            addNewVideoBox(event.userid, mediaElement);
-            //    connection.videosContainer.appendChild(mediaElement);
+        addNewVideoBox(event.userid, mediaElement);
+        //    connection.videosContainer.appendChild(mediaElement);
 
-            setTimeout(function () {
-                $("#connect2").click(function () {
-                    mediaElement.media.play();
-                });
-            }, 5000);
-        });
+        setTimeout(function () {
+            mediaElement.media.play();
+        }, 5000);
 
         mediaElement.id = event.streamid;
     };
@@ -277,9 +271,6 @@
                 <div class="flex-button-wrapper">
                     <button id="connect" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
                         Connect
-                    </button>
-                    <button id="connect2" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
-                        Connect2
                     </button>
                 </div>
             </div>
