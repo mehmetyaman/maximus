@@ -99,14 +99,14 @@ and (min-device-width: 220px) and (max-device-width: 480px)
     .div2 ._1 { /*left*/
         left: 0px;
         top: 24.0654px;
-        width: 120px;
-        height: 284.869px;
+        width: 140px;
+        height: 224.869px;
     }
     .div2 ._2 { /*right*/
-        left: 145px;
+        left: 150px;
         top: 24.0654px;
-        width: 120px;
-        height: 284.869px;
+        width: 140px;
+        height: 224.869px;
     }
 
 }

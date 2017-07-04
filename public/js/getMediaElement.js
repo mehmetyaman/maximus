@@ -66,7 +66,7 @@ function getMediaElement(mediaElement, config) {
                 muteVideo.className = muteVideo.className.replace('unmute-video selected', 'mute-video');
                 mediaElement.muted = false;
                 mediaElement.volume = 1;
-      //          mediaElement.play();
+                mediaElement.play();
                 if (config.onUnMuted) config.onUnMuted('video');
             } else {
                 muteVideo.className = muteVideo.className.replace('mute-video', 'unmute-video selected');
@@ -243,7 +243,7 @@ function getMediaElement(mediaElement, config) {
     }
 
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
-    mediaBox.querySelector('video').setAttribute('autoplay', 'true');
+    mediaBox.querySelector('video').attr('autoplay', 'true');
 
     var times = 0;
 
@@ -332,7 +332,7 @@ function getAudioElement(mediaElement, config) {
     };
 
     mediaElement.controls = false;
- //   mediaElement.play();
+    mediaElement.play();
 
     var mediaElementContainer = document.createElement('div');
     mediaElementContainer.className = 'media-container';
