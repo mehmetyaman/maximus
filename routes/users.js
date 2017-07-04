@@ -136,7 +136,7 @@ module.exports = function (app) {
 function do_queries(connection, userid, callback) {
     var sql2 = " select u.*,ts.id,lang1,lang2,topic,duration,start_date,start_time " +
         " from user u,translation_session ts,  translation_session_users  tsu" +
-        " where ts.id=tsu.session_id" +
+        " where ts.id=tsu.translation_session_id" +
         " and tsu.user_id=u.id" +
         " and tsu.user_id=?" +
         " order by start_date,start_time";

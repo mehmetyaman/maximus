@@ -14,6 +14,7 @@
             word-wrap: break-word;
         }
     </style>
+    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
 </head>
 <body>
 <form id="plan-form">
@@ -69,25 +70,38 @@
             <div class="col-md-2">
                 <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
             </div>
-            <%if(items.translator_id==0){%>
+            <% if(items.translator_id == 0){ %>
             <div class="col-md-2">
-                <a href="#" onclick="assign(<%=items.id%>);">Assign To Me</a>
+                <% if(items.is_demanded){ %>
+                <a href="#">Demanded</a>
+                <% } else { %>
+                <a href="#" onclick="demand(<%= items.id %>);">Demand Now</a>
+                <% } %>
             </div>
-            <%}else{%>
+            <% }else{ %>
             <div class="col-md-2">
                 <span><%= items.translator_id %></span>
-                <span><a href="/videoConference/<%=items.id%>" >Connect</a></span>
+                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
             </div>
-            <%}%>
+            <% } %>
+
         </div>
         <% }) %>
     </div>
     <% } %>
+    <ul id="messages"></ul>
     </div>
 </form>
 <script type="text/javascript">
-   function assign(id) {
-        $.post("assignSession/"+id, function (data) {
+    var socket;
+    $(document).ready(function () {
+        socket = io.connect("http://localhost:4300");
+        socket.on('announcements', function (msg) {
+            console.log(new Date().getTime());
+        });
+    });
+    function demand(id) {
+        $.post("demand/" + id, function (data) {
             location.reload();
         });
     }

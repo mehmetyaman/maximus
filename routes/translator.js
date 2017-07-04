@@ -1,4 +1,3 @@
-
 var VideoChat = require('../app/models/videochat');
 var Peer = require('../app/models/videochatpeer');
 var moment = require('moment');
@@ -31,13 +30,37 @@ module.exports = function (app) {
 
                         req.getConnection(function (err3, connection) {
                             var query = connection.query('select * from categories', function (err3, rows3) {
-                                res.render('translator/profilet.ejs', {
-                                    user: req.user,
-                                    langs: rows,
-                                    lists: rows2,
-                                    cats: rows3,
-                                    moment: moment
-                                });
+                                var appropriateRequests = rows2;
+                                if (appropriateRequests.length > 0) {
+                                    var sqlForDemands = "select * from translation_session_demands where user_id=?";
+                                    var query = connection.query(sqlForDemands, req.user.id, function (errDemands, demands) {
+                                        if (demands.length > 0) {
+                                            appropriateRequests.forEach(function (request) {
+                                                demands.forEach(function (demand) {
+                                                    if (request.translator_id == 0 && request.id == demand.translation_session_id) {
+                                                        request.is_demanded = true;
+                                                    }
+                                                })
+                                            });
+                                        }
+                                        res.render('translator/profilet.ejs', {
+                                            user: req.user,
+                                            langs: rows,
+                                            lists: appropriateRequests,
+                                            cats: rows3,
+                                            moment: moment
+                                        });
+                                    });
+                                } else {
+                                    res.render('translator/profilet.ejs', {
+                                        user: req.user,
+                                        langs: rows,
+                                        lists: appropriateRequests,
+                                        cats: rows3,
+                                        moment: moment
+                                    });
+                                }
+
                             })
                         })
                     });
@@ -51,10 +74,42 @@ module.exports = function (app) {
         var id = req.params.id;
 
         req.getConnection(function (err, connection) {
-            connection.query("UPDATE translation_session set translator_id = ? WHERE id=? ", [req.user.id,id], function (err, rows) {
+            connection.query("UPDATE translation_session set translator_id = ? WHERE id = ? ", [req.user.id, id], function (err, rows) {
 
                 if (err)
                     console.log("Error Updating : %s ", err);
+
+                res.redirect('profilet');
+
+            });
+
+        });
+    });
+
+    app.post('/assign/translator/:translator_id/session/:session_id', isLoggedIn, function (req, res) {
+        var translator_id = req.params.translator_id;
+        var session_id = req.params.session_id;
+        req.getConnection(function (err, connection) {
+            connection.query("UPDATE translation_session set translator_id = ? WHERE id = ? ", [translator_id, session_id], function (err, rows) {
+
+                if (err)
+                    console.log("Error Updating : %s ", err);
+
+                res.redirect('profilet');
+
+            });
+
+        });
+    });
+
+    app.post('/demand/:id', isLoggedIn, function (req, res) {
+        req.getConnection(function (err, connection) {
+            connection.query("insert into translation_session_demands (user_id, translation_session_id) values (?," +
+                " ?) ", [req.user.id, req.params.id], function (err, rows) {
+
+                if (err) {
+                    console.log("Error inserting : %s ", err);
+                }
 
                 res.redirect('profilet');
 
