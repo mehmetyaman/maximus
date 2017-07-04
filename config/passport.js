@@ -31,7 +31,7 @@ module.exports = function (passport) {
     });
 
     // used to deserialize the user
-    passport.deserializeUser(function(obj, done) {
+    passport.deserializeUser(function (obj, done) {
         done(null, obj);
     });
 
@@ -129,17 +129,17 @@ module.exports = function (passport) {
 
      Client Secret:	mpkg3fLKSMnQawzE
 
-    passport.use(new LinkedInStrategy({
-            consumerKey: "86jkoxygnghvrf",
-            consumerSecret: "mpkg3fLKSMnQawzE",
-            callbackURL: "http://localhost:4300/auth/linkedin/callback"
-        },
-        function (token, tokenSecret, profile, done) {
-            User.findOrCreate({linkedinId: profile.id}, function (err, user) {
-                return done(err, user);
-            });
-        }
-    ));
+     passport.use(new LinkedInStrategy({
+     consumerKey: "86jkoxygnghvrf",
+     consumerSecret: "mpkg3fLKSMnQawzE",
+     callbackURL: "http://localhost:4300/auth/linkedin/callback"
+     },
+     function (token, tokenSecret, profile, done) {
+     User.findOrCreate({linkedinId: profile.id}, function (err, user) {
+     return done(err, user);
+     });
+     }
+     ));
      */
 
     passport.use(new LinkedInStrategy({
@@ -147,14 +147,23 @@ module.exports = function (passport) {
         clientSecret: "mpkg3fLKSMnQawzE",
         callbackURL: "http://localhost:4300/auth/linkedin/callback",
         scope: ['r_emailaddress', 'r_basicprofile'],
-    }, function(accessToken, refreshToken, profile, done) {
+    }, function (accessToken, refreshToken, profile, done) {
         // asynchronous verification, for effect...
         process.nextTick(function () {
             // To keep the example simple, the user's LinkedIn profile is returned to
             // represent the logged-in user. In a typical application, you would want
             // to associate the LinkedIn account with a user record in your database,
             // and return that user instead.
-            return done(null, profile);
+            connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
+                if (err)
+                    return done(err);
+                if (!rows.length) {
+                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                }
+
+                // all is well, return successful user
+                return done(null, rows[0]);
+            });
         });
     }));
 

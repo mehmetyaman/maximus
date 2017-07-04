@@ -12,7 +12,7 @@ module.exports = function (app, passport, winston) {
             if (req.user.is_customer) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
-                res.redirect('/profilet/' + req.user.id);
+                res.redirect('/profilet');
             }
         } else {
             res.render('index.ejs');
