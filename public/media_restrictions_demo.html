@@ -53,7 +53,7 @@ function setSource() {
 function mediaPlaybackRequiresUserGesture() {
   // test if play() is ignored when not called from an input event handler
   var video = document.createElement('video');
-  video.play();
+ // video.play();
   return video.paused;
 }
 

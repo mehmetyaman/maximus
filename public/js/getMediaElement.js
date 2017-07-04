@@ -66,7 +66,7 @@ function getMediaElement(mediaElement, config) {
                 muteVideo.className = muteVideo.className.replace('unmute-video selected', 'mute-video');
                 mediaElement.muted = false;
                 mediaElement.volume = 1;
-                mediaElement.play();
+      //          mediaElement.play();
                 if (config.onUnMuted) config.onUnMuted('video');
             } else {
                 muteVideo.className = muteVideo.className.replace('mute-video', 'unmute-video selected');
@@ -332,7 +332,7 @@ function getAudioElement(mediaElement, config) {
     };
 
     mediaElement.controls = false;
-    mediaElement.play();
+ //   mediaElement.play();
 
     var mediaElementContainer = document.createElement('div');
     mediaElementContainer.className = 'media-container';
