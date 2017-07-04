@@ -19,6 +19,7 @@ module.exports = function (app, passport, winston) {
         }
     });
 
+
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
@@ -199,6 +200,19 @@ module.exports = function (app, passport, winston) {
             }
         )
     );
+
+// linkedin -------------------------------
+    app.get('/auth/linkedin',
+        passport.authenticate('linkedin', {state: 'SOME STATE'}),
+        function (req, res) {
+            // The request will be redirected to LinkedIn for authentication, so this
+            // function will not be called.
+        });
+
+    app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }));
 
 // facebook -------------------------------
 
