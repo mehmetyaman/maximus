@@ -97,16 +97,60 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
 and (min-device-width: 220px) and (max-device-width: 480px)
 {
     .div2 ._1 { /*left*/
-        left: 0px;
-        top: 24.0654px;
+        left: 5px;
+        top: 25px;
         width: 150px;
-        height: 194px;
+        height: 15px;
     }
     .div2 ._2 { /*right*/
-        left: 170px;
-        top: 24.0654px;
+        left: 175px;
+        top: 25px;
         width: 150px;
-        height: 194px;
+        height: 195px;
+    }
+    .div3 ._1 { /*left top*/
+        left: 5px;
+        top: 25px;
+        width: 150px;
+        height: 195px;
     }
 
+    .div3 ._2 { /*left bottom*/
+        left: 175px;
+        top: 25px;
+        width: 150px;
+        height: 195px;
+    }
+
+    .div3 ._3 { /*right*/
+        left: 5px;
+        top: 235px;
+        width: 150px;
+        height: 195px;
+    }
+
+    .div4 ._1 { /*left top*/
+        left: 5px;
+        top: 25px;
+        width: 150px;
+        height: 195px;
+    }
+    .div4 ._2 { /*left bottom*/
+        left: 175px;
+        top: 25px;
+        width: 150px;
+        height: 195px;
+    }
+    .div4 ._3 { /*right top*/
+        left: 5px;
+        top: 235px;
+        width: 150px;
+        height: 195px;
+    }
+    .div4 ._4 { /*right bottom*/
+        left: 175px;
+        top: 235px;
+        width: 150px;
+        height: 195px;
+    }
 }

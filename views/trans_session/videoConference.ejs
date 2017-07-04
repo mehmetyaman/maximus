@@ -112,10 +112,11 @@
     } else {
         roomid = connection.token();
     }
-    document.getElementById('room-id').value = roomid;
+ /*   document.getElementById('room-id').value = roomid;
     document.getElementById('room-id').onkeyup = function () {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
+ */
 
     var hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
