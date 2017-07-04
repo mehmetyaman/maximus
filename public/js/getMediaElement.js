@@ -250,7 +250,7 @@ function getMediaElement(mediaElement, config) {
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
     mediaBox.querySelector('video').setAttribute('autoplay', 'true');
     if (config.muted) {
-        mediaBox.querySelector('video').setAttribute('muted', config.muted);
+  //      mediaBox.querySelector('video').setAttribute('muted', config.muted);
     }
 
     var times = 0;
