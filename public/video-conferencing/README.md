@@ -59,7 +59,7 @@ var config = {
         video.setAttribute('controls', true);
         video.setAttribute('id', media.stream.id);
         videosContainer.insertBefore(video, videosContainer.firstChild);
-   //     video.play();
+        video.play();
     },
     onRemoteStreamEnded: function (stream) {
         var video = document.getElementById(stream.id);

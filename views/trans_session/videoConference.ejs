@@ -17,7 +17,7 @@
 <script>
     $(document).ready(function () {
         disableInputButtons();
-        connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
+        connection.openOrJoin("<%=roomId%>", function (isRoomExists, roomid) {
             if (!isRoomExists) {
                 //  showRoomURL(roomid);
             }
@@ -33,6 +33,8 @@
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     connection.socketMessageEvent = 'video-conference-demo';
+    connection.maxParticipantsAllowed = 3;
+    //connection.userid='<%//=peerId%>';
 
     connection.session = {
         audio: true,
@@ -44,13 +46,20 @@
         OfferToReceiveVideo: true
     };
 
+    var i=0;
     connection.videosContainer = document.getElementById('video-wrapper');
     connection.onstream = function (event) {
+        ++i;
+        i==1 ? mute='true' : mute='false';
+       // alert("i="+ i);
+       // alert("id="+event.userid);
+
         //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
-            //    buttons: ['full-screen'],
+                buttons: ['full-screen'],
             //    width: width,
+             muted: mute,
             showOnMouseEnter: false
         });
         addNewVideoBox(event.userid, mediaElement);

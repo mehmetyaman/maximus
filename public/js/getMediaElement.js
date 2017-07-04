@@ -232,6 +232,11 @@ function getMediaElement(mediaElement, config) {
     mediaBox.className = 'media-box';
     mediaElementContainer.appendChild(mediaBox);
 
+    var h2 = document.createElement('h2');
+    h2.innerHTML = 'ID = '+config.title || 'Audio Element';
+    h2.setAttribute('style', 'position: absolute;color: rgb(160, 160, 160);font-size: 20px;text-shadow: 1px 1px rgb(255, 255, 255);padding:0;margin:0;');
+    mediaBox.appendChild(h2);
+
     mediaBox.appendChild(mediaElement);
 
     if (!config.width) config.width = (innerWidth / 2) - 50;
@@ -244,6 +249,9 @@ function getMediaElement(mediaElement, config) {
 
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
     mediaBox.querySelector('video').setAttribute('autoplay', 'true');
+    if (config.muted) {
+        mediaBox.querySelector('video').setAttribute('muted', config.muted);
+    }
 
     var times = 0;
 
@@ -426,10 +434,10 @@ function getAudioElement(mediaElement, config) {
     mediaBox.appendChild(mediaElement);
 
   //  mediaElementContainer.style.width = '329px';
-    mediaBox.style.height = '90px';
+  //  mediaBox.style.height = '90px';
 
     h2.style.width = mediaElementContainer.style.width;
-    h2.style.height = '50px';
+    h2.style.height = '35px';
     h2.style.overflow = 'hidden';
 
     var times = 0;
