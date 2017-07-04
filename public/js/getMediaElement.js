@@ -248,10 +248,17 @@ function getMediaElement(mediaElement, config) {
     }
 
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
-    mediaBox.querySelector('video').setAttribute('autoplay', 'true');
+
     if (config.muted) {
   //      mediaBox.querySelector('video').setAttribute('muted', config.muted);
     }
+    if (config.autoplay) {
+        mediaBox.querySelector('video').setAttribute('autoplay', config.autoplay);
+    }
+   // if (config.volume) {
+        mediaBox.querySelector('video').setAttribute('volume', '0');
+  //  }
+    mediaBox.querySelector('video').setAttribute('muted', 'false');
 
     var times = 0;
 

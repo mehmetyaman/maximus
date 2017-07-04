@@ -51,6 +51,8 @@
     connection.onstream = function (event) {
         ++i;
         i==1 ? mute='true' : mute='false';
+        i==1 ? autplay='false' : autplay='true';
+        i==1 ? vol='0' : vol='';
        // alert("i="+ i);
        // alert("id="+event.userid);
 
@@ -59,7 +61,9 @@
             title: event.userid,
                 buttons: ['full-screen'],
             //    width: width,
-             muted: mute,
+            muted: mute,
+            autoplay: autplay,
+            volume: vol,
             showOnMouseEnter: false
         });
         addNewVideoBox(event.userid, mediaElement);
