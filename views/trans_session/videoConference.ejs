@@ -17,10 +17,12 @@
 <script>
     $(document).ready(function () {
         disableInputButtons();
-        connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
-            if (!isRoomExists) {
-                //  showRoomURL(roomid);
-            }
+        $("#connect").click(function () {
+            connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
+                if (!isRoomExists) {
+                    //  showRoomURL(roomid);
+                }
+            });
         });
     });
 
@@ -269,9 +271,8 @@
 
             <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
                 <div class="flex-button-wrapper">
-                    <button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()"
-                            class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
-                        Claim this room
+                    <button id="connect" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
+                        Connect
                     </button>
                 </div>
             </div>
