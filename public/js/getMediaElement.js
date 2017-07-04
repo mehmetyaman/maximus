@@ -256,7 +256,7 @@ function getMediaElement(mediaElement, config) {
         mediaBox.querySelector('video').setAttribute('autoplay', config.autoplay);
     }
    // if (config.volume) {
-        mediaBox.querySelector('video').setAttribute('volume', '0');
+     //   mediaBox.querySelector('video').setAttribute('volume', '0');
   //  }
     mediaBox.querySelector('video').setAttribute('muted', 'false');
 
