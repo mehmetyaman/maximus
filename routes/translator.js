@@ -11,26 +11,25 @@ module.exports = function (app) {
     // PROFILE SECTION =========================
     app.get('/profilet', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, rows) {
+            var query = connection.query('select * from languages', function (err, langs) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
                 }
                 req.getConnection(function (err1, connection) {
-                    var sql = 'select * from translation_session ts ' +
-                        'where (ts.translator_id = ? or ts.translator_id = 0 ) ' +
-                        'and exists (select * from translator_lang tl  ' +
-                        'where  (tl.translator_id=ts.translator_id  or ts.translator_id = 0 ) ' +
-                        'and ((lang1=lang_from or lang1=lang_to) and (lang2=lang_from or lang2=lang_to) ))';
-                    var query = connection.query(sql, req.user.id, function (err1, rows2) {
+                    var sql = 'select * from translation_session ts  ' +
+                        'where (ts.translator_id = ? or ts.translator_id = 0 ) and ' +
+                        'exists ( select * from translator_lang tl where (tl.translator_id=?) ' +
+                        'and ((lang1=lang_from and lang2=lang_to) or (lang1=lang_to and lang2=lang_from)))';
+                    var query = connection.query(sql, [req.user.id, req.user.id], function (err1, translationRequests) {
 
                         if (err1) {
                             console.log("Error Selecting : %s ", err1);
                         }
 
                         req.getConnection(function (err3, connection) {
-                            var query = connection.query('select * from categories', function (err3, rows3) {
-                                var appropriateRequests = rows2;
+                            var query = connection.query('select * from categories', function (err3, categories) {
+                                var appropriateRequests = translationRequests;
                                 if (appropriateRequests.length > 0) {
                                     var sqlForDemands = "select * from translation_session_demands where user_id=?";
                                     var query = connection.query(sqlForDemands, req.user.id, function (errDemands, demands) {
@@ -45,29 +44,27 @@ module.exports = function (app) {
                                         }
                                         res.render('translator/profilet.ejs', {
                                             user: req.user,
-                                            langs: rows,
+                                            langs: langs,
                                             lists: appropriateRequests,
-                                            cats: rows3,
+                                            cats: categories,
                                             moment: moment
                                         });
                                     });
                                 } else {
                                     res.render('translator/profilet.ejs', {
                                         user: req.user,
-                                        langs: rows,
+                                        langs: langs,
                                         lists: appropriateRequests,
-                                        cats: rows3,
+                                        cats: categories,
                                         moment: moment
                                     });
                                 }
-
                             })
                         })
                     });
                 });
             });
         });
-
     });
 
     app.post('/assignSession/:id', isLoggedIn, function (req, res) {
