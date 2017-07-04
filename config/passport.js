@@ -14,8 +14,6 @@ var bcrypt = require('bcrypt-nodejs');
 var config = require('config');
 
 var connection = mysql.createConnection(config.get('mysql'));
-// load the auth variables
-var configAuth = require('./auth'); // use this one for testing
 
 //connection.query('USE ' + dbconfig.database);
 // expose this function to our app using module.exports
@@ -163,7 +161,7 @@ module.exports = function (passport) {
 // =========================================================================
 // FACEBOOK ================================================================
 // =========================================================================
-    var fbStrategy = configAuth.facebookAuth;
+    var fbStrategy = config.get('facebookAuth');
     fbStrategy.passReqToCallback = true;  // allows us to pass in the req from our route (lets us check if a user is logged in or not)
     passport.use(new FacebookStrategy(fbStrategy,
         function (req, token, refreshToken, profile, done) {
@@ -239,9 +237,9 @@ module.exports = function (passport) {
 // =========================================================================
     passport.use(new TwitterStrategy({
 
-            consumerKey: configAuth.twitterAuth.consumerKey,
-            consumerSecret: configAuth.twitterAuth.consumerSecret,
-            callbackURL: configAuth.twitterAuth.callbackURL,
+            consumerKey: config.get('twitterAuth.consumerKey'),
+            consumerSecret: config.get('twitterAuth.consumerSecret'),
+            callbackURL: config.get('twitterAuth.callbackURL'),
             passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
         },
@@ -317,9 +315,9 @@ module.exports = function (passport) {
 // =========================================================================
     passport.use(new GoogleStrategy({
 
-            clientID: configAuth.googleAuth.clientID,
-            clientSecret: configAuth.googleAuth.clientSecret,
-            callbackURL: configAuth.googleAuth.callbackURL,
+            clientID: config.get('googleAuth.clientID'),
+            clientSecret: config.get('googleAuth.clientSecret'),
+            callbackURL: config.get('googleAuth.callbackURL'),
             passReqToCallback: true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
 
         },
