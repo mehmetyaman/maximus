@@ -243,6 +243,7 @@ function getMediaElement(mediaElement, config) {
     }
 
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
+    mediaBox.querySelector('video').setAttribute('autoplay', 'true');
 
     var times = 0;
 

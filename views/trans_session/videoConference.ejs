@@ -59,7 +59,9 @@
         //    connection.videosContainer.appendChild(mediaElement);
 
         setTimeout(function () {
-            mediaElement.media.play();
+            $("#connect2").click(function () {
+                mediaElement.media.play();
+            });
         }, 5000);
 
         mediaElement.id = event.streamid;
@@ -273,6 +275,9 @@
                 <div class="flex-button-wrapper">
                     <button id="connect" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
                         Connect
+                    </button>
+                    <button id="connect2" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
+                        Connect2
                     </button>
                 </div>
             </div>
