@@ -21,77 +21,56 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
     }
 
     .div2 ._1 { /*left*/
-
-        left: 0px;
-        top: 24.0654px;
-        width: 646.492px;
-        height: 484.869px;
-        font-size: 12.9298pt;
-    }
-
-    .div2 ._2 { /*right*/
-        left: 646.492px;
-        top: 24.0654px;
-        width: 646.492px;
-        height: 484.869px;
-        font-size: 12.9298pt;
+        left: 25px;
+        top: 75px;
+        width: 475px;
+        height: 350px;
+    } .div2 ._2 { /*right*/
+        left: 550px;
+        top: 75px;
+        width: 475px;
+        height: 350px;
     }
 
     .div3 ._1 { /*left top*/
-        left: 99.4014px;
+        left: 75px;
         top: 0px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
-    }
-
-    .div3 ._2 { /*left bottom*/
-        left: 99.4014px;
-        top: 266.5px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
-    }
-
-    .div3 ._3 { /*right*/
-        left: 568.227px;
-        top: 0px;
-        width: 710.667px;
-        height: 533px;
-        font-size: 14.2133pt;
+        width: 400px;
+        height: 250px;
+    } .div3 ._2 { /*left bottom*/
+        left: 75px;
+        top: 300px;
+        width: 400px;
+        height: 250px;
+    } .div3 ._3 { /*right*/
+        left: 575px;
+        top: 150px;
+        width: 400px;
+        height: 250px;
     }
 
     .div4 ._1 { /*left top*/
-        left: 145.579px;
+        left: 75px;
         top: 0px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
+        width: 400px;
+        height: 250px;
+    } .div4 ._2 { /*left bottom*/
+              left: 75px;
+              top: 300px;
+              width: 400px;
+              height: 250px;
+    } .div4 ._3 { /*right top*/
+                    left: 575px;
+                    top: 0px;
+                    width: 400px;
+                    height: 250px;
+    } .div4 ._4 { /*right bottom*/
+                          left: 575px;
+                          top: 300px;
+                          width: 400px;
+                          height: 250px;
     }
 
-    .div4 ._2 { /*left bottom*/
-        left: 145.579px;
-        top: 266.5px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
-    }
-
-    .div4 ._4 { /*right bottom*/
-        left: 792.072px;
-        top: 266.5px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
-    }
-
-    .div4 ._3 { /*right top*/
-        left: 792.072px;
-        top: 0px;
-        width: 355.333px;
-        height: 266.5px;
-        font-size: 7.10667pt;
-    }
 }
 @media screen
 and (min-device-width: 220px) and (max-device-width: 480px)

@@ -33,8 +33,8 @@
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     connection.socketMessageEvent = 'video-conference-demo';
-    connection.maxParticipantsAllowed = 3;
-    //connection.userid='<%//=peerId%>';
+    connection.maxParticipantsAllowed = '3';
+    connection.userid='<%=peerId%>';
 
     connection.session = {
         audio: true,
@@ -59,7 +59,8 @@
         //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
-                buttons: ['full-screen'],
+            //    buttons: ['full-screen'],
+            buttons: ['volume-slider'],
             //    width: width,
             muted: mute,
             autoplay: autplay,
@@ -83,6 +84,10 @@
             removeVideoBox(event.userid);
         }
     };
+
+    connection.onRoomFull =  function (event) {
+        alert("session is full! max. participants=4");
+    }
 
     function disableInputButtons() {
         document.getElementById('room-id').disabled = true;
@@ -171,6 +176,7 @@
                 "</div>";
 
         $("#video-wrapper").html(divHtml);
+        $("#onlineUsers").html($("#onlineUsers").html()+"<br/>"+userId);
 
         var videosContainer = document.getElementById('myVideoContainer_' + userId) || document.body;
         videosContainer.insertBefore(video, videosContainer.firstChild);
@@ -210,14 +216,12 @@
 </head>
 <body>
 
-<main class="video-space" ng-class="{alone: getNumberOfConnectedClients() == 1 }" ng-style="backgroundStyle">
+<main class="video-space"  >
     <header class="video-space-header screen-element">
         <div class="content-wrapper">
-            <div ng-click="toggleRoomActivity()" ng-class="{'selected': roomActivityService.isOpen}"
-                 class="top-bar-button roomactivity">
+            <div class="top-bar-button roomactivity">
                 <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
-                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                    >
+                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg">
                         <title>room-icon</title>
                         <desc>Created with Sketch.</desc>
                         <defs></defs>
@@ -292,6 +296,40 @@
         </div>
     </header>
 
+    <room-activity class="open"><aside class="room-list-content flex-column">
+            <header class="room-list-header flex-row">
+                <div class="refresh-button-wrapper">
+                    <button class="pointer refresh-button icon-button" ></button>
+                </div>
+
+                <button  class="pointer close-button icon-button"></button>
+            </header>
+
+            <favorite-rooms><h1>
+                    <i class="icon favorite-room-icon"></i>
+                    <span>Favorites</span>
+                </h1>
+
+                <p ng-if="module.favoriteRooms.length === 0" class="empty-list-message helper-text">
+                    Star rooms to keep them here for later
+                </p>
+            </favorite-rooms>
+
+            <visited-rooms><h1>Recents</h1>
+                <p ng-if="module.visitedRooms.length === 0" class="empty-list-message">
+                    You don't have any recently visited rooms
+                </p>
+            </visited-rooms>
+
+            <visited-rooms><h1>Online Users</h1>
+                <p ng-if="module.visitedRooms.length === 0" class="empty-list-message">
+                    <span id="onlineUsers">
+                    </span>
+                </p>
+            </visited-rooms>
+
+        </aside>
+    </room-activity>
 
     <div class="video-wrapper screen-element">
         <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">

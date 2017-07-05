@@ -233,7 +233,7 @@ function getMediaElement(mediaElement, config) {
     mediaElementContainer.appendChild(mediaBox);
 
     var h2 = document.createElement('h2');
-    h2.innerHTML = 'ID = '+config.title || 'Audio Element';
+    h2.innerHTML = 'User Id = '+config.title || 'Audio Element';
     h2.setAttribute('style', 'position: absolute;color: rgb(160, 160, 160);font-size: 20px;text-shadow: 1px 1px rgb(255, 255, 255);padding:0;margin:0;');
     mediaBox.appendChild(h2);
 
