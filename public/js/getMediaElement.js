@@ -234,7 +234,7 @@ function getMediaElement(mediaElement, config) {
 
     var h2 = document.createElement('h2');
     h2.innerHTML = 'User Id = '+config.title || 'Audio Element';
-    h2.setAttribute('style', 'position: absolute;color: rgb(160, 160, 160);font-size: 20px;text-shadow: 1px 1px rgb(255, 255, 255);padding:0;margin:0;');
+    h2.setAttribute('class','userid_title')
     mediaBox.appendChild(h2);
 
     mediaBox.appendChild(mediaElement);
