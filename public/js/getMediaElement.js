@@ -258,7 +258,7 @@ function getMediaElement(mediaElement, config) {
    // if (config.volume) {
      //   mediaBox.querySelector('video').setAttribute('volume', '0');
   //  }
-    mediaBox.querySelector('video').setAttribute('muted', 'false');
+ //   mediaBox.querySelector('video').setAttribute('muted', 'false');
 
     var times = 0;
 
