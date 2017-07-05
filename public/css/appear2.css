@@ -1,5 +1,8 @@
 @media screen
 and (min-device-width: 480px) and (max-device-width: 1880px) {
+
+    .visible {display:display;}
+
     .video-frame .video-stream-container {
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
         display: flex;
@@ -12,7 +15,19 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
     }
 
     .div2 {
-        position: absolute;
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+    .div3 {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+    .div4 {
+        position: relative;
+        height: 100%;
+        width: 100%;
     }
 
     video {
@@ -21,115 +36,143 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
     }
 
     .div2 ._1 { /*left*/
-        left: 25px;
-        top: 75px;
-        width: 475px;
-        height: 350px;
+        left: 3%;
+        top: 15%;
+        width: 45%;
+        height: 60%;
     } .div2 ._2 { /*right*/
-        left: 550px;
-        top: 75px;
-        width: 475px;
-        height: 350px;
+        left: 52%;
+        top: 15%;
+        width: 45%;
+        height: 60%;
     }
 
     .div3 ._1 { /*left top*/
-        left: 75px;
-        top: 0px;
-        width: 400px;
-        height: 250px;
+        left: 5%;
+        top: 2%;
+        width: 40%;
+        height: 45%;
     } .div3 ._2 { /*left bottom*/
-        left: 75px;
-        top: 300px;
-        width: 400px;
-        height: 250px;
+              left: 5%;
+              top: 50%;
+              width: 40%;
+              height: 45%;
     } .div3 ._3 { /*right*/
-        left: 575px;
-        top: 150px;
-        width: 400px;
-        height: 250px;
+                    left: 50%;
+                    top: 25%;
+                    width: 40%;
+                    height: 45%;
     }
 
     .div4 ._1 { /*left top*/
-        left: 75px;
-        top: 0px;
-        width: 400px;
-        height: 250px;
+        left: 7%;
+        top: 1%;
+        width: 35%;
+        height: 48%;
     } .div4 ._2 { /*left bottom*/
-              left: 75px;
-              top: 300px;
-              width: 400px;
-              height: 250px;
+              left: 7%;
+              top: 52%;
+              width: 35%;
+              height: 48%;
     } .div4 ._3 { /*right top*/
-                    left: 575px;
-                    top: 0px;
-                    width: 400px;
-                    height: 250px;
+                    left: 53%;
+                    top: 1%;
+                    width: 35%;
+                    height: 48%;
     } .div4 ._4 { /*right bottom*/
-                          left: 575px;
-                          top: 300px;
-                          width: 400px;
-                          height: 250px;
+                          left: 53%;
+                          top: 52%;
+                          width: 35%;
+                          height: 48%;
     }
 
 }
 @media screen
 and (min-device-width: 220px) and (max-device-width: 480px)
 {
+    .visible {display:block;}
+    .visible {display:none;}
+
+    .video-frame .video-stream-container {
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+        display: flex;
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+    }
+
+    .div2 {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+    .div3 {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+    .div4 {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+
+    video {
+        height: 100%;
+        width: 100%;
+    }
+
     .div2 ._1 { /*left*/
-        left: 5px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
-    .div2 ._2 { /*right*/
-        left: 175px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
+        left: 1%;
+        top: 15%;
+        width: 70%;
+        height: 45%;
+    } .div2 ._2 { /*right*/
+          left: 1%;
+          top: 48%;
+          width: 70%;
+          height: 45%;
+      }
+
     .div3 ._1 { /*left top*/
-        left: 5px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
-
-    .div3 ._2 { /*left bottom*/
-        left: 175px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
-
-    .div3 ._3 { /*right*/
-        left: 5px;
-        top: 235px;
-        width: 150px;
-        height: 195px;
-    }
+        left: 1%;
+        top: 1%;
+        width: 45%;
+        height: 35%;
+    } .div3 ._2 { /*left bottom*/
+          left: 1%;
+          top: 38%;
+          width: 45%;
+          height: 35%;
+      } .div3 ._3 { /*right*/
+            left: 47%;
+            top: 28%;
+            width: 45%;
+            height: 35%;
+        }
 
     .div4 ._1 { /*left top*/
-        left: 5px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
-    .div4 ._2 { /*left bottom*/
-        left: 175px;
-        top: 25px;
-        width: 150px;
-        height: 195px;
-    }
-    .div4 ._3 { /*right top*/
-        left: 5px;
-        top: 235px;
-        width: 150px;
-        height: 195px;
-    }
-    .div4 ._4 { /*right bottom*/
-        left: 175px;
-        top: 235px;
-        width: 150px;
-        height: 195px;
-    }
+        left: 1%;
+        top: 1%;
+        width: 45%;
+        height: 35%;
+    } .div4 ._2 { /*left bottom*/
+          left: 1%;
+          top: 38%;
+          width: 45%;
+          height: 35%;
+      } .div4 ._3 { /*right top*/
+            left: 47%;
+            top: 1%;
+            width: 45%;
+            height: 35%;
+        } .div4 ._4 { /*right bottom*/
+              left: 47%;
+              top: 38%;
+              width: 45%;
+              height: 35%;
+          }
 }

@@ -18,10 +18,22 @@
     $(document).ready(function () {
         disableInputButtons();
         connection.openOrJoin("<%=roomId%>", function (isRoomExists, roomid) {
+
+        //    alert("isRoomExists="+isRoomExists);
+
             if (!isRoomExists) {
                 //  showRoomURL(roomid);
             }
         });
+
+        $('#close_btn').click(function() {
+            $('#room_activity').removeClass('open');
+        });
+
+        $('#icon_activity').click(function() {
+            $('#room_activity').addClass('open');
+        });
+
     });
 
     var connection = new RTCMultiConnection();
@@ -34,7 +46,7 @@
 
     connection.socketMessageEvent = 'video-conference-demo';
     connection.maxParticipantsAllowed = '3';
-    connection.userid='<%=peerId%>';
+ //   connection.userid='<%//=peerId%>';
 
     connection.session = {
         audio: true,
@@ -60,7 +72,8 @@
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
             //    buttons: ['full-screen'],
-            buttons: ['volume-slider'],
+            // buttons: ['volume-slider'],
+            buttons: [''],
             //    width: width,
             muted: mute,
             autoplay: autplay,
@@ -157,7 +170,6 @@
                     connection.join(roomid);
                     return;
                 }
-
                 setTimeout(reCheckRoomPresence, 5000);
             });
         })();
@@ -212,7 +224,6 @@
 
 <script src="https://cdn.webrtc-experiment.com/common.js"></script>
 
-
 </head>
 <body>
 
@@ -220,10 +231,9 @@
     <header class="video-space-header screen-element">
         <div class="content-wrapper">
             <div class="top-bar-button roomactivity">
-                <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
+                <i class="icon" id="icon_activity">
                     <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg">
                         <title>room-icon</title>
-                        <desc>Created with Sketch.</desc>
                         <defs></defs>
                         <g id="Page-1-Copy-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g id="room-presence-b1---expanded-copy-3" transform="translate(-28.000000, -23.000000)"
@@ -246,8 +256,8 @@
                     </svg>
                 </i>
             </div>
-            <div class="logo-wrapper ng-hide" ng-show="RoomState.logoUrl">
-                <img class="custom-logo ng-hide" ng-show="RoomState.logoUrl">
+            <div class="logo-wrapper ng-hide">
+                <img class="custom-logo ng-hide">
             </div>
             <div class="room-url-wrapper" analytics-event="copyUrlAnalyticsEvent">
                 <div class="room-url">
@@ -255,14 +265,12 @@
                 </div>
             </div>
             <div class="room-control-buttons control-button-group">
-                <div ng-click="openMediaSelectorModal()" class="top-bar-button contacts-button" title="Cam/Mic">
-                    <i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'">
-                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1"
-                             xmlns="http://www.w3.org/2000/svg">
+                <div class="top-bar-button contacts-button" title="Cam/Mic">
+                    <i class="icon contacts" >
+                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
                             <defs></defs>
                             <g id="fb-messenger-invite" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)"
-                                   fill="#FFFFFF">
+                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)" fill="#FFFFFF">
                                     <g id="room" transform="translate(-1.000000, 0.000000)">
                                         <g id="top-bar-icons" transform="translate(472.000000, 14.000000)">
                                             <g id="cam-/-mic">
@@ -285,7 +293,7 @@
 
             </div>
 
-            <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
+            <div class="user-control-buttons control-button-group">
                 <div class="flex-button-wrapper">
                     <button id="connect" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
                         Connect
@@ -296,35 +304,29 @@
         </div>
     </header>
 
-    <room-activity class="open"><aside class="room-list-content flex-column">
+    <room-activity class="open visible" id="room_activity">
+        <aside class="room-list-content flex-column">
             <header class="room-list-header flex-row">
                 <div class="refresh-button-wrapper">
                     <button class="pointer refresh-button icon-button" ></button>
                 </div>
 
-                <button  class="pointer close-button icon-button"></button>
+                <button  class="pointer close-button icon-button" id="close_btn"></button>
             </header>
 
-            <favorite-rooms><h1>
+            <favorite-rooms>
+                <h1>
                     <i class="icon favorite-room-icon"></i>
                     <span>Favorites</span>
                 </h1>
 
-                <p ng-if="module.favoriteRooms.length === 0" class="empty-list-message helper-text">
+                <p class="empty-list-message helper-text">
                     Star rooms to keep them here for later
                 </p>
             </favorite-rooms>
 
             <visited-rooms><h1>Recents</h1>
-                <p ng-if="module.visitedRooms.length === 0" class="empty-list-message">
-                    You don't have any recently visited rooms
-                </p>
-            </visited-rooms>
-
-            <visited-rooms><h1>Online Users</h1>
-                <p ng-if="module.visitedRooms.length === 0" class="empty-list-message">
-                    <span id="onlineUsers">
-                    </span>
+                <p class="empty-list-message" id="onlineUsers">
                 </p>
             </visited-rooms>
 
@@ -332,17 +334,16 @@
     </room-activity>
 
     <div class="video-wrapper screen-element">
-        <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">
+        <div class="div2" id="video-wrapper">
         </div>
     </div>
     <div class="bottom-right-button-group screen-element">
-        <a class="ui-text-button white" ng-click="clickedHelpButton()">Help</a>
-        <a class="ui-text-button white" ng-click="openPopupForType('tos')">Terms of use</a>
+        <a class="ui-text-button white" >Help</a>
+        <a class="ui-text-button white" >Terms of use</a>
     </div>
 
-    <div ng-show="ChatService.isEnabled" class="action-button chat-open-button visible" ng-click="openChat()"
-         ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
-        <i class="svg bordered" ng-include="'/images/tools/chat-button.2c5ae55e.svg'">
+    <div class="action-button chat-open-button visible" ng-click="openChat()" >
+        <i class="svg bordered">
             <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none"
