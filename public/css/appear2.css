@@ -126,14 +126,14 @@ and (min-device-width: 220px) and (max-device-width: 480px)
     }
 
     .div2 ._1 { /*left*/
-        margin:0 auto;
-        top: 15%;
-        width: 70%;
+        left: 5%;
+        top:  5%;
+        width: 90%;
         height: 45%;
     } .div2 ._2 { /*right*/
-        margin:0 auto;
-          top: 48%;
-          width: 70%;
+          left: 5%;
+          top: 54%;
+          width: 90%;
           height: 45%;
       }
 
