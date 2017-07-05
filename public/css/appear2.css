@@ -126,12 +126,12 @@ and (min-device-width: 220px) and (max-device-width: 480px)
     }
 
     .div2 ._1 { /*left*/
-        left: 1%;
+        margin:0 auto;
         top: 15%;
         width: 70%;
         height: 45%;
     } .div2 ._2 { /*right*/
-          left: 1%;
+        margin:0 auto;
           top: 48%;
           width: 70%;
           height: 45%;
@@ -139,40 +139,40 @@ and (min-device-width: 220px) and (max-device-width: 480px)
 
     .div3 ._1 { /*left top*/
         left: 1%;
-        top: 1%;
-        width: 45%;
+        top: 3%;
+        width: 48%;
         height: 35%;
     } .div3 ._2 { /*left bottom*/
           left: 1%;
-          top: 38%;
-          width: 45%;
+          top: 41%;
+          width: 48%;
           height: 35%;
       } .div3 ._3 { /*right*/
             left: 47%;
-            top: 28%;
-            width: 45%;
+            top: 25%;
+            width: 48%;
             height: 35%;
         }
 
     .div4 ._1 { /*left top*/
         left: 1%;
-        top: 1%;
-        width: 45%;
+        top: 3%;
+        width: 48%;
         height: 35%;
     } .div4 ._2 { /*left bottom*/
           left: 1%;
-          top: 38%;
-          width: 45%;
+          top: 41%;
+          width: 48%;
           height: 35%;
       } .div4 ._3 { /*right top*/
-            left: 47%;
-            top: 1%;
-            width: 45%;
+            left: 50%;
+            top: 3%;
+            width: 48%;
             height: 35%;
         } .div4 ._4 { /*right bottom*/
-              left: 47%;
-              top: 38%;
-              width: 45%;
+              left: 50%;
+              top: 41%;
+              width: 48%;
               height: 35%;
           }
 }
