@@ -1,7 +1,8 @@
 @media screen
 and (min-device-width: 480px) and (max-device-width: 1880px) {
 
-    .visible {display:display;}
+    .visible {display:block;}
+    .notvisible {display:none;}
 
     .video-frame .video-stream-container {
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
@@ -99,7 +100,7 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
 and (min-device-width: 220px) and (max-device-width: 480px)
 {
     .visible {display:block;}
-    .visible {display:none;}
+    .notvisible {display:none;}
 
     .video-frame .video-stream-container {
         box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);

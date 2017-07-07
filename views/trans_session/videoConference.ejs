@@ -30,6 +30,16 @@
             $('#room_activity').removeClass('open');
         });
 
+        $('#chat_btn').click(function() {
+            $('#chat_wrapper').removeClass('notvisible');
+            $('#chat_wrapper_content').addClass('is-visible');
+        });
+
+        $('#close_chat_btn').click(function() {
+            $('#chat_wrapper_content').removeClass('is-visible');
+            $('#chat_wrapper').addClass('notvisible');
+        });
+
         $('#icon_activity').click(function() {
             $('#room_activity').addClass('open');
         });
@@ -72,13 +82,13 @@
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
             //    buttons: ['full-screen'],
-            // buttons: ['volume-slider'],
-            buttons: [''],
+             buttons: ['volume-slider'],
+         //   buttons: [''],
             //    width: width,
-            muted: mute,
-            autoplay: autplay,
-            volume: vol,
-            showOnMouseEnter: false
+        //    muted: mute,
+        //    autoplay: autplay,
+        //    volume: vol,
+        //    showOnMouseEnter: false
         });
         addNewVideoBox(event.userid, mediaElement);
         //    connection.videosContainer.appendChild(mediaElement);
@@ -338,11 +348,64 @@
         </div>
     </div>
     <div class="bottom-right-button-group screen-element">
-        <a class="ui-text-button white" >Help</a>
-        <a class="ui-text-button white" >Terms of use</a>
+        <a class="ui-text-button white">Help</a>
+        <a class="ui-text-button white">Terms of use</a>
     </div>
+    <chat-wrapper animation-duration="300" id="chat_wrapper" class="notvisible">
+        <div class="screen-element chat-wrapper user-select-enabled">
+            <div class="chat jstest-chat" id="chat_wrapper_content" animation-duration="module.animationDuration" detect-media-links="true" close-callback="module.closeCallback()">
+                <div class="chat-content">
+                    <div class="action-button close-button" id="close_chat_btn" >
+                        <i class="svg" ng-include="'/images/tools/close-button.0d2709ea.svg'">
+                            <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                                <title>close-button</title>
+                                <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                                    <g id="chat-open" sketch:type="MSArtboardGroup" transform="translate(-976.000000, -67.000000)" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <g id="chat-window" sketch:type="MSLayerGroup" transform="translate(716.000000, 63.000000)">
+                                            <g id="close-button" transform="translate(260.000000, 4.000000)" sketch:type="MSShapeGroup">
+                                                <path d="M18,18 L23,23 L18,18 L13,23 L18,18 Z M18,18 L13,13 L18,18 L23,13 L18,18 Z" id="Path-135"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg></i>
+                    </div>
+                    <div class="chat-inner-wrapper">
+                        <div class="messages-wrapper">
+                            <aside class="unread-indicator unread-above ng-hide" ng-show="unreadCountAbove > 0">
+                                <a ng-click="scrollToEarliestUnread()" ng-bind="unreadCountAboveLabel">0 unread message above</a>
+                            </aside>
+                            <div class="message-scroller">
+                                <div class="messages">
 
-    <div class="action-button chat-open-button visible" ng-click="openChat()" >
+                                    <div class="typing-indicator-wrapper ng-hide" ng-show="usersTyping.length > 0" ng-animate="">
+                                        
+                                        <aside class="dot-dot-dot">
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                        </aside>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <aside class="unread-indicator unread-below ng-hide" ng-show="unreadCountBelow > 0">
+                                <a ng-click="scrollToLatestUnread()" ng-bind="unreadCountBelowLabel">0 unread message below</a>
+                            </aside>
+                        </div>
+                        <div class="message-input-wrapper">
+                            <form name="ChatForm" ng-submit="sendMessage()" class="ng-pristine ng-valid">
+                                <input type="text" name="message" autocomplete="off" class="chat-text-input ng-pristine ng-valid ng-empty ng-touched" ng-model="message" ng-click="handleChatInputClick()" ng-keydown="handleKeydownEvent($event)" ng-change="handleChange()">
+                            </form>
+                            
+                        </div>
+                    </div>
+                    <audio class="chat-notification-sound ng-hide" ng-hide="true" ng-src="https://d1x2efl61akomv.cloudfront.net/assets/chat-notification.ogg" type="audio/ogg" preload="" src="https://d1x2efl61akomv.cloudfront.net/assets/chat-notification.ogg"></audio>
+                </div>
+            </div>
+        </div>
+    </chat-wrapper>
+    <div class="action-button chat-open-button visible" id="chat_btn" >
         <i class="svg bordered">
             <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
