@@ -53,15 +53,15 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
         width: 40%;
         height: 45%;
     } .div3 ._2 { /*left bottom*/
-              left: 5%;
-              top: 50%;
-              width: 40%;
-              height: 45%;
+        left: 5%;
+        top: 50%;
+        width: 40%;
+        height: 45%;
     } .div3 ._3 { /*right*/
-                    left: 50%;
-                    top: 25%;
-                    width: 40%;
-                    height: 45%;
+        left: 50%;
+        top: 25%;
+        width: 40%;
+        height: 45%;
     }
 
     .div4 ._1 { /*left top*/
@@ -70,20 +70,20 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
         width: 35%;
         height: 48%;
     } .div4 ._2 { /*left bottom*/
-              left: 7%;
-              top: 52%;
-              width: 35%;
-              height: 48%;
+        left: 7%;
+        top: 52%;
+        width: 35%;
+        height: 48%;
     } .div4 ._3 { /*right top*/
-                    left: 53%;
-                    top: 1%;
-                    width: 35%;
-                    height: 48%;
+        left: 53%;
+        top: 1%;
+        width: 35%;
+        height: 48%;
     } .div4 ._4 { /*right bottom*/
-                          left: 53%;
-                          top: 52%;
-                          width: 35%;
-                          height: 48%;
+        left: 53%;
+        top: 52%;
+        width: 35%;
+        height: 48%;
     }
 
     .userid_title{
