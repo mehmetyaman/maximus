@@ -19,6 +19,8 @@ var server = email.server.connect({
     ssl: true
 });
 
+var io = require('socket.io').listen(server);
+
 // send the message and get a callback with an error or details of the message that was sent
 /*
  server.send({
