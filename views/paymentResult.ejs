@@ -1,0 +1,49 @@
+<html>
+<head>
+    <title>Payment Result </title>
+    <link href="/../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <script>
+        window.onunload = refreshParent;
+        function refreshParent() {
+            window.opener.location.reload();
+        }
+    </script>
+</head>
+<body>
+<div class="container" style="height: 120px;">
+
+    <br/>
+    <br/>
+    <%if(result=='success'){%>
+        <div class="isa_success">
+            <i class="fa fa-check"></i>
+            <%=message%>
+        </div>
+    <%}%>
+
+    <%if(result=='info'){%>
+        <div class="isa_info">
+            <i class="fa fa-info-circle"></i>
+            <%=message%>
+        </div>
+    <%}%>
+
+    <%if(result=='warning'){%>
+        <div class="isa_warning">
+            <i class="fa fa-warning"></i>
+            <%=message%>
+        </div>
+    <%}%>
+
+    <%if(result=='error'){%>
+        <div class="isa_error">
+            <i class="fa fa-times-circle"></i>
+            <%=message%>
+        </div>
+    <%}%>
+
+</div>
+</body>
+</html>

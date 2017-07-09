@@ -73,38 +73,30 @@ CREATE TABLE `translator_lang` (
 
 
 CREATE TABLE `translation_session` (
-  `id`            INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `lang1`         VARCHAR(5)       NOT NULL,
-  `lang2`         VARCHAR(5)       NOT NULL,
-  `start_date`    DATE                      DEFAULT NULL,
-  `end_date`      DATE                      DEFAULT NULL,
-  `description`   VARCHAR(45)               DEFAULT NULL,
-  `duration`      INT(4)                    DEFAULT NULL,
-  `category_id`   INT(11) UNSIGNED NOT NULL,
-  `save_record`   INT(11)          NOT NULL DEFAULT '0',
-  `video_chat_id` VARCHAR(45)               DEFAULT NULL,
-  `translator_id` INT(11) UNSIGNED NOT NULL,
-  `start_time`    TIME                      DEFAULT NULL,
-  `end_time`      TIME                      DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `lang1` varchar(5) NOT NULL,
+  `lang2` varchar(5) NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `description` varchar(45) DEFAULT NULL,
+  `duration` int(4) DEFAULT NULL,
+  `category_id` int(11) unsigned NOT NULL,
+  `save_record` int(11) NOT NULL DEFAULT '0',
+  `video_chat_id` varchar(45) DEFAULT NULL,
+  `translator_id` int(11) unsigned NOT NULL,
+  `start_time` time DEFAULT NULL,
+  `end_time` time DEFAULT NULL,
+  `is_paid` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_1_idx` (`lang1`),
   KEY `fk_translation_session_2_idx` (`lang2`),
   KEY `fk_translation_session_3_idx` (`translator_id`),
   KEY `fk_translation_session_4_idx` (`category_id`),
-  CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-    ON DELETE NO
-    ACTION
-    ON UPDATE NO ACTION
-)
-  ENGINE = InnoDB
-  AUTO_INCREMENT = 3
-  DEFAULT CHARSET = utf8;
+  CONSTRAINT `fk_translation_session_1` FOREIGN KEY (`lang1`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translation_session_2` FOREIGN KEY (`lang2`) REFERENCES `languages` (`lang_short`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translation_session_4` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
 
 
 CREATE TABLE `translation_session_users` (

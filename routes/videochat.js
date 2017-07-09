@@ -41,7 +41,7 @@ module.exports = function (app) {
                     console.log("Error /videoChat/:id : %s ", err);
                     res.status(500).send(err);
                 }
-                res.render('trans_session/videoConference', {title: 'Video Conference', roomId:videoChatId, peerId:peerId, peers: peers});
+                res.render('trans_session/videoConference', {title: 'Video Conference', roomId:videoChatId, peerId:peerId, peers: peers, username:username});
             });
         });
     });
