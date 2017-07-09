@@ -1,5 +1,6 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
+drop table if EXISTS `translation_session_demands`;
 DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
@@ -19,6 +20,7 @@ CREATE TABLE `users` (
   `country_code`  VARCHAR(5),
   `time_zone`     VARCHAR(10),
   `user_type`     VARCHAR(20),
+  `picture_url`     VARCHAR(200),
   `is_customer`   BOOLEAN                   DEFAULT FALSE,
   `is_translator` BOOLEAN                   DEFAULT FALSE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),

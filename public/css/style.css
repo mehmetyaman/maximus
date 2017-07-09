@@ -121,9 +121,6 @@ option {
 .yellow select  { color: #000; }
 .black select   { color: #fff; }
 
-
-@import url('//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
-
 .isa_info, .isa_success, .isa_warning, .isa_error {
     margin: 10px 0px;
     padding:12px;
