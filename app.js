@@ -87,6 +87,7 @@ require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
+require('./routes/payment')(app);
 require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
 
 // all environments

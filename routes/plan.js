@@ -27,7 +27,8 @@ module.exports = function (app, winston) {
                 duration: input.interval,
                 description: input.desc,
                 category_id:input.catval,
-                translator_id: 0
+                translator_id: 0,
+                is_paid: 0
             }
             if (err) {
                 connection.rollback(function () {
