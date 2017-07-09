@@ -12,12 +12,13 @@ module.exports = function (app, passport, winston) {
             if (req.user.is_customer) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
-                res.redirect('/profilet/' + req.user.id);
+                res.redirect('/profilet');
             }
         } else {
             res.render('index.ejs');
         }
     });
+
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function (req, res) {
@@ -199,6 +200,19 @@ module.exports = function (app, passport, winston) {
             }
         )
     );
+
+// linkedin -------------------------------
+    app.get('/auth/linkedin',
+        passport.authenticate('linkedin', {state: 'SOME STATE'}),
+        function (req, res) {
+            // The request will be redirected to LinkedIn for authentication, so this
+            // function will not be called.
+        });
+
+    app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }));
 
 // facebook -------------------------------
 

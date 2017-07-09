@@ -5,6 +5,8 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+//var LinkedInStrategy = require('passport-linkedin').Strategy;
+var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // load up the user model
 var mysql = require('mysql');
@@ -25,14 +27,12 @@ module.exports = function (passport) {
 
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        done(null, user.id);
+        done(null, user);
     });
 
     // used to deserialize the user
-    passport.deserializeUser(function (id, done) {
-        connection.query("SELECT * FROM users WHERE id = ? ", [id], function (err, rows) {
-            done(err, rows[0]);
-        });
+    passport.deserializeUser(function (obj, done) {
+        done(null, obj);
     });
 
     // =========================================================================
@@ -66,7 +66,7 @@ module.exports = function (passport) {
                             is_customer: req.query.customer ? 1 : 0,
                             is_translator: !req.query.customer ? 1 : 0,
                             name: req.body.name,
-                            surname:req.body.surname
+                            surname: req.body.surname
                         };
 
                         var insertQuery = "INSERT INTO users (email, password, is_customer, is_translator, name," +
@@ -121,6 +121,51 @@ module.exports = function (passport) {
             })
     );
 
+// =========================================================================
+// Linkedin ================================================================
+// =========================================================================
+    /*
+     Client ID:	86jkoxygnghvrf
+
+     Client Secret:	mpkg3fLKSMnQawzE
+
+     passport.use(new LinkedInStrategy({
+     consumerKey: "86jkoxygnghvrf",
+     consumerSecret: "mpkg3fLKSMnQawzE",
+     callbackURL: "http://localhost:4300/auth/linkedin/callback"
+     },
+     function (token, tokenSecret, profile, done) {
+     User.findOrCreate({linkedinId: profile.id}, function (err, user) {
+     return done(err, user);
+     });
+     }
+     ));
+     */
+
+    passport.use(new LinkedInStrategy({
+        clientID: "86jkoxygnghvrf",
+        clientSecret: "mpkg3fLKSMnQawzE",
+        callbackURL: "http://localhost:4300/auth/linkedin/callback",
+        scope: ['r_emailaddress', 'r_basicprofile'],
+    }, function (accessToken, refreshToken, profile, done) {
+        // asynchronous verification, for effect...
+        process.nextTick(function () {
+            // To keep the example simple, the user's LinkedIn profile is returned to
+            // represent the logged-in user. In a typical application, you would want
+            // to associate the LinkedIn account with a user record in your database,
+            // and return that user instead.
+            connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
+                if (err)
+                    return done(err);
+                if (!rows.length) {
+                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                }
+
+                // all is well, return successful user
+                return done(null, rows[0]);
+            });
+        });
+    }));
 
 // =========================================================================
 // FACEBOOK ================================================================
