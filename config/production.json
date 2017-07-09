@@ -32,6 +32,14 @@
     "clientID"         : "your-secret-clientID-here",
     "clientSecret"     : "your-client-secret-here",
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
+  },
+  "iyzico_client" : {
+    "callbackUrl" : "http://maxsimus.herokuapp.com/paymentResult",
+    "api" : {
+      "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
+      "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
+      "uri": "https://sandbox-api.iyzipay.com"
+    }
   }
 
 }

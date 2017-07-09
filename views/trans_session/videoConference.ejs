@@ -7,22 +7,84 @@
     <link href="/../css/appear2.css" rel="stylesheet">
     <link href="/../css/getMediaElement.css" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-    <script src="/../js/RTCMultiConnection.min.js"></script>
+
+    <!-- custom layout for HTML5 audio/video elements-->
     <script src="/../js/socket.io.js"></script>
+    <script src="/../js/RTCMultiConnection.min.js"></script>
+    <script src="/../js/getMediaElement.js"></script>
 
     <!-- custom layout for HTML5 audio/video elements -->
-    <script src="/../js/getMediaElement.js"></script>
+    <script src="https://cdn.webrtc-experiment.com:443/FileBufferReader.js"></script>
+
 </head>
 
 <script>
     $(document).ready(function () {
         disableInputButtons();
-        connection.openOrJoin(document.getElementById('room-id').value, function (isRoomExists, roomid) {
-            if (!isRoomExists) {
-                //  showRoomURL(roomid);
-            }
+
+
+        $('#close_btn').click(function() {
+            $('#room_activity').removeClass('open');
         });
-    });
+
+        $('#chat_btn').click(function() {
+            $('#chat_wrapper').removeClass('notvisible');
+            $('#chat_wrapper_content').addClass('is-visible');
+            document.getElementById('input-text-chat').focus();
+        });
+
+        $('#close_chat_btn').click(function() {
+            $('#chat_wrapper_content').removeClass('is-visible');
+            $('#chat_wrapper').addClass('notvisible');
+        });
+
+        $('#icon_activity').click(function() {
+            $('#room_activity').addClass('open');
+        });
+
+        // ......................................................
+        // ................FileSharing/TextChat Code.............
+        // ......................................................
+        document.getElementById('share-file').onclick = function() {
+            var fileSelector = new FileSelector();
+            fileSelector.selectSingleFile(function(file) {
+                connection.send(file);
+            });
+        };
+        var username="<%=username%>";
+        document.getElementById('input-text-chat').onkeyup = function(e) {
+            if (e.keyCode != 13) return;
+            // removing trailing/leading whitespace
+            this.value = this.value.replace(/^\s+|\s+$/g, '');
+            if (!this.value.length) return;
+            connection.send(username + " : "+ this.value);
+            appendDIV("Me : "+this.value);
+            this.value = '';
+        };
+
+        function getMessageTime() {
+            var date = new Date;
+            var seconds = date.getSeconds();
+            var minutes = date.getMinutes();
+            var hour = date.getHours();
+            return hour+":"+minutes+":"+seconds;
+        }
+
+        var chatContainer = document.getElementById('chat-output');
+            function appendDIV(event) {
+                if($('#chat_wrapper').hasClass('notvisible')){
+                $('#chat_wrapper').removeClass('notvisible');
+                $('#chat_wrapper_content').addClass('is-visible');
+            }
+            var div = document.createElement('div');
+            div.innerHTML = event.data  || event;
+            chatContainer.insertBefore(div, chatContainer.firstChild);
+            div.tabIndex = 0;
+            div.focus();
+            document.getElementById('input-text-chat').focus();
+        }
+
+
 
     var connection = new RTCMultiConnection();
 
@@ -33,10 +95,14 @@
     connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
     connection.socketMessageEvent = 'video-conference-demo';
+    connection.maxParticipantsAllowed = '3';
+ //   connection.userid='<%//=peerId%>';
+    connection.enableFileSharing = true;
 
     connection.session = {
         audio: true,
-        video: true
+        video: true,
+        data: true
     };
 
     connection.sdpConstraints.mandatory = {
@@ -44,20 +110,33 @@
         OfferToReceiveVideo: true
     };
 
+    var i=0;
     connection.videosContainer = document.getElementById('video-wrapper');
     connection.onstream = function (event) {
+        ++i;
+        i==1 ? mute='true' : mute='false';
+        i==1 ? autplay='false' : autplay='true';
+        i==1 ? vol='0' : vol='';
+       // alert("i="+ i);
+       // alert("id="+event.userid);
+
         //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
             //    buttons: ['full-screen'],
+             buttons: ['volume-slider'],
+         //   buttons: [''],
             //    width: width,
-            showOnMouseEnter: false
+            muted: mute,
+            autoplay: autplay,
+        //    volume: vol,
+        //    showOnMouseEnter: false
         });
         addNewVideoBox(event.userid, mediaElement);
         //    connection.videosContainer.appendChild(mediaElement);
 
         setTimeout(function () {
-            mediaElement.media.play();
+  //          mediaElement.media.play();
         }, 5000);
 
         mediaElement.id = event.streamid;
@@ -70,6 +149,14 @@
             removeVideoBox(event.userid);
         }
     };
+
+    connection.onmessage = appendDIV;
+    connection.filesContainer = document.getElementById('file-container');
+
+
+    connection.onRoomFull =  function (event) {
+        alert("session is full! max. participants=4");
+    }
 
     function disableInputButtons() {
         document.getElementById('room-id').disabled = true;
@@ -112,10 +199,11 @@
     } else {
         roomid = connection.token();
     }
-    document.getElementById('room-id').value = roomid;
+ /*   document.getElementById('room-id').value = roomid;
     document.getElementById('room-id').onkeyup = function () {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
+ */
 
     var hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
@@ -138,7 +226,6 @@
                     connection.join(roomid);
                     return;
                 }
-
                 setTimeout(reCheckRoomPresence, 5000);
             });
         })();
@@ -157,6 +244,7 @@
                 "</div>";
 
         $("#video-wrapper").html(divHtml);
+        $("#onlineUsers").html($("#onlineUsers").html()+"<br/>"+userId);
 
         var videosContainer = document.getElementById('myVideoContainer_' + userId) || document.body;
         videosContainer.insertBefore(video, videosContainer.firstChild);
@@ -183,6 +271,16 @@
         }
     }
 
+        connection.openOrJoin("<%=roomId%>", function (isRoomExists, roomid) {
+
+            //    alert("isRoomExists="+isRoomExists);
+
+            if (!isRoomExists) {
+                //  showRoomURL(roomid);
+            }
+        });
+
+    });
 
 </script>
 
@@ -192,20 +290,16 @@
 
 <script src="https://cdn.webrtc-experiment.com/common.js"></script>
 
-
 </head>
 <body>
 
-<main class="video-space" ng-class="{alone: getNumberOfConnectedClients() == 1 }" ng-style="backgroundStyle">
+<main class="video-space"  >
     <header class="video-space-header screen-element">
         <div class="content-wrapper">
-            <div ng-click="toggleRoomActivity()" ng-class="{'selected': roomActivityService.isOpen}"
-                 class="top-bar-button roomactivity">
-                <i class="icon" ng-include="'/images/tools/oval-grid.e47553a0.svg'">
-                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                    >
+            <div class="top-bar-button roomactivity">
+                <i class="icon" id="icon_activity">
+                    <svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg">
                         <title>room-icon</title>
-                        <desc>Created with Sketch.</desc>
                         <defs></defs>
                         <g id="Page-1-Copy-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g id="room-presence-b1---expanded-copy-3" transform="translate(-28.000000, -23.000000)"
@@ -228,23 +322,22 @@
                     </svg>
                 </i>
             </div>
-            <div class="logo-wrapper ng-hide" ng-show="RoomState.logoUrl">
-                <img class="custom-logo ng-hide" ng-show="RoomState.logoUrl">
+            <div class="logo-wrapper ng-hide">
+                <img class="custom-logo ng-hide">
             </div>
             <div class="room-url-wrapper" analytics-event="copyUrlAnalyticsEvent">
                 <div class="room-url">
                     <p id="room-id">Room Id: <%= roomId %></p>
                 </div>
+                <div id="file-container"></div>
             </div>
             <div class="room-control-buttons control-button-group">
-                <div ng-click="openMediaSelectorModal()" class="top-bar-button contacts-button" title="Cam/Mic">
-                    <i class="icon contacts" ng-include="'/images/tools/camera.cc998da0.svg'">
-                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1"
-                             xmlns="http://www.w3.org/2000/svg">
+                <div class="top-bar-button contacts-button" title="Cam/Mic">
+                    <i class="icon contacts" >
+                        <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg">
                             <defs></defs>
                             <g id="fb-messenger-invite" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)"
-                                   fill="#FFFFFF">
+                                <g id="web---fb-messenger-invite" transform="translate(-480.000000, -28.000000)" fill="#FFFFFF">
                                     <g id="room" transform="translate(-1.000000, 0.000000)">
                                         <g id="top-bar-icons" transform="translate(472.000000, 14.000000)">
                                             <g id="cam-/-mic">
@@ -263,15 +356,13 @@
                     <span>Cam/Mic</span>
                 </span>
                 </div>
-
-
             </div>
 
-            <div ng-hide="RoomState.isClaimed" class="user-control-buttons control-button-group">
+            <div class="user-control-buttons control-button-group">
+                <div id="file-container"></div>
                 <div class="flex-button-wrapper">
-                    <button ng-if="shouldShowClaimRoomButton()" ng-click="openClaimRoom()"
-                            class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
-                        Claim this room
+                    <button id="share-file" class="ui-button topbar-signup-button jstest-claim-button topbar-small-button">
+                        Share File
                     </button>
                 </div>
             </div>
@@ -279,19 +370,93 @@
         </div>
     </header>
 
+    <room-activity class="open visible" id="room_activity">
+        <aside class="room-list-content flex-column">
+            <header class="room-list-header flex-row">
+                <div class="refresh-button-wrapper">
+                    <button class="pointer refresh-button icon-button" ></button>
+                </div>
+
+                <button  class="pointer close-button icon-button" id="close_btn"></button>
+            </header>
+
+            <favorite-rooms>
+                <h1>
+                    <i class="icon favorite-room-icon"></i>
+                    <span>Favorites</span>
+                </h1>
+
+                <p class="empty-list-message helper-text">
+                    Star rooms to keep them here for later
+                </p>
+            </favorite-rooms>
+
+            <visited-rooms><h1>Recents</h1>
+                <p class="empty-list-message" id="onlineUsers">
+                </p>
+            </visited-rooms>
+
+        </aside>
+    </room-activity>
 
     <div class="video-wrapper screen-element">
-        <div style="/* height: 100%; *//* width: 100%; */" class="div2" id="video-wrapper">
+        <div class="div2" id="video-wrapper">
         </div>
     </div>
     <div class="bottom-right-button-group screen-element">
-        <a class="ui-text-button white" ng-click="clickedHelpButton()">Help</a>
-        <a class="ui-text-button white" ng-click="openPopupForType('tos')">Terms of use</a>
+        <a class="ui-text-button white">Help</a>
+        <a class="ui-text-button white">Terms of use</a>
     </div>
-
-    <div ng-show="ChatService.isEnabled" class="action-button chat-open-button visible" ng-click="openChat()"
-         ng-class="{active: ChatService.unreadCount > 0, visible: !ChatService.isOpen, 'pushed-up': isPushedUp()}">
-        <i class="svg bordered" ng-include="'/images/tools/chat-button.2c5ae55e.svg'">
+    <chat-wrapper animation-duration="300" id="chat_wrapper" class="notvisible">
+        <div class="screen-element chat-wrapper user-select-enabled">
+            <div class="chat jstest-chat" id="chat_wrapper_content" animation-duration="module.animationDuration" detect-media-links="true" close-callback="module.closeCallback()">
+                <div class="chat-content">
+                    <div class="action-button close-button" id="close_chat_btn" >
+                        <i class="svg" ng-include="'/images/tools/close-button.0d2709ea.svg'">
+                            <svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+                                <title>close-button</title>
+                                <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+                                    <g id="chat-open" sketch:type="MSArtboardGroup" transform="translate(-976.000000, -67.000000)" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <g id="chat-window" sketch:type="MSLayerGroup" transform="translate(716.000000, 63.000000)">
+                                            <g id="close-button" transform="translate(260.000000, 4.000000)" sketch:type="MSShapeGroup">
+                                                <path d="M18,18 L23,23 L18,18 L13,23 L18,18 Z M18,18 L13,13 L18,18 L23,13 L18,18 Z" id="Path-135"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg></i>
+                    </div>
+                    <div class="chat-inner-wrapper">
+                        <div class="messages-wrapper">
+                            <aside class="unread-indicator unread-above ng-hide" ng-show="unreadCountAbove > 0">
+                                <a ng-click="scrollToEarliestUnread()" ng-bind="unreadCountAboveLabel">0 unread message above</a>
+                            </aside>
+                            <div class="message-scroller" id="chat-container">
+                                <div class="messages" id="chat-output">
+                                    <div class="typing-indicator-wrapper ng-hide">
+                                        <aside class="dot-dot-dot">
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                            <span class="dot"></span>
+                                        </aside>
+                                    </div>
+                                </div>
+                            </div>
+                            <aside class="unread-indicator unread-below ng-hide" ng-show="unreadCountBelow > 0">
+                                <a ng-click="scrollToLatestUnread()" ng-bind="unreadCountBelowLabel">0 unread message below</a>
+                            </aside>
+                        </div>
+                        <div class="message-input-wrapper">
+                                <input type="text" id="input-text-chat" name="message" placeholder="Enter Text Chat"  autocomplete="off" class="chat-text-input ng-pristine ng-valid ng-empty ng-touched">
+                        </div>
+                    </div>
+                    <audio class="chat-notification-sound ng-hide" ng-hide="true" ng-src="https://d1x2efl61akomv.cloudfront.net/assets/chat-notification.ogg" type="audio/ogg" preload="" src="https://d1x2efl61akomv.cloudfront.net/assets/chat-notification.ogg"></audio>
+                </div>
+            </div>
+        </div>
+    </chat-wrapper>
+    <div class="action-button chat-open-button visible" id="chat_btn" >
+        <i class="svg bordered">
             <svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                 <g id="Page-1-Copy-Copy-Copy-Copy-Copy-Copy-Copy" stroke="none" stroke-width="1" fill="none"

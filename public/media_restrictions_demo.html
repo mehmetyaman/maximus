@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- saved from url=(0076)https://foolip.org/2014/02/10/media-playback-restrictions-in-blink/demo.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Media playback restrictions demo</title>
+<meta name="viewport" content="width=device-width">
+<style>
+body, h1 {
+  font-family: sans-serif;
+  font-size: 17px;
+}
+pre {
+  white-space: pre-wrap;
+  width: 100%;
+}
+video {
+  background: black;
+  height: 300px;
+  max-width: 100%;
+  width: 400px;
+}
+</style>
+<style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head><body><h1>Media playback restrictions demo</h1>
+<p>The video should autoplay after any user input. Read more in
+the <a href="http://blog.foolip.org/2014/02/10/media-playback-restrictions-in-blink/">blog post</a>.</p>
+<video controls="" autoplay="" src="https://archive.org/download/anita-leker-med-kameran/anita-leker-med-kameran.mp4"></video>
+<pre>log:
+ no user gesture required
+ set source</pre>
+<script>
+function log(msg) {
+  document.querySelector('pre').textContent += '\n ' + msg;
+}
+
+function setSource() {
+  log('set source');
+  var video = document.querySelector('video');
+  video.src = 'https://archive.org/download/anita-leker-med-kameran/anita-leker-med-kameran.' +
+              (video.canPlayType('video/mp4') ? 'mp4' : 'ogv');
+}
+
+function mediaPlaybackRequiresUserGesture() {
+  // test if play() is ignored when not called from an input event handler
+  var video = document.createElement('video');
+ // video.play();
+  return video.paused;
+}
+
+function removeBehaviorsRestrictions() {
+  var video = document.querySelector('video');
+  log('call load()');
+  video.load();
+  window.removeEventListener('keydown', removeBehaviorsRestrictions);
+  window.removeEventListener('mousedown', removeBehaviorsRestrictions);
+  window.removeEventListener('touchstart', removeBehaviorsRestrictions);
+  log('wait 1 second');
+  setTimeout(setSource, 1000);
+}
+
+if (mediaPlaybackRequiresUserGesture()) {
+  log('wait for input event');
+  window.addEventListener('keydown', removeBehaviorsRestrictions);
+  window.addEventListener('mousedown', removeBehaviorsRestrictions);
+  window.addEventListener('touchstart', removeBehaviorsRestrictions);
+} else {
+  log('no user gesture required');
+  setSource();
+}
+</script>
+</body></html>

@@ -8,8 +8,10 @@
 
         // Compatibility shim
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    //    var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 443, path: '/'});
-        var peer = new Peer({key: '72ojzzcbfs6pqfr'});
+        alert(<%=sessionID%>);
+        var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 443, path: '/'});
+  //      var peer = new Peer({key: '72ojzzcbfs6pqfr'});
+
         peer.on('open', function () {
             $('#my-id').text(peer.id);
         });
@@ -31,7 +33,6 @@
             $('#make-call').click(function(){
                 // Initiate a call!
                 var call = peer.call($('#callto-id').val(), window.localStream);
-
                 step3(call);
             });
 

@@ -232,6 +232,11 @@ function getMediaElement(mediaElement, config) {
     mediaBox.className = 'media-box';
     mediaElementContainer.appendChild(mediaBox);
 
+    var h2 = document.createElement('h2');
+    h2.innerHTML = 'User Id = '+config.title || 'Audio Element';
+    h2.setAttribute('class','userid_title')
+    mediaBox.appendChild(h2);
+
     mediaBox.appendChild(mediaElement);
 
     if (!config.width) config.width = (innerWidth / 2) - 50;
@@ -243,6 +248,17 @@ function getMediaElement(mediaElement, config) {
     }
 
     mediaBox.querySelector('video').style.maxHeight = innerHeight + 'px';
+
+    if (config.muted) {
+  //      mediaBox.querySelector('video').setAttribute('muted', config.muted);
+    }
+    if (config.autoplay) {
+        mediaBox.querySelector('video').setAttribute('autoplay', config.autoplay);
+    }
+   // if (config.volume) {
+     //   mediaBox.querySelector('video').setAttribute('volume', '0');
+  //  }
+ //   mediaBox.querySelector('video').setAttribute('muted', 'false');
 
     var times = 0;
 
@@ -425,10 +441,10 @@ function getAudioElement(mediaElement, config) {
     mediaBox.appendChild(mediaElement);
 
   //  mediaElementContainer.style.width = '329px';
-    mediaBox.style.height = '90px';
+  //  mediaBox.style.height = '90px';
 
     h2.style.width = mediaElementContainer.style.width;
-    h2.style.height = '50px';
+    h2.style.height = '35px';
     h2.style.overflow = 'hidden';
 
     var times = 0;
