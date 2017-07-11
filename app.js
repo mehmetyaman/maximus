@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-var express = require('express');
+var express = require('express'), expressValidator = require('express-validator');
 var app = express();
 var env = require('dotenv').load();
 var winston = require('winston');
@@ -34,7 +34,7 @@ var server = email.server.connect({
 app.use(express.logger('dev')); // log every request to the console
 app.use(express.cookieParser()); // read cookies (needed for auth)
 app.use(express.bodyParser()); // get information from html forms
-
+app.use(expressValidator());
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
@@ -101,6 +101,7 @@ app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use(expressValidator());
 
 // development only
 if ('development' == app.get('env')) {
