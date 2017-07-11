@@ -1,4 +1,4 @@
-module.exports = function (app, winston) {
+module.exports = function (app, winston, io) {
 
     app.get('/plan/:userId', isLoggedIn, function (req, res, next) {
         var userId = req.params.userId;
@@ -6,14 +6,14 @@ module.exports = function (app, winston) {
             var query = connection.query('select ts.* from translation_session_users tu, translation_session ts' +
                 '  where tu.user_id = ? and tu.id = ts.id ', userId, function (err, rows) {
 
-                if (err){
+                if (err) {
                     console.log("Error Selecting : %s ", err);
                 }
                 res.status(200).json(rows);
             });
         });
     });
-    
+
     app.post('/plan', isLoggedIn, function (req, res, next) {
         var input = JSON.parse(JSON.stringify(req.body));
 

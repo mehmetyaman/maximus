@@ -126,20 +126,7 @@ module.exports = function (passport) {
 // =========================================================================
     /*
      Client ID:	86jkoxygnghvrf
-
      Client Secret:	mpkg3fLKSMnQawzE
-
-     passport.use(new LinkedInStrategy({
-     consumerKey: "86jkoxygnghvrf",
-     consumerSecret: "mpkg3fLKSMnQawzE",
-     callbackURL: "http://localhost:4300/auth/linkedin/callback"
-     },
-     function (token, tokenSecret, profile, done) {
-     User.findOrCreate({linkedinId: profile.id}, function (err, user) {
-     return done(err, user);
-     });
-     }
-     ));
      */
 
     passport.use(new LinkedInStrategy({
@@ -154,11 +141,43 @@ module.exports = function (passport) {
             // represent the logged-in user. In a typical application, you would want
             // to associate the LinkedIn account with a user record in your database,
             // and return that user instead.
+
             connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
                 if (err)
                     return done(err);
                 if (!rows.length) {
-                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    var user = {
+                        name: profile._json.firstName,
+                        surname: profile._json.lastName,
+                        email: profile._json.emailAddress,
+                        picture_url: profile._json.pictureUrl,
+                        country_code: profile._json.location.country.code,
+                        password: bcrypt.hashSync(1, null, null),
+                        is_linkedin_user: 1
+                    }
+
+                    var query = connection.query("INSERT INTO users set ? ", user, function (err1, results, rows) {
+                        if (err1) {
+                            return done(err);
+                        }
+                        done(null, user);
+                    });
+                } else {
+                    var user = {
+                        name: profile._json.firstName,
+                        surname: profile._json.lastName,
+                        email: profile._json.emailAddress,
+                        picture_url: profile._json.pictureUrl,
+                        country_code: profile._json.location.country.code,
+                        is_linkedin_user: 1
+                    }
+
+                    var query = connection.query("update users set ? where id=? ", [user, user.linkedin_id], function (err1, results, rows) {
+                        if (err1) {
+                            return done(err);
+                        }
+                        done(null, user);
+                    });
                 }
 
                 // all is well, return successful user

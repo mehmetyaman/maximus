@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+    <title>selection page</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
+    <style>
+        body {
+            padding-top: 80px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<form id="plan-form">
+    <div class="container">
+
+        <% if (demandedTranslators) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span>Name</span>
+            </div>
+            <div class="col-md-3">
+                <span>SurName</span>
+            </div>
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-3">
+            </div>
+            <div>
+            </div>
+        </div>
+        <% demandedTranslators.forEach(function (demanded) { %>
+        <div class="row">
+            <div class="col-md-3">
+                <span><%= demanded.name %></span>
+            </div>
+            <div class="col-md-3">
+                <span><%= demanded.surname %></span>
+            </div>
+            <div class="col-md-3">
+                <img src="<%= demanded.picture_url %>">
+            </div>
+            <div class="col-md-3">
+                <a href="/selection/session/<%= demanded.session_id %>/translator/<%= demanded.user_id %>"
+                   class="btn btn-large btn-info"
+                   target="_self">Select</a>
+            </div>
+        </div>
+        <% }) %>
+    </div>
+    <% } %>
+    </div>
+</form>
+</body>
+</html>
