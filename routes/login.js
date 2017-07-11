@@ -132,58 +132,66 @@ module.exports = function (app, passport, winston) {
 
     });
 
-
     // process the signup form
     app.post('/signup', function (req, res, next) {
-        passport.authenticate('local-signup', function (err, user, info) {
+        req.assert('email', 'A valid email is required').isEmail();  //Validate email
+        req.assert('name', 'Name field can not be empty and has to be minimum 2 character maximum 10').len(2,10);
+        req.assert('surname', 'Surname field can not be empty and has to be minimum 2 character maximum 10').len(2,10);
+        req.assert('password', 'Surname field can not be empty and has to be minimum 2 character maximum 20').len(6,20);
 
-                if (err) {
-                    return next(err);
-                }
-                if (!user) {
-                    return res.redirect('/signup');
-                }
-                req.logIn(user, function (err) {
-                    if (user.is_translator) {
-                        var input = JSON.parse(JSON.stringify(req.body));
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty()) {
+                return res.redirect('signup?customer=true');
+            } else {
+                passport.authenticate('local-signup', function (err, user, info) {
 
-                        req.getConnection(function (err, connection) {
-
-                                var data = {
-                                    name: input.name,
-                                    surname: input.surname,
-                                    email: input.email
-                                };
-
-                                langListCarrier = input.langListCarrier;
-                                var values = [];
-                                langListCarrier.split(";").filter(function (e) {
-                                    return e
-                                }).forEach(function (item) {
-                                    values.push([user.id, item.split(",")[0], item.split(",")[1]]);
-                                });
-                                var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
-                                    if (err2) {
-                                        console.log("Error inserting : %s ", err2);
-                                    }
-
-                                    res.redirect('/profilet');
-                                });
-
-                            }
-                        );
+                    if (err) {
+                        return next(err);
                     }
-                    else if (user.is_customer) {
-                        {
-                            res.redirect('/profile');
+                    if (!user) {
+                        return res.redirect('/signup');
+                    }
+                    req.logIn(user, function (err) {
+                        if (user.is_translator) {
+                            var input = JSON.parse(JSON.stringify(req.body));
+
+                            req.getConnection(function (err, connection) {
+
+                                    var data = {
+                                        name: input.name,
+                                        surname: input.surname,
+                                        email: input.email
+                                    };
+
+                                    langListCarrier = input.langListCarrier;
+                                    var values = [];
+                                    langListCarrier.split(";").filter(function (e) {
+                                        return e
+                                    }).forEach(function (item) {
+                                        values.push([user.id, item.split(",")[0], item.split(",")[1]]);
+                                    });
+                                    var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
+                                        if (err2) {
+                                            console.log("Error inserting : %s ", err2);
+                                        }
+
+                                        res.redirect('/profilet');
+                                    });
+
+                                }
+                            );
                         }
-                    }
-                });
+                        else if (user.is_customer) {
+                            {
+                                res.redirect('/profile');
+                            }
+                        }
+                    });
+                })(req, res, next);
             }
-        )
-        (req, res, next);
-    })
-    ;
+        });
+    });
+
 
 // SIGNUP =================================
 // show the signup form
@@ -238,7 +246,6 @@ module.exports = function (app, passport, winston) {
             successRedirect: '/profile',
             failureRedirect: '/'
         }));
-
 
 // google ---------------------------------
 
