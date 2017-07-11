@@ -115,12 +115,10 @@ require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
 
-var scheduler = require('./scheduler/schedule-master.js');
-scheduler.init();
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
-// Loading socket.io
+
 var io = require('socket.io').listen(server);
 io.on('connection', function(socket) {
     console.log("new connection established");

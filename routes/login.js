@@ -205,6 +205,7 @@ module.exports = function (app, passport, winston) {
     app.get('/auth/linkedin',
         passport.authenticate('linkedin', {state: 'SOME STATE'}),
         function (req, res) {
+            console.log("here");
             // The request will be redirected to LinkedIn for authentication, so this
             // function will not be called.
         });

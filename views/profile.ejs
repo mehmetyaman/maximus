@@ -210,98 +210,27 @@
                 <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
             </div>
             <%if(items.is_paid == 1){ %>
-                <div class="col-md-2">
-                    <span style="color: #00CC00">Paid</span>
-                    <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
-                </div>
+            <div class="col-md-2">
+                <span style="color: #00CC00">Paid</span>
+                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+            </div>
             <%}else{%>
-                <div class="col-md-2">
-                    <span style="color: #d32132">Not Paid</span>
+            <div class="col-md-2">
+                <span style="color: #d32132">Not Paid</span>
                     <span>
                         <button type="button" class="btn btn-info btn-md" id="pay_btn"
                                 onclick="PopupCenter('/payment/150/TRY/<%= items.id %>','Payment','500','500');">
                             Click To Pay
                         </button>
                     </span>
-                </div>
-            <%}%>
-            <button type="button" class="btn btn-info btn-md" data-toggle="modal" data-target="#modal<%= items.id %>">
-                Select a Translater
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="modal<%= items.id %>" role="dialog">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Demanded Translators</h4>
-                        </div>
-                        <div class="modal-body">
-                            <%
-                                var exist = false;
-                            demandedTranslators.forEach(function (demand) {
-                            if(demand.session_id == items.id){
-                                exist = true;
-                            }});
-                            %>
-                            <% if(exist) { %>
-                            <div id="carousel<%= items.id %>" class="carousel slide" data-ride="carousel">
-                                <!-- Indicators -->
-                                <ol class="carousel-indicators">
-                                    <%
-                                        var first = true;
-                                    demandedTranslators.forEach(function (demand) {
-                                    if(demand.session_id == items.id){
-                                    %>
-                                    <li data-target="#carousel<%= items.id %>" data-slide-to="0"
-                                            <% if (first) { %>
-                                        class="active"
-                                            <% } %>
-                                    ></li>
-                                    <% first = false; }}) %>
-                                </ol>
-
-                                <!-- Wrapper for slides -->
-                                <div class="carousel-inner" role="listbox">
-                                    <%
-                                        first = true;
-                                    demandedTranslators.forEach(function (demand) {
-                                    if(demand.session_id == items.id){
-                                    %>
-                                    <div class="item <% if (first) { %>active<% } %>">
-                                        <h4>user <%= demand.id %></h4>
-                                        <h4>name <%= demand.name %></h4>
-                                        <h4>surname <%= demand.surname %></h4>
-                                        <h4>email <%= demand.email %></h4>
-                                    </div>
-
-                                    <button type="button" class="btn btn-default"
-                                            onclick="assignSession(<%= demand.id %>,<%= demand.session_id %>)">Assign
-                                    </button>
-                                    <% first = false;  }}) %>
-                                </div>
-
-                                <!-- Left and right controls -->
-                                <a class="left carousel-control" href="#carousel<%= items.id %>" data-slide="prev">
-                                    <span class="glyphicon glyphicon-chevron-left"></span>
-                                    <span class="sr-only">Previous</span>
-                                </a>
-                                <a class="right carousel-control" href="#carousel<%= items.id %>" data-slide="next">
-                                    <span class="glyphicon glyphicon-chevron-right"></span>
-                                    <span class="sr-only">Next</span>
-                                </a>
-                            </div>
-                            <% } else  {%>
-                              <h2>No translator has been demanded</h2>
-                            <% } %>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
             </div>
+            <%}%>
+            <div class="col-md-2">
+                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+            </div>
+            <% if(!items.translator_id){ %>
+            <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">Select Translater</a>
+            <% } %>
         </div>
         <% }) %>
     </div>
@@ -325,7 +254,6 @@
     $(document).ready(function () {
         $('#plandate').datetimepicker();
     });
-
     $(".dropdown-menu li a").click(function () {
         var selText = $(this).text();
         $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
@@ -375,24 +303,6 @@
             location.reload();
         });
     });
-
-    function PopupCenter(url, title, w, h) {
-        // Fixes dual-screen position                         Most browsers      Firefox
-        var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
-        var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
-
-        var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-        var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-
-        var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-        var top = ((height / 2) - (h / 2)) + dualScreenTop;
-        return window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
-
-        // Puts focus on the newWindow
-        //if (window.focus) {
-        //    newWindow.focus();
-        //}
-    }
 </script>
 </body>
 </html>
