@@ -143,8 +143,9 @@ module.exports = function (passport) {
             // and return that user instead.
 
             connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
-                if (err)
+                if (err){
                     return done(err);
+                }
                 if (!rows.length) {
                     var user = {
                         name: profile._json.firstName,
