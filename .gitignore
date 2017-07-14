@@ -29,9 +29,6 @@ Desktop.ini
 logs
 *.log
 
-# Deps
-node_modules
-bower_components
 
 # idea files
 .idea

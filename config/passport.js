@@ -5,7 +5,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-//var LinkedInStrategy = require('passport-linkedin').Strategy;
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // load up the user model
@@ -124,16 +123,11 @@ module.exports = function (passport) {
 // =========================================================================
 // Linkedin ================================================================
 // =========================================================================
-    /*
-     Client ID:	86jkoxygnghvrf
-     Client Secret:	mpkg3fLKSMnQawzE
-     */
-
     passport.use(new LinkedInStrategy({
         clientID: "86jkoxygnghvrf",
         clientSecret: "mpkg3fLKSMnQawzE",
         callbackURL: "http://localhost:4300/auth/linkedin/callback",
-        scope: ['r_emailaddress', 'r_basicprofile'],
+        scope: ['r_emailaddress', 'r_basicprofile']
     }, function (accessToken, refreshToken, profile, done) {
         // asynchronous verification, for effect...
         process.nextTick(function () {
@@ -141,12 +135,12 @@ module.exports = function (passport) {
             // represent the logged-in user. In a typical application, you would want
             // to associate the LinkedIn account with a user record in your database,
             // and return that user instead.
-
             connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
-                if (err){
+                if (err) {
                     return done(err);
                 }
                 if (!rows.length) {
+                    // new user case
                     var user = {
                         name: profile._json.firstName,
                         surname: profile._json.lastName,
@@ -154,14 +148,16 @@ module.exports = function (passport) {
                         picture_url: profile._json.pictureUrl,
                         country_code: profile._json.location.country.code,
                         password: bcrypt.hashSync(1, null, null),
-                        is_linkedin_user: 1
+                        is_linkedin_user: 1,
+                        linkedin_id: profile._json.id
                     }
 
-                    var query = connection.query("INSERT INTO users set ? ", user, function (err1, results, rows) {
+                    var query = connection.query("INSERT INTO users set ? ", user, function (err1, results, rows1) {
                         if (err1) {
                             return done(err);
                         }
-                        done(null, user);
+
+                        return done(null, user);
                     });
                 } else {
                     var user = {
@@ -170,19 +166,19 @@ module.exports = function (passport) {
                         email: profile._json.emailAddress,
                         picture_url: profile._json.pictureUrl,
                         country_code: profile._json.location.country.code,
-                        is_linkedin_user: 1
+                        is_linkedin_user: 1,
+                        linkedin_id: profile._json.id
                     }
 
-                    var query = connection.query("update users set ? where id=? ", [user, user.linkedin_id], function (err1, results, rows) {
+                    var query = connection.query("update users set ? where linkedin_id=? ", [user, user.linkedin_id], function (err1, results, rows2) {
                         if (err1) {
                             return done(err);
                         }
-                        done(null, user);
+
+                        // all is well, return successful user
+                        return done(null, user);
                     });
                 }
-
-                // all is well, return successful user
-                return done(null, rows[0]);
             });
         });
     }));

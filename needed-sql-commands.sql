@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `password`         CHAR(60)         NOT NULL,
+  `linkedin_id`      CHAR(60)         NOT NULL,
   PRIMARY KEY (`id`),
   `name`             VARCHAR(45)      NOT NULL,
   `surname`          VARCHAR(45)      NOT NULL,
@@ -88,7 +89,7 @@ CREATE TABLE `translation_session` (
   `start_time`    TIME                      DEFAULT NULL,
   `end_time`      TIME                      DEFAULT NULL,
   `is_pushed`     BOOLEAN                   DEFAULT FALSE,
-  `is_paid` int(11) NOT NULL,
+  `is_paid`       INT(11)          NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_1_idx` (`lang1`),
   KEY `fk_translation_session_2_idx` (`lang2`),
