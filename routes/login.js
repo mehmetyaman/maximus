@@ -135,9 +135,9 @@ module.exports = function (app, passport, winston) {
     // process the signup form
     app.post('/signup', function (req, res, next) {
         req.assert('email', 'A valid email is required').isEmail();  //Validate email
-        req.assert('name', 'Name field can not be empty and has to be minimum 2 character maximum 25').len(2,25);
-        req.assert('surname', 'Surname field can not be empty and has to be minimum 2 character maximum 25').len(2,25);
-        req.assert('password', 'Surname field can not be empty and has to be minimum 2 character maximum 20').len(6,20);
+        req.assert('name', 'Name field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
+        req.assert('surname', 'Surname field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
+        req.assert('password', 'Surname field can not be empty and has to be minimum 2 character maximum 20').len(6, 20);
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
