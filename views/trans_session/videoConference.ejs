@@ -115,7 +115,7 @@
     connection.videosContainer = document.getElementById('video-wrapper');
     connection.onstream = function (event) {
         ++i;
-        i==1 ? mute='true' : mute='false';
+        i==1 ? mute=true : mute=false;
         i==1 ? autplay='false' : autplay='true';
         i==1 ? vol='0' : vol='';
        // alert("i="+ i);
@@ -125,11 +125,11 @@
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
             //    buttons: ['full-screen'],
-             buttons: ['volume-slider'],
-         //   buttons: [''],
+         //    buttons: ['volume-slider'],
+            buttons: [''],
             //    width: width,
             muted: mute,
-            autoplay: autplay,
+        //    autoplay: autplay,
         //    volume: vol,
         //    showOnMouseEnter: false
         });
