@@ -4,7 +4,7 @@ var path = require('path');
 
 module.exports = function (app) {
 
-    app.get('/videoConference/:id', isLoggedIn, function (req, res) {
+    app.get('/videoConference/:id', function (req, res) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
         var username=req.user.email;
