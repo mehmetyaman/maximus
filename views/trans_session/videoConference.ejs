@@ -19,6 +19,7 @@
 </head>
 
 <script>
+
     $(document).ready(function () {
         disableInputButtons();
 
@@ -277,7 +278,18 @@
 
             if (!isRoomExists) {
                 //  showRoomURL(roomid);
+                alert("room is created");
+                //connection.getAllParticipants;
+                //    .forEach(function (participant) {
+                //    var parti= participant;
+                //    console.log(parti);
+                //});
             }
+
+            parts = connection.getAllParticipants();
+            console.log(parts);
+
+
         });
 
     });
