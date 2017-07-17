@@ -51,11 +51,29 @@ module.exports = function (passport) {
             function (req, username, password, done) {
                 // find a user whose email is the same as the forms email
                 // we are checking to see if the user trying to login already exists
+                var isLinkedincycle = false;
+                if (req.body.linkedincycle) {
+                    isLinkedincycle = true;
+                }
                 connection.query("SELECT * FROM users WHERE email = ? ", [username], function (err, rows) {
                     if (err)
                         return done(err);
                     if (rows.length) {
-                        return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                        if (isLinkedincycle) {
+                            var user = rows[0];
+                            user.password = bcrypt.hashSync(password, null, null);
+                            var updatequery = "update users set password =? where email=?";
+
+                            connection.query(updatequery, [bcrypt.hashSync(user.password, null, null), username], function (err, rows) {
+                                if (err) {
+                                    return done(err);
+                                }
+
+                                return done(null, user);
+                            });
+                        } else {
+                            return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                        }
                     } else {
                         // if there is no user with that username
                         // create the user
@@ -104,7 +122,7 @@ module.exports = function (passport) {
             },
             function (req, username, password, done) { // callback with email and password from our form
                 connection.query("SELECT * FROM users WHERE email = ?", [username], function (err, rows) {
-                    if (err){
+                    if (err) {
                         return done(err);
                     }
                     if (!rows.length) {
@@ -163,7 +181,7 @@ module.exports = function (passport) {
 
                         done(null, user);
                     });
-                    
+
                 } else {
                     var user = {
                         name: profile._json.firstName,

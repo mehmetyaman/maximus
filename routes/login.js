@@ -13,6 +13,8 @@ module.exports = function (app, passport, winston) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
                 res.redirect('/profilet');
+            } else if(req.user.is_linkedin_user) {
+                res.redirect('/logout');
             }
         } else {
             res.render('index.ejs');
@@ -108,8 +110,7 @@ module.exports = function (app, passport, winston) {
     // SIGNUP =================================
     // show the signup form
     app.get('/signup', function (req, res) {
-        var sql = "SELECT id FROM translators" +
-            " WHERE  translators.email = ?";
+        var sql = "SELECT id FROM translators WHERE  translators.email = ?";
 
         if (!req.query.customer) {
             req.getConnection(function (err, connection) {
@@ -141,7 +142,11 @@ module.exports = function (app, passport, winston) {
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
-                return res.redirect('signup?customer=true');
+                if(req.body.linkedincycle) {
+                    return res.redirect("/logout");
+                } else  {
+                    return res.redirect('/login');
+                }
             } else {
                 passport.authenticate('local-signup', function (err, user, info) {
 

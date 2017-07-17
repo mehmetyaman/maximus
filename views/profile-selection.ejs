@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-<form id="profile-selection">
+<form id="profile-selection" method="post" action="/profile/select" >
     <div class="container">
         <div class="row">
             <div class="col-md-4">
@@ -58,7 +58,7 @@
         </div><!-- /.col-lg-6 -->
         <div class="col-md-8">
             <div class="input-group">
-                <button type="button" id="post-btn" name="post-btn" class="btn btn-default">Submit</button>
+                <button type="submit" id="post-btn" name="post-btn" class="btn btn-default">Submit</button>
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
@@ -66,7 +66,7 @@
 </form>
 
 <script type="text/javascript">
-    $("#post-btn").click(function () {
+    $("#post-btn1").click(function () {
         $.post("/profile/select", {
                 selectedProfile: $('#profile-selection input:radio:checked').val()
             }, function (resp) {
