@@ -151,6 +151,7 @@ module.exports = function (passport) {
     }, function (req, accessToken, refreshToken, profile, done) {
         req.session.accessToken = accessToken;
         req.session.linkedinprofile = profile._json;
+        
         // asynchronous verification, for effect...
         process.nextTick(function () {
             // To keep the example simple, the user's LinkedIn profile is returned to
@@ -180,6 +181,7 @@ module.exports = function (passport) {
                             done(err);
                         }
                         user.id = results.insertId;
+                        user.isNew = true;
                         done(null, user);
                     });
 
@@ -193,7 +195,9 @@ module.exports = function (passport) {
                         country_code: profile._json.location.country.code,
                         is_linkedin_user: 1,
                         linkedin_id: profile._json.id,
-                        id: dbUser.id
+                        id: dbUser.id,
+                        is_customer: rows[0].is_customer,
+                        is_translator: rows[0].is_translator
                     }
 
                     var query = connection.query("update users set ? where linkedin_id=? ", [user, user.linkedin_id], function (err1, results, rows2) {

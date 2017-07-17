@@ -13,7 +13,7 @@ module.exports = function (app, passport, winston) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
                 res.redirect('/profilet');
-            } else if(req.user.is_linkedin_user) {
+            } else if (req.user.is_linkedin_user) {
                 res.redirect('/logout');
             }
         } else {
@@ -142,9 +142,9 @@ module.exports = function (app, passport, winston) {
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
-                if(req.body.linkedincycle) {
+                if (req.body.linkedincycle) {
                     return res.redirect("/logout");
-                } else  {
+                } else {
                     return res.redirect('/login');
                 }
             } else {
@@ -222,10 +222,24 @@ module.exports = function (app, passport, winston) {
             console.log("here another");
         }));
 
-    app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-        successRedirect: '/profile/select',
-        failureRedirect: '/login'
-    }));
+    app.get('/auth/linkedin/callback', passport.authenticate('linkedin',
+        {
+            successRedirect: '/selector',
+            failureRedirect: '/login'
+        }));
+
+    app.get('/selector', isLoggedIn , function (req, res) {
+        if (req.user.isNew) {
+            return res.redirect('/profile/select');
+        }
+        if (req.user.is_translator) {
+            return res.redirect('/profilet');
+        }
+        if (req.user.is_customer) {
+            return res.redirect('/profile');
+        }
+    });
+
 
 // facebook -------------------------------
 
