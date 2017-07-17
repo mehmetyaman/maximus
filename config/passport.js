@@ -104,8 +104,9 @@ module.exports = function (passport) {
             },
             function (req, username, password, done) { // callback with email and password from our form
                 connection.query("SELECT * FROM users WHERE email = ?", [username], function (err, rows) {
-                    if (err)
+                    if (err){
                         return done(err);
+                    }
                     if (!rows.length) {
                         return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
                     }
@@ -126,9 +127,12 @@ module.exports = function (passport) {
     passport.use(new LinkedInStrategy({
         clientID: "86jkoxygnghvrf",
         clientSecret: "mpkg3fLKSMnQawzE",
-        callbackURL: "http://localhost:4300/auth/linkedin/callback",
-        scope: ['r_emailaddress', 'r_basicprofile']
-    }, function (accessToken, refreshToken, profile, done) {
+        callbackURL: "/auth/linkedin/callback",
+        scope: ['r_emailaddress', 'r_basicprofile'],
+        passReqToCallback: true
+    }, function (req, accessToken, refreshToken, profile, done) {
+        req.session.accessToken = accessToken;
+        req.session.linkedinprofile = profile._json;
         // asynchronous verification, for effect...
         process.nextTick(function () {
             // To keep the example simple, the user's LinkedIn profile is returned to
@@ -154,11 +158,12 @@ module.exports = function (passport) {
 
                     var query = connection.query("INSERT INTO users set ? ", user, function (err1, results, rows1) {
                         if (err1) {
-                            return done(err);
+                            done(err);
                         }
 
-                        return done(null, user);
+                        done(null, user);
                     });
+                    
                 } else {
                     var user = {
                         name: profile._json.firstName,
@@ -172,11 +177,11 @@ module.exports = function (passport) {
 
                     var query = connection.query("update users set ? where linkedin_id=? ", [user, user.linkedin_id], function (err1, results, rows2) {
                         if (err1) {
-                            return done(err);
+                            done(err);
                         }
 
                         // all is well, return successful user
-                        return done(null, user);
+                        done(null, user);
                     });
                 }
             });

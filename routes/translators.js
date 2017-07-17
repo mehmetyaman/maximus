@@ -49,7 +49,6 @@ module.exports = function (app) {
         });
     });
 
-    //app.post('/translators/add', translators.save);
     app.post('/translators/add', isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
