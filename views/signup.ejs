@@ -16,7 +16,6 @@
     <div class="col-sm-6 col-sm-offset-3">
 
         <h1><span class="fa fa-sign-in"></span> Signup</h1>
-
         <% if (message.length > 0) { %>
         <div class="alert alert-danger"><%= message %></div>
         <% } %>
@@ -25,15 +24,34 @@
         <form action="/signup<% if (customer) { %>?customer=true<% } %>" method="post">
             <div class="form-group">
                 <label>Name</label>
-                <input type="text" class="form-control" name="name">
+                <input type="text" class="form-control" name="name"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.firstName %>"
+                        <% } %>
+                >
             </div>
             <div class="form-group">
                 <label>SurName</label>
-                <input type="text" class="form-control" name="surname">
+                <input type="text" class="form-control" name="surname"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.lastName %>"
+                        <% } %>
+                >
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" class="form-control" name="email">
+                <input type="text" class="form-control" name="email"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.emailAddress %>"
+                        <% } %>
+                >
+                <% if (typeof linkedinprofile == 'object') { %>
+                <input type="hidden" name="linkedincycle" id="linkedincycle" value="true">
+                <%
+                } %>
+                <% if (customer) { %>
+                <input type="hidden" name="isCustomer" id="isCustomer" value="true">
+                <% } %>
             </div>
             <div class="form-group">
                 <label>Password</label>
