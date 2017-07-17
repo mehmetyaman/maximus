@@ -158,6 +158,7 @@ module.exports = function (passport) {
             // to associate the LinkedIn account with a user record in your database,
             // and return that user instead.
             connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
+
                 if (err) {
                     return done(err);
                 }
@@ -178,11 +179,12 @@ module.exports = function (passport) {
                         if (err1) {
                             done(err);
                         }
-
+                        user.id = results.insertId;
                         done(null, user);
                     });
 
                 } else {
+                    var dbUser = rows[0];
                     var user = {
                         name: profile._json.firstName,
                         surname: profile._json.lastName,
@@ -190,7 +192,8 @@ module.exports = function (passport) {
                         picture_url: profile._json.pictureUrl,
                         country_code: profile._json.location.country.code,
                         is_linkedin_user: 1,
-                        linkedin_id: profile._json.id
+                        linkedin_id: profile._json.id,
+                        id: dbUser.id
                     }
 
                     var query = connection.query("update users set ? where linkedin_id=? ", [user, user.linkedin_id], function (err1, results, rows2) {
