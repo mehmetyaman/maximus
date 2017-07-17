@@ -211,15 +211,14 @@ module.exports = function (app, passport, winston) {
 
 // linkedin -------------------------------
     app.get('/auth/linkedin',
-        passport.authenticate('linkedin', {state: 'SOME STATE'}),
-        function (req, res) {
-            console.log("here");
+        passport.authenticate('linkedin', function (req, res) {
             // The request will be redirected to LinkedIn for authentication, so this
             // function will not be called.
-        });
+            console.log("here another");
+        }));
 
     app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-        successRedirect: '/',
+        successRedirect: '/profile/select',
         failureRedirect: '/login'
     }));
 

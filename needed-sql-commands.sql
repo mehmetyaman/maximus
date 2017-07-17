@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `password`         CHAR(60)         NOT NULL,
-  `linkedin_id`      CHAR(60)         NOT NULL,
+  `linkedin_id`      CHAR(60)         NULL,
   PRIMARY KEY (`id`),
   `name`             VARCHAR(45)      NOT NULL,
   `surname`          VARCHAR(45)      NOT NULL,

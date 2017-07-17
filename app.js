@@ -87,6 +87,7 @@ require('./routes/users')(app);
 require('./routes/videochat')(app);
 require('./routes/payment')(app);
 require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
+require('./routes/profile-selection')(app);
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
