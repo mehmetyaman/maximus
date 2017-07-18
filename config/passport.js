@@ -77,22 +77,33 @@ module.exports = function (passport) {
                     } else {
                         // if there is no user with that username
                         // create the user
+
+                        var randomstring = require("randomstring");
+
                         var newUserMysql = {
                             username: username,
                             password: bcrypt.hashSync(password, null, null),
                             is_customer: req.query.customer ? 1 : 0,
                             is_translator: !req.query.customer ? 1 : 0,
                             name: req.body.name,
-                            surname: req.body.surname
+                            surname: req.body.surname,
+                            email_verification_code: randomstring.generate({
+                                length: 64
+                            }),
+                            password_verification_code: randomstring.generate({
+                                length: 64
+                            }),
+                            is_email_verification: 0
                         };
 
                         var insertQuery = "INSERT INTO users (email, password, is_customer, is_translator, name," +
-                            " surname)" +
+                            " surname, email_verification_code, password_verification_code, is_email_verification)" +
                             " values" +
-                            " (?,?,?,?,?,?) ";
+                            " (?,?,?,?,?,?,?,?,?) ";
 
                         connection.query(insertQuery, [newUserMysql.username, newUserMysql.password,
-                            newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname], function (err, rows) {
+                            newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname,
+                        newUserMysql.email_verification_code, newUserMysql.password_verification_code, newUserMysql.is_email_verification], function (err, rows) {
                             if (err) {
                                 return done(err);
                             }
@@ -125,6 +136,11 @@ module.exports = function (passport) {
                     if (err) {
                         return done(err);
                     }
+
+                    if(rows[0].is_email_verification == 0){
+                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
+                    }
+
                     if (!rows.length) {
                         return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
                     }
@@ -135,6 +151,49 @@ module.exports = function (passport) {
 
                     // all is well, return successful user
                     return done(null, rows[0]);
+                });
+            })
+    );
+
+    // =========================================================================
+    // create-new-token =============================================================
+    // =========================================================================
+
+    passport.use(
+        'create-new-token',
+        new LocalStrategy({
+                // by default, local strategy uses username and password, we will override with email
+                usernameField: 'email',
+                passReqToCallback: true // allows us to pass back the entire request to the callback
+            },
+            function (req, username, password, done) { // callback with email and password from our form
+                connection.query("SELECT * FROM users WHERE email = ?", [username], function (err, rows) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    if (!rows.length) {
+                        return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    }
+
+                    var token = randomstring.generate({
+                        length: 64
+                    });
+                    var updatequery = "update users set email_verification_code =?  where email=?";
+
+                    connection.query(updatequery, [token, username], function (err, rows) {
+                        if (err) {
+
+                            return done(null, false, req.flash('loginMessage', 'Oops something wrong. Please try again'));
+
+                        }else {
+
+                            rows[0].email_verification_code = token;
+                            return done(null, rows[0], null);
+                        }
+                    });
+
+
                 });
             })
     );
