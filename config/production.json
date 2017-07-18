@@ -45,7 +45,7 @@
   "socketURL": "https://maxsimus.herokuapp.com:443/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "9000",
+  "port": "443",
   "enableLogs": true,
   "autoRebootServerOnFailure": false,
   "enableScalableBroadcast":true,
