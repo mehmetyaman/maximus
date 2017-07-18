@@ -1,7 +1,7 @@
 var http = require('http');
 var moment = require('moment');
 
-module.exports = function (app, passport, winston) {
+module.exports = function (app, passport, winston, emailserver) {
 
 
 // normal routes ===============================================================
@@ -79,7 +79,7 @@ module.exports = function (app, passport, winston) {
     // LOGIN ===============================
     // show the login form
     app.get('/login', function (req, res) {
-        res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer});
+        res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer, openTokenRequest:false});
     });
 
 
@@ -105,6 +105,106 @@ module.exports = function (app, passport, winston) {
                 }
             });
         })(req, res, next);
+    });
+
+    //emial verify ============
+
+
+    app.post('/send-verify-email-again', function (req, res, next) {
+
+        var randomstring = require("randomstring");
+        req.getConnection(function (err, connection) {
+            connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
+                if (err) {
+                    res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                    return;
+                }
+
+                if (!rows.length) {
+                    res.render('login.ejs', {message:  'No user found.', customer: req.query.customer, openTokenRequest:true});
+                    // req.flash is the way to set flashdata using connect-flash
+                    return;
+                }
+
+                var token = randomstring.generate({
+                    length: 64
+                });
+                var updatequery = "update users set email_verification_code =?  where email=?";
+
+                connection.query(updatequery, [token, req.body.email], function (err, rowsUpdate) {
+                    if (err) {
+
+                        res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                        return;
+
+                    }else {
+
+                        rows[0].email_verification_code = token;
+                        sendVerificationEmail(req, rows[0], res);
+                        res.render('login.ejs', {message:  'New verification email sended. Please look your email', customer: req.query.customer, openTokenRequest:false});
+                        return;
+                    }
+                });
+
+
+            });
+        });
+
+    });
+
+
+    app.get('/verify-email', function (req, res) {
+
+        if (req.query.token != null) {
+            req.getConnection(function (err, connection) {
+                var query = connection.query('select * from users where email_verification_code= ?', [req.query.token], function (err, rows) {
+
+                    if (err) {
+                        res.render('login.ejs', {
+                            message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                            customer: req.query.customer,
+                            openTokenRequest: true
+
+                        });
+                    }else {
+                        if (rows.length) {
+
+                            var updatequery = "update users set email_verification_code =? , is_email_verification=?  where email_verification_code=?";
+
+                            connection.query(updatequery, [null, 1, req.query.token], function (err, rows) {
+                                if (err) {
+                                    res.render('login.ejs', {
+                                        message: 'Your token expired. You can get new token email under the below. Please type your email adress',
+                                        customer: req.query.customer,
+                                        openTokenRequest: true
+
+                                    });
+                                } else {
+
+                                    res.render('login.ejs', {
+                                        message: 'Your email is verifed. You can login now.',
+                                        customer: req.query.customer,
+                                        openTokenRequest: false
+                                    });
+                                }
+                            });
+                        }else{
+                            res.render('login.ejs', {
+                                message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                                customer: req.query.customer,
+                                openTokenRequest: true
+
+                            });
+                        }
+                    }
+
+
+                });
+            });
+        } else {
+            res.render('signup.ejs', {message: req.flash('signupMessage'), customer: req.query.customer});
+        }
+
     });
 
     // SIGNUP =================================
@@ -180,7 +280,7 @@ module.exports = function (app, passport, winston) {
                                             console.log("Error inserting : %s ", err2);
                                         }
 
-                                        res.redirect('/profilet');
+                                        sendVerificationEmail(req, user, res);
                                     });
 
                                 }
@@ -188,7 +288,7 @@ module.exports = function (app, passport, winston) {
                         }
                         else if (user.is_customer) {
                             {
-                                res.redirect('/profile');
+                                sendVerificationEmail(req, user, res);
                             }
                         }
                     });
@@ -198,16 +298,43 @@ module.exports = function (app, passport, winston) {
     });
 
 
+    function sendVerificationEmail(req, user, res) {
+        var email = require("emailjs");
+        var server = email.server.connect({
+            user: "linpretinfo",
+            password: "Hede9902",
+            host: "smtp.gmail.com",
+            ssl: true
+        });
+
+        server.send({
+            text:    "Maximus Email Verification link is " + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
+            from:    "linpretinfo@gmail.com",
+            to:     user.email,
+            cc:      "semih.kahya08@gmail.com",
+            subject: "Maximus Email Verification"
+        }, function(err, message) { console.log(err || message); });
+
+        res.redirect('/signup-success');
+    }
+
 // SIGNUP =================================
 // show the signup form
     app.get('/signup', function (req, res) {
         res.render('signup.ejs', {message: req.flash('signupMessage')});
     });
 
+
+
+    // show the signup success page
+    app.get('/signup-success', function (req, res) {
+        res.render('signup-success.ejs', {message: "Verification email send your email address"});
+    });
+
 // process the signup form
     app.post('/signup',
         passport.authenticate('local-signup', {
-                successRedirect: '/profile', // redirect to the secure profile section
+                successRedirect: '/signup-success', // redirect to the secure profile section
                 failureRedirect: '/signup', // redirect back to the signup page if there is an error
                 failureFlash: true // allow flash messages
             }
