@@ -1,5 +1,3 @@
-
-var bcrypt = require('bcrypt-nodejs');
 var randomstring = require("randomstring");
 
 module.exports = function (app, winston, emailServer) {
@@ -18,28 +16,85 @@ module.exports = function (app, winston, emailServer) {
         });
     });
 
+    app.get('/plan-assign', isLoggedIn, function (req, res, next) {
+        var qstr = "select * from translation_session_invitations where email =? and invitation_token=? and" +
+            " translation_session_id =?";
+        req.getConnection(function (err, connection) {
+            var query =
+                connection.query(qstr, [req.user.email, req.query.invitation_token, req.query.sessionId], function (err, invitations) {
+
+                    if (err) {
+                        console.log("Error Selecting : %s ", err);
+                    }
+                    if(invitations.length>0){
+                        var data = {
+                            translation_session_id: req.query.sessionId,
+                            user_id: req.user.id
+                        }
+                        var query3 = connection.query("INSERT INTO `translation_session_users` set ?", [data], function (err3, rows3) {
+                            if (err3) {
+                                connection.rollback(function () {
+                                    throw err;
+                                });
+                                console.log("Error inserting : %s ", err3);
+                                res.status(500).json({error: err3});
+                            }
+
+                            if(req.user.is_customer){
+                                res.redirect("/profile");
+                            } else if(req.user.is_translator){
+                                res.redirect("/profilet");
+                            }
+                        });
+                    };
+                    // res == true
+                    console.log(res);
+
+                });
+        });
+    })
+
     // add-participant
     app.post('/add-participant', isLoggedIn, function (req, res, next) {
         var participant = req.body.participantName;
+        var sessionId = req.body.sessionId;
         // generate a link for participant and send email
-        var url = bcrypt.hashSync(password, null, null);
         var token = randomstring.generate({
-            length: 64
+            length: 32
         });
-        bcrypt.hash(token, null, null, function(err, hash) {
-            emailServer.send({
-                text:  "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan?token='+ hash,
-                from: "linpretinfo@gmail.com",
-                to: participant,
-                cc: "kaplanerbil@gmail.com",
-                subject: "Linpret Translation Meeting Invitation "
-            }, function (err, message) {
-                res.send(400);
-                console.log(err || message);
-            });
 
-            res.send(200);
-        });
+        var data = {
+            invitation_token: token,
+            email: participant,
+            translation_session_id: sessionId
+        }
+        req.getConnection(function (err, connection) {
+            var query2 = connection.query("INSERT INTO `translation_session_invitations` set ?", [data], function (err2, rows2) {
+
+                if (err2) {
+                    connection.rollback(function () {
+                        throw err;
+                    });
+                    console.log("Error inserting : %s ", err2);
+                    res.status(500).json({error: err2});
+                }
+
+                emailServer.send({
+                    text: "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan-assign?sessionId=' + sessionId + '&invitation_token=' + token,
+                    from: "linpretinfo@gmail.com",
+                    to: participant,
+                    cc: "kaplanerbil@gmail.com",
+                    subject: "Linpret Translation Meeting Invitation "
+                }, function (err, message) {
+                    if (err) {
+                        res.send(500)
+                    }
+                    console.log(err || message);
+                });
+
+                res.send(200);
+            });
+        })
     });
 
     app.post('/plan', isLoggedIn, function (req, res, next) {
