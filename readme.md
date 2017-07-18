@@ -113,6 +113,7 @@ heroku addons:create mongolab
 heroku config:get MONGODB_URI
 heroku run bash
 
+
 git commit -a
 git push heroku HEAD:master
 heroku ps:scale web=1
