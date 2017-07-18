@@ -146,3 +146,7 @@ CREATE TABLE `translation_session_demands` (
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
+
+ALTER TABLE maximus.users ADD email_verification_code VARCHAR(200) NULL;
+ALTER TABLE maximus.users ADD password_verification_code VARCHAR(200) NULL;
+ALTER TABLE maximus.users ADD is_email_verification TINYINT(1) default '0';
