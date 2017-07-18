@@ -45,11 +45,11 @@ var server = require(isUseHTTPs ? 'https' : 'http');
 var url = require('url');
 var app;
 
-if (isUseHTTPs) {
-    app = server.createServer(options, serverHandler);
-} else {
+//if (isUseHTTPs) {
+//    app = server.createServer(options, serverHandler);
+//} else {
     app = server.createServer(serverHandler);
-}
+//}
 function serverHandler(request, response) {
     console.log("serverHandler is empty!!");
 }
