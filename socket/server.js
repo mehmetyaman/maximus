@@ -111,11 +111,12 @@ function runServer() {
 
     console.log('--------------1111111111111111111111--------');
     console.log('process.env.IP='+process.env.IP);
+
     app = app.listen(port, process.env.IP || '0.0.0.0', function(error) {
         var addr = app.address();
-        console.log('app.adress='+addr);
+        console.log('app.adress='+addr.address);
         if (addr.address === '0.0.0.0') {
-            addr.address = 'localhost';
+            addr.address = config.get('app.url');
         }
 
         var domainURL = (isUseHTTPs ? 'https' : 'http') + '://' + addr.address + ':' + addr.port + '/';
