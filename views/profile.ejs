@@ -9,7 +9,7 @@
     <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="http://localhost:9000/socket.io/socket.io.js"></script>
+    <script src="<%=config.socketURL%>socket.io/socket.io.js"></script>
     <script src="/js/RTCMultiConnection.min.js"></script>
     <script src="/js/getMediaElement.js"></script>
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
@@ -26,17 +26,13 @@
     if(lists){
         lists.forEach(function (items) {
     %>
-        var text="";
-        var url = window.location.href;
-        var arr = url.split("/");
-        var urlwithport = arr[0] + "//" + arr[2]
 
-        $.get( urlwithport+"/peers/<%= items.id %>", function( participants ) {
+        $.get( "<%=config.socketURL%>peers/<%= items.id %>", function( participants ) {
             index=0;
 
             if(participants && participants.length>0){
                 participants.forEach(function(part) {
-                    $.get( urlwithport+"/userData/"+part.userId, function( user ) {
+                    $.get( "<%=config.socketURL%>userData/"+part.userId, function( user ) {
                         text += user.name+ " " +user.surname;
                         if(++index!=participants.length) {  // dont add "," after last one
                             text += ", ";

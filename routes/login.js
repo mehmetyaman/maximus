@@ -1,5 +1,6 @@
 var http = require('http');
 var moment = require('moment');
+var config = require('config');
 
 module.exports = function (app, passport, winston) {
 
@@ -53,7 +54,8 @@ module.exports = function (app, passport, winston) {
                                         lists: sessions,
                                         cats: categories,
                                         demandedTranslators: demandedTranslators,
-                                        moment: moment
+                                        moment: moment,
+                                        config: config
                                     });
                                 });
                             })
