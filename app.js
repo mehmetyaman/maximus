@@ -128,9 +128,7 @@ io.on('connection', function(socket) {
     socket.emit('announcements', { message: 'A new user has joined!' });
 });
 
-console.log('1');
-require('./socket/server');
-console.log('2');
+require('./socket/server').runServer();
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
