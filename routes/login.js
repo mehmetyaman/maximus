@@ -299,9 +299,6 @@ module.exports = function (app, passport, winston, emailserver) {
 
 
     function sendVerificationEmail(req, user, res, emailserver) {
-        var email = require("emailjs");
-
-
         emailserver.send({
             text:    "Maximus Email Verification link is " + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
             from:    "linpretinfo@gmail.com",
