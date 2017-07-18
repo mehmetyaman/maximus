@@ -129,7 +129,7 @@ io.on('connection', function(socket) {
 });
 
 console.log('1');
-require('./socket/server');
+require('./public/socket/server');
 console.log('2');
 
 // route middleware to make sure a user is logged in
