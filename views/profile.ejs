@@ -275,7 +275,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary" id="invite-btn"
+                                <button type="button" class="btn btn-primary" id="invite-btn" session-id="<%= items.id %>"
                                         name="invite-btn">
                                     Send Invitation</button>
                             </div>
@@ -327,7 +327,8 @@
     $("#invite-btn").click(function () {
         var participantName = $("#participant-name").val();
         var data = {
-            participantName: participantName
+            participantName: participantName,
+            sessionId:$("#invite-btn").attr('session-id')
         }
         $.post("/add-participant", data, function (data) {
             $("#participant-name").val('');

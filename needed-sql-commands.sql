@@ -150,8 +150,13 @@ CREATE TABLE `translation_session_demands` (
 CREATE TABLE `translation_session_invitations` (
   `id`    INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(200)     NOT NULL,
-  `token` VARCHAR(64)      NOT NULL,
-  PRIMARY KEY (`id`)
+  `invitation_token` VARCHAR(64)      NOT NULL,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translation_session_invitations_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translation_session_invitations_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 )
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
