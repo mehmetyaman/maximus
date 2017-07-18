@@ -71,7 +71,8 @@ app.use(
 var users = require('./routes/users');
 var translators = require('./routes/translators');
 var login = require('./routes/login');
-require('./routes/login')(app, passport, winston); // load our routes and pass in our app and fully configured passport
+// load our routes and pass in our app and fully configured passport
+require('./routes/login')(app, passport, winston, emailServer);
 var videochat = require('./routes/videochat');
 require('./routes/translators')(app);
 require('./routes/translator')(app);
