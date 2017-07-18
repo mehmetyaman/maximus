@@ -42,10 +42,10 @@
       "uri": "https://sandbox-api.iyzipay.com"
     }
   },
-  "socketURL": "https://maxsimus.herokuapp.com/",
+  "socketURL": "https://maxsimus.herokuapp.com:9000/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "443",
+  "port": "9000",
   "enableLogs": true,
   "autoRebootServerOnFailure": false,
   "enableScalableBroadcast":true,

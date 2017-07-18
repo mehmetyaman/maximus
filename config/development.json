@@ -41,10 +41,10 @@
       "uri": "https://sandbox-api.iyzipay.com"
     }
   },
-  "socketURL": "http://localhost:4300/",
+  "socketURL": "http://localhost:9000/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "4300",
+  "port": "9000",
   "enableLogs": true,
   "autoRebootServerOnFailure": false,
   "enableScalableBroadcast":true,
