@@ -45,6 +45,8 @@ module.exports = function (app, passport, winston) {
                                     'tsu.user_id = ? and ' +
                                     'tsd.translation_session_id=ts.id and ' +
                                     'tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
+
+
                                     res.render('profile.ejs', {
                                         user: req.user,
                                         langs: languages,

@@ -1,7 +1,8 @@
 
 {
   "app": {
-    "port": 4300
+    "port": 4300,
+    "url":"localhost"
   },
   "mysql": {
     "host": "172.17.0.2",
@@ -39,6 +40,13 @@
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
     }
-  }
-
+  },
+  "socketURL": "http://localhost:9000/",
+  "socketMessageEvent": "RTCMultiConnection-Message",
+  "socketCustomEvent": "RTCMultiConnection-Custom-Message",
+  "port": "9000",
+  "enableLogs": true,
+  "autoRebootServerOnFailure": false,
+  "enableScalableBroadcast":true,
+  "isUseHTTPs" : false
 }

@@ -1,7 +1,8 @@
 
 {
   "app": {
-    "port": 4300
+    "port": 4300,
+    "url":"maxsimus.herokuapp.com"
   },
   "mysql": {
     "host": "lg7j30weuqckmw07.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
@@ -40,6 +41,14 @@
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
     }
-  }
+  },
+  "socketURL": "https://maxsimus.herokuapp.com:443/",
+  "socketMessageEvent": "RTCMultiConnection-Message",
+  "socketCustomEvent": "RTCMultiConnection-Custom-Message",
+  "port": "443",
+  "enableLogs": true,
+  "autoRebootServerOnFailure": false,
+  "enableScalableBroadcast":true,
+  "isUseHTTPs" : true
 
 }
