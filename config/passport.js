@@ -81,7 +81,7 @@ module.exports = function (passport) {
                         var randomstring = require("randomstring");
 
                         var newUserMysql = {
-                            username: username,
+                            email: username,
                             password: bcrypt.hashSync(password, null, null),
                             is_customer: req.query.customer ? 1 : 0,
                             is_translator: !req.query.customer ? 1 : 0,
@@ -101,7 +101,7 @@ module.exports = function (passport) {
                             " values" +
                             " (?,?,?,?,?,?,?,?,?) ";
 
-                        connection.query(insertQuery, [newUserMysql.username, newUserMysql.password,
+                        connection.query(insertQuery, [newUserMysql.email, newUserMysql.password,
                             newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname,
                         newUserMysql.email_verification_code, newUserMysql.password_verification_code, newUserMysql.is_email_verification], function (err, rows) {
                             if (err) {
