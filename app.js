@@ -12,7 +12,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 
 var email = require("emailjs");
-var server = email.server.connect({
+var emailServer = email.server.connect({
     user: "linpretinfo",
     password: "Hede9902",
     host: "smtp.gmail.com",
@@ -20,15 +20,7 @@ var server = email.server.connect({
 });
 
 // send the message and get a callback with an error or details of the message that was sent
-/*
- server.send({
- text:    "i hope this works",
- from:    "you linpretinfo@gmail.com",
- to:      "someone mehmetyaman@gmail.com",
- cc:      "else kaplanerbil@gmail.com",
- subject: "testing emailjs"
- }, function(err, message) { console.log(err || message); });
- */
+
 
 // set up our express application
 app.use(express.logger('dev')); // log every request to the console
@@ -86,7 +78,7 @@ require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
 require('./routes/payment')(app);
-require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
+require('./routes/plan')(app, winston, emailServer); // load our routes and pass in our app and fully configured passport
 require('./routes/profile-selection')(app);
 require('./routes/selection')(app);
 

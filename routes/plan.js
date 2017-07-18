@@ -1,4 +1,4 @@
-module.exports = function (app, winston, io) {
+module.exports = function (app, winston, emailServer) {
 
     app.get('/plan/:userId', isLoggedIn, function (req, res, next) {
         var userId = req.params.userId;
@@ -14,6 +14,27 @@ module.exports = function (app, winston, io) {
         });
     });
 
+    // add-participant
+    app.post('/add-participant', isLoggedIn, function (req, res, next) {
+        var participant = req.body.participantName;
+        // generate a link for participant and send email
+
+        emailServer.send({
+            text: "You have a invitation from " + req.user.name + " " + req.user.surname + " email:"
+            + req.user.email + " click this link to join",
+            from: "linpretinfo@gmail.com",
+            to: participant,
+            cc: "kaplanerbil@gmail.com",
+            subject: "Linpret Translation Meeting Invitation "
+        }, function (err, message) {
+            res.send(400);
+            console.log(err || message);
+        });
+
+        res.send(200);
+
+    });
+
     app.post('/plan', isLoggedIn, function (req, res, next) {
         var input = JSON.parse(JSON.stringify(req.body));
 
@@ -26,7 +47,7 @@ module.exports = function (app, winston, io) {
                 end_date: new Date(input.plandate),
                 duration: input.interval,
                 description: input.desc,
-                category_id:input.catval,
+                category_id: input.catval,
                 translator_id: 0,
                 is_paid: 0
             }
