@@ -195,17 +195,23 @@
             <div class="col-md-2">
                 <span>Konu</span>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span>Sure (dk)</span>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span>Diller</span>
             </div>
             <div class="col-md-2">
                 <span>Baslangic Trh</span>
             </div>
-            <div>
+            <div class="col-md-2">
                 <span>Connect</span>
+            </div>
+            <div class="col-md-2">
+                <span>Payment</span>
+            </div>
+            <div class="col-md-2">
+                <span>Invite</span>
             </div>
         </div>
         <% lists.forEach(function (items) { %>
@@ -213,33 +219,69 @@
             <div class="col-md-2">
                 <span><%= items.description %></span>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span><%= items.duration %></span>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span><%= items.lang1 %> > <%= items.lang2 %></span>
             </div>
             <div class="col-md-2">
                 <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
             </div>
-            <%if(items.is_paid == 1){ %>
+            <% if(items.is_paid == 1){ %>
+            <div class="col-md-2">
+                <span style="color: #00CC00"></span>
+            </div>
             <div class="col-md-2">
                 <span style="color: #00CC00">Paid</span>
                 <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
             </div>
-            <%}else{%>
+            <% } else{ %>
             <div class="col-md-2">
                 <span style="color: #d32132">Not Paid</span>
                     <span>
                         <button type="button" class="btn btn-info btn-md" id="pay_btn"
-                                onclick="PopupCenter('/payment/150/TRY/<%= items.id %>','Payment','500','500');">
-                            Click To Pay
+                                onclick="PopupCenter('/payment/150/TRY/<%= items.id %>','Payment','500','500');">Payment
                         </button>
                     </span>
             </div>
-            <%}%>
             <div class="col-md-2">
-                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+                <span style="color: #00CC00"></span>
+            </div>
+            <% } %>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inviteModal">
+                    Invite Participant
+                </button>
+
+                <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="inviteModalLabel">Participant User Name</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="participant-name" class="form-control-label">User Name:</label>
+                                        <input type="text" class="form-control" id="participant-name"
+                                               name="participant-name">
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" id="invite-btn"
+                                        name="invite-btn">
+                                    Send Invitation</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <% if(!items.translator_id){ %>
             <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">Select Translater</a>
@@ -281,6 +323,17 @@
             location.reload();
         });
     }
+
+    $("#invite-btn").click(function () {
+        var participantName = $("#participant-name").val();
+        var data = {
+            participantName: participantName
+        }
+        $.post("/add-participant", data, function (data) {
+            $("#participant-name").val('');
+            $('#inviteModal').modal('toggle');
+        });
+    });
 
     $("#post-btn").click(function () {
         if ($("#desc").val() === undefined) {
