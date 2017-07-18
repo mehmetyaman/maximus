@@ -147,6 +147,23 @@ CREATE TABLE `translation_session_demands` (
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
 
+CREATE TABLE `translation_session_invitations` (
+  `id`    INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(200)     NOT NULL,
+  `token` VARCHAR(64)      NOT NULL,
+  PRIMARY KEY (`id`)
+)
+  ENGINE = InnoDB
+  AUTO_INCREMENT = 4
+  DEFAULT CHARSET = utf8;
+
+ALTER TABLE maximus.users
+  ADD email_verification_code VARCHAR(200) NULL;
+ALTER TABLE maximus.users
+  ADD password_verification_code VARCHAR(200) NULL;
+ALTER TABLE maximus.users
+  ADD is_email_verification TINYINT(1) DEFAULT '0';
+
 ALTER TABLE maximus.users ADD email_verification_code VARCHAR(200) NULL;
 ALTER TABLE maximus.users ADD password_verification_code VARCHAR(200) NULL;
 ALTER TABLE maximus.users ADD is_email_verification TINYINT(1) default '0';

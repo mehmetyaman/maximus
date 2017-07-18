@@ -1,5 +1,6 @@
 var http = require('http');
 var moment = require('moment');
+var randomstring = require("randomstring");
 
 module.exports = function (app, passport, winston, emailserver) {
 
@@ -112,7 +113,6 @@ module.exports = function (app, passport, winston, emailserver) {
 
     app.post('/send-verify-email-again', function (req, res, next) {
 
-        var randomstring = require("randomstring");
         req.getConnection(function (err, connection) {
             connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
                 if (err) {
@@ -140,7 +140,7 @@ module.exports = function (app, passport, winston, emailserver) {
                     }else {
 
                         rows[0].email_verification_code = token;
-                        sendVerificationEmail(req, rows[0], res);
+                        sendVerificationEmail(req, rows[0], res, emailserver);
                         res.render('login.ejs', {message:  'New verification email sended. Please look your email', customer: req.query.customer, openTokenRequest:false});
                         return;
                     }
@@ -280,7 +280,7 @@ module.exports = function (app, passport, winston, emailserver) {
                                             console.log("Error inserting : %s ", err2);
                                         }
 
-                                        sendVerificationEmail(req, user, res);
+                                        sendVerificationEmail(req, user, res, emailserver);
                                     });
 
                                 }
@@ -288,7 +288,7 @@ module.exports = function (app, passport, winston, emailserver) {
                         }
                         else if (user.is_customer) {
                             {
-                                sendVerificationEmail(req, user, res);
+                                sendVerificationEmail(req, user, res, emailserver);
                             }
                         }
                     });
@@ -298,16 +298,11 @@ module.exports = function (app, passport, winston, emailserver) {
     });
 
 
-    function sendVerificationEmail(req, user, res) {
+    function sendVerificationEmail(req, user, res, emailserver) {
         var email = require("emailjs");
-        var server = email.server.connect({
-            user: "linpretinfo",
-            password: "Hede9902",
-            host: "smtp.gmail.com",
-            ssl: true
-        });
 
-        server.send({
+
+        emailserver.send({
             text:    "Maximus Email Verification link is " + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
             from:    "linpretinfo@gmail.com",
             to:     user.email,
