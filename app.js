@@ -129,7 +129,6 @@ io.on('connection', function(socket) {
 });
 
 //require('./socket/server');
-
 require('./socket/Signaling-Server')(app,server, function(socket) {
     try {
         var params = socket.handshake.query;
