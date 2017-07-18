@@ -1,3 +1,7 @@
+
+var bcrypt = require('bcrypt-nodejs');
+var randomstring = require("randomstring");
+
 module.exports = function (app, winston, emailServer) {
 
     app.get('/plan/:userId', isLoggedIn, function (req, res, next) {
@@ -18,21 +22,24 @@ module.exports = function (app, winston, emailServer) {
     app.post('/add-participant', isLoggedIn, function (req, res, next) {
         var participant = req.body.participantName;
         // generate a link for participant and send email
-
-        emailServer.send({
-            text: "You have a invitation from " + req.user.name + " " + req.user.surname + " email:"
-            + req.user.email + " click this link to join",
-            from: "linpretinfo@gmail.com",
-            to: participant,
-            cc: "kaplanerbil@gmail.com",
-            subject: "Linpret Translation Meeting Invitation "
-        }, function (err, message) {
-            res.send(400);
-            console.log(err || message);
+        var url = bcrypt.hashSync(password, null, null);
+        var token = randomstring.generate({
+            length: 64
         });
+        bcrypt.hash(token, null, null, function(err, hash) {
+            emailServer.send({
+                text:  "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan?token='+ hash,
+                from: "linpretinfo@gmail.com",
+                to: participant,
+                cc: "kaplanerbil@gmail.com",
+                subject: "Linpret Translation Meeting Invitation "
+            }, function (err, message) {
+                res.send(400);
+                console.log(err || message);
+            });
 
-        res.send(200);
-
+            res.send(200);
+        });
     });
 
     app.post('/plan', isLoggedIn, function (req, res, next) {
