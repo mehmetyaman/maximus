@@ -43,6 +43,9 @@ try {
 
 var server = require(isUseHTTPs ? 'https' : 'http');
 var url = require('url');
+
+/*
+
 var app;
 
 if (isUseHTTPs) {
@@ -50,6 +53,8 @@ if (isUseHTTPs) {
 } else {
     app = server.createServer(serverHandler);
 }
+*/
+
 function serverHandler(request, response) {
     console.log("serverHandler is empty!!");
 }
@@ -96,7 +101,7 @@ function runServer() {
             console.log('\x1b[31m%s\x1b[0m ', socketURL + ' is already in use. Please kill below processes using "kill PID".');
             console.log('------------------------------');
 
-            foo = new cmd_exec('lsof', ['-n', '-i4TCP:'+po],
+            foo = new cmd_exec('lsof', ['-n', '-i4TCP:'+port],
                 function(me, data) {
                     me.stdout += data.toString();
                 },

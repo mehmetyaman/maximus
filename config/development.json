@@ -44,7 +44,7 @@
   "socketURL": "http://localhost:9000/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "9000",
+  "port": "4300",
   "enableLogs": true,
   "autoRebootServerOnFailure": false,
   "enableScalableBroadcast":true,

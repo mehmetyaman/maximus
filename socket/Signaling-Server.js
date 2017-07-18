@@ -1,7 +1,7 @@
 var config = require('config');
 var http = require('http');
 
-module.exports = exports = function(app, socketCallback) {
+module.exports = exports = function(app, server, socketCallback) {
     // stores all sockets, user-ids, extra-data and connected sockets
     // you can check presence as following:
     // var isRoomExist = listOfUsers['room-id'] != null;
@@ -15,11 +15,11 @@ var port= config.get("app.port");
     // for scalable-broadcast demos
     var ScalableBroadcast;
 
-    var io = require('socket.io');
-
+   // var io = require('socket.io');
+    var io = require('socket.io').listen(server);
     try {
         // use latest socket.io
-        io = io(app);
+      //  io = io(app);
         io.on('connection', onConnection);
     } catch (e) {
         // otherwise fallback

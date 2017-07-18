@@ -128,7 +128,26 @@ io.on('connection', function(socket) {
     socket.emit('announcements', { message: 'A new user has joined!' });
 });
 
-require('./socket/server');
+//require('./socket/server');
+
+require('./socket/Signaling-Server')(app,server, function(socket) {
+    try {
+        var params = socket.handshake.query;
+
+        if (!params.socketCustomEvent) {
+            params.socketCustomEvent = 'custom-message';
+        }
+
+        socket.on(params.socketCustomEvent, function(message) {
+            try {
+                socket.broadcast.emit(params.socketCustomEvent, message);
+            } catch (e) {}
+        });
+
+    } catch (e) {}
+
+});
+
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
