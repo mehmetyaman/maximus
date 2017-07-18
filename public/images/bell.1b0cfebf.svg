@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.2 (15855) - http://www.bohemiancoding.com/sketch -->
+    <title>bell</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="room" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Artboard-15" sketch:type="MSArtboardGroup" transform="translate(-578.000000, -37.000000)">
+            <g id="bell" sketch:type="MSLayerGroup" transform="translate(568.000000, 27.000000)">
+                <rect id="bounds" sketch:type="MSShapeGroup" x="0" y="0" width="36" height="36"></rect>
+                <path d="M15.5386107,23.9957858 L10.8887611,23.9957858 C10.5330904,23.9957858 10.2116317,23.7838496 10.0716738,23.4566148 C9.93171597,23.1296022 10.000362,22.7508273 10.2458436,22.4935715 C11.4616997,21.2195106 11.726731,19.3347448 11.9830983,17.5119603 C12.3627617,14.8125509 12.7910772,11.7783534 16.6092609,11.3784738 L16.6092609,10.8886213 C16.6092609,10.3978802 17.0071411,10 17.4978822,10 C17.9886233,10 18.3865035,10.3978802 18.3865035,10.8886213 L18.3865035,11.3778074 C22.2364554,11.7750211 22.6683254,14.8103294 23.0513211,17.5110717 C23.3096878,19.3331897 23.5767185,21.2175112 24.8027938,22.4909056 C25.0498305,22.7477172 25.1198094,23.1271585 24.9802959,23.4548376 C24.8407823,23.782961 24.5188793,23.9957858 24.1625421,23.9957858 L19.4571537,23.9957858 C19.2305184,24.8679555 18.4400703,25.5142001 17.4978822,25.5142001 C16.5556941,25.5142001 15.7652461,24.8679555 15.5386107,23.9957858 Z" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>
