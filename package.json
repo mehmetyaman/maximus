@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "preinstall": "npm install config bower iyzipay socket.io && bower install bootstrap jquery eonasdan-bootstrap-datetimepicker#latest"
+    "preinstall": "npm install config bower iyzipay socket.io socket-io-server && bower install bootstrap jquery eonasdan-bootstrap-datetimepicker#latest"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",

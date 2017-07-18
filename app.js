@@ -122,11 +122,11 @@ var server = http.createServer(app).listen(app.get('port'), function () {
 });
 
 // Loading socket.io
-//var io = require('socket.io').listen(server);
-//io.on('connection', function(socket) {
-//    console.log("new connection established");
-//    socket.emit('announcements', { message: 'A new user has joined!' });
-//});
+var io = require('socket.io').listen(server);
+io.on('connection', function(socket) {
+    console.log("new connection established");
+    socket.emit('announcements', { message: 'A new user has joined!' });
+});
 
 require('./socket/server');
 
