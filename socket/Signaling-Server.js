@@ -21,6 +21,9 @@ var port= config.get("app.port");
         // use latest socket.io
       //  io = io(app);
         io.on('connection', onConnection);
+        io.on('error', function(err) {
+            console.log('parser error', err)
+        })
     } catch (e) {
         // otherwise fallback
         io = io.listen(app, {
