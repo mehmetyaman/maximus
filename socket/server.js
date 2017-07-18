@@ -109,6 +109,8 @@ function runServer() {
         }
     });
 
+    console.log('--------------1111111111111111111111--------');
+
     app = app.listen(port, process.env.IP || '0.0.0.0', function(error) {
         var addr = app.address();
 
