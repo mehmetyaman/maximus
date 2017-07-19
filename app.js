@@ -2,7 +2,7 @@
  * Module dependencies.
  */
 
-var express = require('express');
+var express = require('express'), expressValidator = require('express-validator');
 var app = express();
 var env = require('dotenv').load();
 var winston = require('winston');
@@ -12,7 +12,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 
 var email = require("emailjs");
-var server = email.server.connect({
+var emailServer = email.server.connect({
     user: "linpretinfo",
     password: "Hede9902",
     host: "smtp.gmail.com",
@@ -20,21 +20,13 @@ var server = email.server.connect({
 });
 
 // send the message and get a callback with an error or details of the message that was sent
-/*
- server.send({
- text:    "i hope this works",
- from:    "you linpretinfo@gmail.com",
- to:      "someone mehmetyaman@gmail.com",
- cc:      "else kaplanerbil@gmail.com",
- subject: "testing emailjs"
- }, function(err, message) { console.log(err || message); });
- */
+
 
 // set up our express application
 app.use(express.logger('dev')); // log every request to the console
 app.use(express.cookieParser()); // read cookies (needed for auth)
 app.use(express.bodyParser()); // get information from html forms
-
+app.use(expressValidator());
 app.set('view engine', 'ejs'); // set up ejs for templating
 
 // required for passport
@@ -79,14 +71,17 @@ app.use(
 var users = require('./routes/users');
 var translators = require('./routes/translators');
 var login = require('./routes/login');
-require('./routes/login')(app, passport, winston); // load our routes and pass in our app and fully configured passport
+// load our routes and pass in our app and fully configured passport
+require('./routes/login')(app, passport, winston, emailServer);
 var videochat = require('./routes/videochat');
 require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
 require('./routes/videochat')(app);
 require('./routes/payment')(app);
-require('./routes/plan')(app, winston); // load our routes and pass in our app and fully configured passport
+require('./routes/plan')(app, winston, emailServer); // load our routes and pass in our app and fully configured passport
+require('./routes/profile-selection')(app);
+require('./routes/selection')(app);
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
@@ -101,6 +96,7 @@ app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
+app.use(expressValidator());
 
 // development only
 if ('development' == app.get('env')) {
@@ -115,22 +111,15 @@ require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
 
-var scheduler = require('./scheduler/schedule-master.js');
-scheduler.init();
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
 
-// Loading socket.io
 var io = require('socket.io').listen(server);
 io.on('connection', function(socket) {
     console.log("new connection established");
     socket.emit('announcements', { message: 'A new user has joined!' });
 });
-
-
-//require('./socket/server');
-
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {

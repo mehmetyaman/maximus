@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+    <title>Profile Selection Linpret Language Services</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
+    <style>
+        body {
+            padding-top: 80px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<form id="profile-selection" method="post" action="/profile/select" >
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="radio" aria-label="atranslator" name="profile-selection" id="atranslator"
+                           value="atranslator">
+                  </span>
+                    <input type="text" class="form-control" value="Continue as a Translator" aria-label="atranslator"
+                           readonly>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            <div class="col-md-8">
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.row -->
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <input type="radio" aria-label="notatranslator" name="profile-selection" id="notatranslator"
+                           value="acustomer">
+                  </span>
+                    <input type="text" class="form-control" value="Continue as a Customer" aria-label="notatranslator"
+                           readonly>
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+        </div><!-- /.col-lg-6 -->
+        <div class="col-md-8">
+        </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
+    <div class="row">
+        <div class="col-md-4">
+
+        </div><!-- /.col-lg-6 -->
+        <div class="col-md-8">
+            <div class="input-group">
+                <button type="submit" id="post-btn" name="post-btn" class="btn btn-default">Submit</button>
+            </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    $("#post-btn1").click(function () {
+        $.post("/profile/select", {
+                selectedProfile: $('#profile-selection input:radio:checked').val()
+            }, function (resp) {
+                window.location.href = resp.redirect;
+            }
+        );
+    });
+</script>
+</body>
+</html>

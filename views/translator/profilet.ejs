@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>For your translater needs</title>
+    <title>Profile Linpret Language Services</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
@@ -17,8 +17,22 @@
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
 </head>
 <body>
+
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+        <img style="max-width:150px; margin-top: -7px;"
+             src="/../images/linpret_logo_3.png">
+    </a>
+</div>
 <form id="plan-form">
-    <div class="container">
+    <div class="container" id="rowContainer">
 
         <div class="row">
             <div class="col-md-12">
@@ -57,7 +71,7 @@
             </div>
         </div>
         <% lists.forEach(function (items) { %>
-        <div class="row">
+        <div class="row" id="<%= items.id %>">
             <div class="col-md-2">
                 <span><%= items.description %></span>
             </div>
@@ -98,10 +112,65 @@
     var socket;
     $(document).ready(function () {
         socket = io.connect("http://localhost:4300");
+
+        socket.on('connect', function (socket) {
+            console.log(': Connected');
+        });
+
+        socket.on('connect_error', function (e) {
+            console.log(': Connection Error: ' + e);
+        });
+
+        socket.on('message', function () {
+            console.log(': Server message');
+        });
+
+        socket.on('disconnect', function () {
+            console.log(': disconnect');
+        });
+
         socket.on('announcements', function (msg) {
             console.log(new Date().getTime());
         });
+
+        socket.on('newsessionrequest', function (data) {
+            console.log("get new request and loaded");
+            addRow(data);
+        });
     });
+    function addRow(newItem) {
+        $('#' + newItem.id).remove();
+        var newhtml = '<div class="row" id=' + newItem.id + '>'
+                + '<div class="col-md-2">'
+                + '<span>' + newItem.description + '</span>'
+                + '       </div>'
+                + '      <div class="col-md-2">'
+                + '      <span>' + newItem.duration + '</span>'
+                + '      </div>'
+                + '      <div class="col-md-2">'
+                + '      <span>' + newItem.lang1 + ' > ' + newItem.lang2 + '</span>'
+                + '      </div>'
+                + '      <div class="col-md-2">'
+                + '      <span> ' + moment(newItem.start_date).format('DD-MM-YYYY') + ' </span>'
+                + '      </div>';
+
+        if (newItem.translator_id == 0) {
+            newhtml += '      <div class="col-md-2">';
+            if (newItem.demand_id) {
+                newhtml += '      <a href="#">Demanded</a>';
+            } else {
+                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ');">Demand Now</a>';
+            }
+            newhtml += '</div>';
+        } else {
+            newhtml += '<div class="col-md-2">'
+                    + '       <span>' + newItem.translator_id + '</span>'
+                    + '      <span><a href="/videoConference/' + newItem.id + '>Connect</a></span>'
+                    + '      </div>';
+        }
+        newhtml += '       </div>';
+        $('#rowContainer').append(newhtml);
+    }
     function demand(id) {
         $.post("demand/" + id, function (data) {
             location.reload();
