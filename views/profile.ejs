@@ -24,12 +24,12 @@
         lists.forEach(function (items) {
     %>
 
-        $.get( "<%=config.app.protocol%>//<%=config.app.url%>/peers/<%= items.id %>", function( participants ) {
+        $.get( "<%=config.app.protocol%>://<%=config.app.url%>/peers/<%= items.id %>", function( participants ) {
             index=0;
 
             if(participants && participants.length>0){
                 participants.forEach(function(part) {
-                    $.get( "<%=config.app.protocol%>//<%=config.app.url%>/userData/"+part.userId, function( user ) {
+                    $.get( "<%=config.app.protocol%>://<%=config.app.url%>/userData/"+part.userId, function( user ) {
                         text += user.name+ " " +user.surname;
                         if(++index!=participants.length) {  // dont add "," after last one
                             text += ", ";
