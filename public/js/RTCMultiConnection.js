@@ -11,10 +11,10 @@ window.RTCMultiConnection = function(roomid, forceOptions) {
         parameters += '?userid=' + connection.userid;
         parameters += '&sessionid=' + connection.sessionid;
         parameters += '&videochatid=' + connection.videochatid;
+        parameters += '&peerid=' + connection.peerid;
         parameters += '&msgEvent=' + connection.socketMessageEvent;
         parameters += '&socketCustomEvent=' + connection.socketCustomEvent;
         parameters += '&autoCloseEntireSession=' + !!connection.autoCloseEntireSession;
-
         parameters += '&maxParticipantsAllowed=' + connection.maxParticipantsAllowed;
 
         if (connection.enableScalableBroadcast) {
