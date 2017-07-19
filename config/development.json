@@ -6,9 +6,9 @@
     "protocol":"http"
   },
   "mysql": {
-    "host": "localhost",
+    "host": "172.17.0.2",
     "user": "root",
-    "password" : "anadolu",
+    "password" : "admin123",
     "port": 3306,
     "database":"maximus",
     "multipleStatements": "true"
@@ -42,10 +42,10 @@
       "uri": "https://sandbox-api.iyzipay.com"
     }
   },
-  "socketURL": "https://cryptic-headland-18558.herokuapp.com/",
+  "socketURL": "http://localhost:9001/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "443",
+  "port": "9001",
   "enableLogs": true,
   "autoRebootServerOnFailure": false,
   "enableScalableBroadcast":true,

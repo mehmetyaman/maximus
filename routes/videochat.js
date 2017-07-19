@@ -187,32 +187,16 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/peer/remove/:id',  function (req, res) {
-        var id = req.params.id;
-        Peer.remove( {"userId":id}, function (err) {
+    app.get('/peer/remove/:videoChatId/:peerId',  function (req, res) {
+        var videoChatId = req.params.videoChatId;
+        var peerId = req.params.peerId;
+        Peer.remove( {"videoChatId":videoChatId, "userId":peerId}, function (err) {
             if (err) {
                 console.log("Error /peer/remove/:id : %s ", err);
                 res.status(500).send(err);
             } else {
                 console.log("Peer has deleted!");
-                Peer.find({}, function (err, peers) {
-                    if (err) {
-                        console.log("Error /videoChatsPage : %s ", err);
-                        res.status(500).send(err);
-                    } else {
-                        if(peers.length==0){  // check if this peer is last one for session then  remove session as well
-                            VideoChat.remove( {"_id":id}, function (err) {
-                                if (err) {
-                                    console.log("Error /peer/remove/:id : %s ", err);
-                                    res.status(500).send(err);
-                                } else {
-                                    console.log("VideoChat has deleted!");
-                                    res.send("VideoChat has deleted!");
-                                }
-                            });
-                        }
-                    }
-                });
+                res.send("Peer has deleted!");
             }
         });
     });
@@ -220,14 +204,13 @@ module.exports = function (app) {
     app.get('/peer/save/:videoChatId/:peerId',  function (req, res) {
         var videoChatId = req.params.videoChatId;
         var peerId = req.params.peerId;
-        //var username=req.user.username;
         var username = "x";
         createPeer(videoChatId, peerId, username, function (err) {
             if (err) {
-                console.log("Error /peer/remove/:id : %s ", err);
+                console.log("Error /peer/save/:id : %s ", err);
                 res.status(500).send(err);
             } else {
-                console.log("VideoChat has deleted!");
+                console.log("Peer has attended!");
                 res.send("Peer has attended!");
             }
 
