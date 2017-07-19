@@ -73,7 +73,6 @@
                     <p>
                         <strong>id</strong>: <%= user.id %><br>
                         <strong>email</strong>: <%= user.email %><br>
-                        <strong>password</strong>: <%= user.password %>
                     </p>
                     <% } else { %>
                     <a href="/connect/local" class="btn btn-default">Connect Local</a>
@@ -259,26 +258,28 @@
                 <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
             </div>
             <% if(items.is_paid == 1){ %>
-            <div class="col-md-2">
-                <span style="color: #00CC00"></span>
-            </div>
-            <div class="col-md-2">
-                <span style="color: #00CC00">Paid</span>
-                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
-                <span id="participants-span-<%= items.id %>"></span>
-            </div>
+                <div class="col-md-2">
+                    <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+                    <span id="participants-span-<%= items.id %>"></span>
+                </div>
+                <div class="col-md-2">
+                    <span style="color: #00CC00">Paid</span>
+                </div>
             <% } else{ %>
-            <div class="col-md-2">
-                <span style="color: #d32132">Not Paid</span>
-                    <span>
-                        <button type="button" class="btn btn-info btn-md" id="pay_btn"
-                                onclick="PopupCenter('/payment/150/TRY/<%= items.id %>','Payment','500','500');">Payment
-                        </button>
-                    </span>
-            </div>
-            <div class="col-md-2">
-                <span style="color: #00CC00"></span>
-            </div>
+                <div class="col-md-2">
+                    <span style="color: #00CC00"></span>
+                </div>
+                <div class="col-md-2">
+                    <span style="color: #d32132">Not Paid</span>
+                        <span>
+                            <button type="button" class="btn btn-info btn-md" id="pay_btn"
+                                    onclick="PopupCenter('/payment/150/TRY/<%= items.id %>','Payment','500','500');">Payment
+                            </button>
+                        </span>
+                </div>
+                <div class="col-md-2">
+                    <span style="color: #00CC00"></span>
+                </div>
             <% } %>
             <div class="col-md-2">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inviteModal">
