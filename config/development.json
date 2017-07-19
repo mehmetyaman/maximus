@@ -1,7 +1,9 @@
 
 {
   "app": {
-    "port": 4300
+    "port": 4300,
+    "url":"localhost",
+    "protocol":"http"
   },
   "mysql": {
     "host": "172.17.0.2",
@@ -39,6 +41,13 @@
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
     }
-  }
-
+  },
+  "socketURL": "https://cryptic-headland-18558.herokuapp.com/",
+  "socketMessageEvent": "RTCMultiConnection-Message",
+  "socketCustomEvent": "RTCMultiConnection-Custom-Message",
+  "port": "443",
+  "enableLogs": true,
+  "autoRebootServerOnFailure": false,
+  "enableScalableBroadcast":true,
+  "isUseHTTPs" : false
 }

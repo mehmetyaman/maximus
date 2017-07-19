@@ -2,7 +2,7 @@
  * Module requirements.
  */
 
-var errorMessages = require('../error').messages;
+var MongooseError = require('../error');
 var utils = require('../utils');
 
 var SchemaType = require('../schematype');
@@ -130,7 +130,7 @@ SchemaDate.prototype.min = function(value, message) {
   }
 
   if (value) {
-    var msg = message || errorMessages.Date.min;
+    var msg = message || MongooseError.messages.Date.min;
     msg = msg.replace(/{MIN}/, (value === Date.now ? 'Date.now()' : this.cast(value).toString()));
     var _this = this;
     this.validators.push({
@@ -186,7 +186,7 @@ SchemaDate.prototype.max = function(value, message) {
   }
 
   if (value) {
-    var msg = message || errorMessages.Date.max;
+    var msg = message || MongooseError.messages.Date.max;
     msg = msg.replace(/{MAX}/, (value === Date.now ? 'Date.now()' : this.cast(value).toString()));
     var _this = this;
     this.validators.push({
@@ -217,6 +217,10 @@ SchemaDate.prototype.cast = function(value) {
   }
 
   if (value instanceof Date) {
+    if (isNaN(value.valueOf())) {
+      throw new CastError('date', value, this.path);
+    }
+
     return value;
   }
 
@@ -273,7 +277,7 @@ SchemaDate.prototype.castForQuery = function($conditional, val) {
   var handler;
 
   if (arguments.length !== 2) {
-    return this.cast($conditional);
+    return this._castForQuery($conditional);
   }
 
   handler = this.$conditionalHandlers[$conditional];

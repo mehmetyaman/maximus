@@ -1,4 +1,4 @@
-<!doctype html>
+
 <html>
 <head>
     <title>For your translater needs</title>
@@ -18,6 +18,36 @@
             word-wrap: break-word;
         }
     </style>
+<script>
+    <%
+    if(lists){
+        lists.forEach(function (items) {
+    %>
+
+        $.get( "/peers/<%= items.id %>", function( participants ) {
+            index=0;
+            text="";
+            if(participants && participants.length>0){
+                participants.forEach(function(part) {
+                    $.get( "/userData/"+part.userId, function( user ) {
+                        text += user.name+ " " +user.surname;
+                        if(++index!=participants.length) {  // dont add "," after last one
+                            text += ", ";
+                        }else{
+                            text = "("+text+")";
+                            $("#participants-span-<%= items.id %>").html(text);
+                        }
+                    });
+
+                });
+
+            }
+        });
+    <%
+        });
+    }
+    %>
+    </script>
 </head>
 <body>
 <form id="plan-form">
@@ -213,6 +243,8 @@
                 <div class="col-md-2">
                     <span style="color: #00CC00">Paid</span>
                     <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+                    <span id="participants-span-<%= items.id %>">
+                    </span>
                 </div>
             <%}else{%>
                 <div class="col-md-2">

@@ -120,12 +120,17 @@ scheduler.init();
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
+
 // Loading socket.io
 var io = require('socket.io').listen(server);
 io.on('connection', function(socket) {
     console.log("new connection established");
     socket.emit('announcements', { message: 'A new user has joined!' });
 });
+
+
+//require('./socket/server');
+
 
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
