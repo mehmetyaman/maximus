@@ -43,7 +43,7 @@
       "uri": "https://sandbox-api.iyzipay.com"
     }
   },
-  "socketURL": "https://cryptic-headland-18558.herokuapp.com/",
+  "socketURL": "https://cryptic-headland-18558.herokuapp.com:443/",
   "socketMessageEvent": "RTCMultiConnection-Message",
   "socketCustomEvent": "RTCMultiConnection-Custom-Message",
   "port": "443",
