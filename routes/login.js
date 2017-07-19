@@ -2,6 +2,7 @@ var http = require('http');
 var moment = require('moment');
 var config = require('config');
 var randomstring = require("randomstring");
+var bcrypt = require('bcrypt-nodejs');
 
 module.exports = function (app, passport, winston, emailserver) {
 
@@ -308,12 +309,184 @@ module.exports = function (app, passport, winston, emailserver) {
             from:    "linpretinfo@gmail.com",
             to:     user.email,
             cc:      "semih.kahya08@gmail.com",
-            subject: "Maximus Email Verification"
+            subject: "Linpret Email Verification"
         }, function(err, message) { console.log(err || message); });
 
         res.redirect('/signup-success');
     }
 
+
+    ////Password Change request======================
+
+
+    app.get('/login', function (req, res) {
+        res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer, openTokenRequest:false});
+    });
+
+
+    app.get('/verify-password', function (req, res) {
+
+        if(req.query.token){
+                req.getConnection(function (err, connection) {
+                    var query = connection.query('select * from users where password_verification_code= ?', [req.query.token], function (err, rows) {
+
+                        if (err) {
+                            res.render('password-change.ejs', {
+                                message: 'Your password verification token expired. You can get new verification token. Please type your email adress',
+                                openTokenRequest: true
+
+                            });
+                        }else {
+                            if (rows.length) {
+
+                                res.render('password-change.ejs', {
+                                    message: 'Please type your new password',
+                                    openTokenRequest: false
+
+                                });
+                            }else{
+                                res.render('password-change.ejs', {
+                                    message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                                    openTokenRequest: true
+
+                                });
+                            }
+                        }
+                });
+            });
+        }else{
+
+        }
+    });
+
+
+    app.post('/change-password-request', function (req, res) {
+
+        var code = randomstring.generate({
+            length: 64
+        });
+        if(req.query.email){
+            req.getConnection(function (err, connection) {
+                connection.query("UPDATE users set password_verification_code = ? WHERE email = ? ", [code, req.query.email], function (err, rows) {
+
+                    if (err) {
+                        console.log("Error Updating : %s ", err);
+                        res.end( "Opps someting is wrong. Please try again." );
+                    }else{
+                        emailserver.send({
+                            text:    "Maximus Password Verification link is " + req.protocol + '://' + req.get('host') + '/verify-password?token='+ code,
+                            from:    "linpretinfo@gmail.com",
+                            to:     req.query.email,
+                            cc:      "semih.kahya08@gmail.com",
+                            subject: "Linpret Password Verification"
+                        }, function(err, message) { console.log(err || message); });
+                    }
+
+                    res.end( "Password change request send your email adress. Please check your email" );
+
+                });
+
+            });
+        }else{
+            res.end( "Opps someting is wrong. Please try again." );
+        }
+    });
+
+    app.post('/send-verify-password-again', function (req, res, next) {
+
+        req.getConnection(function (err, connection) {
+            connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
+                if (err) {
+                    res.render('password-change.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                    return;
+                }
+
+                if (!rows.length) {
+                    res.render('password-change.ejs', {message:  'No user found.', customer: req.query.customer, openTokenRequest:true});
+                    return;
+                }else{
+                    emailserver.send({
+                        text:    "Maximus Password Verification link is " + req.protocol + '://' + req.get('host') + '/verify-password?token='+ rows[0].password_verification_code,
+                        from:    "linpretinfo@gmail.com",
+                        to:     rows[0].email,
+                        cc:      "semih.kahya08@gmail.com",
+                        subject: "Linpret Password Verification"
+                    }, function(err, message) { console.log(err || message); });
+
+                    res.render('login.ejs', {
+                        message: 'Your password change request is sended. Please check your emails.',
+                        customer: req.query.customer,
+                        openTokenRequest: false
+                    });
+                    return;
+                }
+
+            });
+        });
+
+    });
+
+    app.post('/change-password', function (req, res, next) {
+
+        if(req.body.password != req.body.repassword){
+            res.render('password-change.ejs', {message: 'Please use same password again', customer: req.query.customer, openTokenRequest:false});
+            return;
+        }else {
+
+            req.getConnection(function (err, connection) {
+                connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
+                    if (err) {
+                        res.render('password-change.ejs', {
+                            message: 'Oops something wrong. Please try again',
+                            customer: req.query.customer,
+                            openTokenRequest: false
+                        });
+                        return;
+                    }
+
+                    if (!rows.length) {
+                        res.render('password-change.ejs', {
+                            message: 'No user found.',
+                            customer: req.query.customer,
+                            openTokenRequest: false
+                        });
+                        // req.flash is the way to set flashdata using connect-flash
+                        return;
+                    }
+
+                    var password = bcrypt.hashSync(req.body.password, null, null);
+                    var code = randomstring.generate({
+                        length: 64
+                    });
+                    var updatequery = "update users set password =?, password_verification_code=?  where email=?";
+
+                    connection.query(updatequery, [password,code, req.body.email], function (err, rowsUpdate) {
+                        if (err) {
+
+                            res.render('password-change.ejs', {
+                                message: 'Oops something wrong. Please try again',
+                                customer: req.query.customer,
+                                openTokenRequest: false
+                            });
+                            return;
+
+                        } else {
+
+                            res.render('login.ejs', {
+                                message: 'Your password is change.',
+                                customer: req.query.customer,
+                                openTokenRequest: false
+                            });
+                            return;
+                        }
+                    });
+
+
+                });
+            });
+        }
+
+    });
 // SIGNUP =================================
 // show the signup form
     app.get('/signup', function (req, res) {

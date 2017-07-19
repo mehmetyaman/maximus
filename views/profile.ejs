@@ -80,6 +80,7 @@
                     <% } %>
                     <a href="/logout" class="btn btn-default btn-sm">Logout</a>
                     <h1><span class="fa fa-anchor"></span></h1>
+                    <button class="btn btn-primary" type="button" onclick="changePassword();">Change Password</button>
                 </div>
             </div>
         </div>
@@ -349,6 +350,12 @@
 
     function planner() {
         $("#plannerDiv").toggle();
+    }
+
+    function changePassword() {
+        $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
+            alert(data);
+        });
     }
 
     function assignSession(translator_id, session_id) {

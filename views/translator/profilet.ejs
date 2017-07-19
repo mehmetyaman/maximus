@@ -46,7 +46,9 @@
                     <a href="/connect/local" class="btn btn-default">Connect Local</a>
                     <% } %>
                     <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+                    <button class="btn btn-primary" type="button" onclick="changePassword();">Change Password</button>
                     <h1><span class="fa fa-anchor"></span></h1>
+
                 </div>
             </div>
         </div>
@@ -95,8 +97,6 @@
             <div class="col-md-2">
                 <span><%= items.translator_id %></span>
                 <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
-                <span id="participants-span-<%= items.id %>">
-                </span>
             </div>
             <% } %>
 
@@ -204,6 +204,13 @@
     });
     }
     %>
+
+
+    function changePassword() {
+        $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
+            alert(data);
+        });
+    }
 </script>
 </body>
 </html>
