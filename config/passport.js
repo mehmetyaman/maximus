@@ -5,7 +5,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-//var LinkedInStrategy = require('passport-linkedin').Strategy;
 var LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 
 // load up the user model
@@ -52,30 +51,59 @@ module.exports = function (passport) {
             function (req, username, password, done) {
                 // find a user whose email is the same as the forms email
                 // we are checking to see if the user trying to login already exists
+                var isLinkedincycle = false;
+                if (req.body.linkedincycle) {
+                    isLinkedincycle = true;
+                }
                 connection.query("SELECT * FROM users WHERE email = ? ", [username], function (err, rows) {
                     if (err)
                         return done(err);
                     if (rows.length) {
-                        return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                        if (isLinkedincycle) {
+                            var user = rows[0];
+                            user.password = bcrypt.hashSync(password, null, null);
+                            var updatequery = "update users set password =? where email=?";
+
+                            connection.query(updatequery, [bcrypt.hashSync(user.password, null, null), username], function (err, rows) {
+                                if (err) {
+                                    return done(err);
+                                }
+
+                                return done(null, user);
+                            });
+                        } else {
+                            return done(null, false, req.flash('signupMessage', 'That username is already taken.'));
+                        }
                     } else {
                         // if there is no user with that username
                         // create the user
+
+                        var randomstring = require("randomstring");
+
                         var newUserMysql = {
-                            username: username,
+                            email: username,
                             password: bcrypt.hashSync(password, null, null),
                             is_customer: req.query.customer ? 1 : 0,
                             is_translator: !req.query.customer ? 1 : 0,
                             name: req.body.name,
-                            surname: req.body.surname
+                            surname: req.body.surname,
+                            email_verification_code: randomstring.generate({
+                                length: 64
+                            }),
+                            password_verification_code: randomstring.generate({
+                                length: 64
+                            }),
+                            is_email_verification: 0
                         };
 
                         var insertQuery = "INSERT INTO users (email, password, is_customer, is_translator, name," +
-                            " surname)" +
+                            " surname, email_verification_code, password_verification_code, is_email_verification)" +
                             " values" +
-                            " (?,?,?,?,?,?) ";
+                            " (?,?,?,?,?,?,?,?,?) ";
 
-                        connection.query(insertQuery, [newUserMysql.username, newUserMysql.password,
-                            newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname], function (err, rows) {
+                        connection.query(insertQuery, [newUserMysql.email, newUserMysql.password,
+                            newUserMysql.is_customer, newUserMysql.is_translator, newUserMysql.name, newUserMysql.surname,
+                        newUserMysql.email_verification_code, newUserMysql.password_verification_code, newUserMysql.is_email_verification], function (err, rows) {
                             if (err) {
                                 return done(err);
                             }
@@ -105,8 +133,14 @@ module.exports = function (passport) {
             },
             function (req, username, password, done) { // callback with email and password from our form
                 connection.query("SELECT * FROM users WHERE email = ?", [username], function (err, rows) {
-                    if (err)
+                    if (err) {
                         return done(err);
+                    }
+
+                    if(rows[0].is_email_verification == 0){
+                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
+                    }
+
                     if (!rows.length) {
                         return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
                     }
@@ -121,33 +155,62 @@ module.exports = function (passport) {
             })
     );
 
+    // =========================================================================
+    // create-new-token =============================================================
+    // =========================================================================
+
+    passport.use(
+        'create-new-token',
+        new LocalStrategy({
+                // by default, local strategy uses username and password, we will override with email
+                usernameField: 'email',
+                passReqToCallback: true // allows us to pass back the entire request to the callback
+            },
+            function (req, username, password, done) { // callback with email and password from our form
+                connection.query("SELECT * FROM users WHERE email = ?", [username], function (err, rows) {
+                    if (err) {
+                        return done(err);
+                    }
+
+                    if (!rows.length) {
+                        return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    }
+
+                    var token = randomstring.generate({
+                        length: 64
+                    });
+                    var updatequery = "update users set email_verification_code =?  where email=?";
+
+                    connection.query(updatequery, [token, username], function (err, rows) {
+                        if (err) {
+
+                            return done(null, false, req.flash('loginMessage', 'Oops something wrong. Please try again'));
+
+                        }else {
+
+                            rows[0].email_verification_code = token;
+                            return done(null, rows[0], null);
+                        }
+                    });
+
+
+                });
+            })
+    );
+
 // =========================================================================
 // Linkedin ================================================================
 // =========================================================================
-    /*
-     Client ID:	86jkoxygnghvrf
-
-     Client Secret:	mpkg3fLKSMnQawzE
-
-     passport.use(new LinkedInStrategy({
-     consumerKey: "86jkoxygnghvrf",
-     consumerSecret: "mpkg3fLKSMnQawzE",
-     callbackURL: "http://localhost:4300/auth/linkedin/callback"
-     },
-     function (token, tokenSecret, profile, done) {
-     User.findOrCreate({linkedinId: profile.id}, function (err, user) {
-     return done(err, user);
-     });
-     }
-     ));
-     */
-
     passport.use(new LinkedInStrategy({
         clientID: "86jkoxygnghvrf",
         clientSecret: "mpkg3fLKSMnQawzE",
-        callbackURL: "http://localhost:4300/auth/linkedin/callback",
+        callbackURL: "/auth/linkedin/callback",
         scope: ['r_emailaddress', 'r_basicprofile'],
-    }, function (accessToken, refreshToken, profile, done) {
+        passReqToCallback: true
+    }, function (req, accessToken, refreshToken, profile, done) {
+        req.session.accessToken = accessToken;
+        req.session.linkedinprofile = profile._json;
+        
         // asynchronous verification, for effect...
         process.nextTick(function () {
             // To keep the example simple, the user's LinkedIn profile is returned to
@@ -155,14 +218,56 @@ module.exports = function (passport) {
             // to associate the LinkedIn account with a user record in your database,
             // and return that user instead.
             connection.query("SELECT * FROM users WHERE email = ? ", profile.emails[0].value, function (err, rows) {
-                if (err)
-                    return done(err);
-                if (!rows.length) {
-                    return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
-                }
 
-                // all is well, return successful user
-                return done(null, rows[0]);
+                if (err) {
+                    return done(err);
+                }
+                if (!rows.length) {
+                    // new user case
+                    var user = {
+                        name: profile._json.firstName,
+                        surname: profile._json.lastName,
+                        email: profile._json.emailAddress,
+                        picture_url: profile._json.pictureUrl,
+                        country_code: profile._json.location.country.code,
+                        password: bcrypt.hashSync(1, null, null),
+                        is_linkedin_user: 1,
+                        linkedin_id: profile._json.id
+                    }
+
+                    var query = connection.query("INSERT INTO users set ? ", user, function (err1, results, rows1) {
+                        if (err1) {
+                            done(err);
+                        }
+                        user.id = results.insertId;
+                        user.isNew = true;
+                        done(null, user);
+                    });
+
+                } else {
+                    var dbUser = rows[0];
+                    var user = {
+                        name: profile._json.firstName,
+                        surname: profile._json.lastName,
+                        email: profile._json.emailAddress,
+                        picture_url: profile._json.pictureUrl,
+                        country_code: profile._json.location.country.code,
+                        is_linkedin_user: 1,
+                        linkedin_id: profile._json.id,
+                        id: dbUser.id,
+                        is_customer: rows[0].is_customer,
+                        is_translator: rows[0].is_translator
+                    }
+
+                    var query = connection.query("update users set ? where linkedin_id=? ", [user, user.linkedin_id], function (err1, results, rows2) {
+                        if (err1) {
+                            done(err);
+                        }
+
+                        // all is well, return successful user
+                        done(null, user);
+                    });
+                }
             });
         });
     }));

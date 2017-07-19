@@ -1,8 +1,9 @@
 var http = require('http');
 var moment = require('moment');
 var config = require('config');
+var randomstring = require("randomstring");
 
-module.exports = function (app, passport, winston) {
+module.exports = function (app, passport, winston, emailserver) {
 
 
 // normal routes ===============================================================
@@ -14,6 +15,8 @@ module.exports = function (app, passport, winston) {
                 res.redirect('/profile');
             } else if (req.user.is_translator) {
                 res.redirect('/profilet');
+            } else if (req.user.is_linkedin_user) {
+                res.redirect('/logout');
             }
         } else {
             res.render('index.ejs');
@@ -81,7 +84,7 @@ module.exports = function (app, passport, winston) {
     // LOGIN ===============================
     // show the login form
     app.get('/login', function (req, res) {
-        res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer});
+        res.render('login.ejs', {message: req.flash('loginMessage'), customer: req.query.customer, openTokenRequest:false});
     });
 
 
@@ -109,11 +112,109 @@ module.exports = function (app, passport, winston) {
         })(req, res, next);
     });
 
+    //emial verify ============
+
+
+    app.post('/send-verify-email-again', function (req, res, next) {
+
+        req.getConnection(function (err, connection) {
+            connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
+                if (err) {
+                    res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                    return;
+                }
+
+                if (!rows.length) {
+                    res.render('login.ejs', {message:  'No user found.', customer: req.query.customer, openTokenRequest:true});
+                    // req.flash is the way to set flashdata using connect-flash
+                    return;
+                }
+
+                var token = randomstring.generate({
+                    length: 64
+                });
+                var updatequery = "update users set email_verification_code =?  where email=?";
+
+                connection.query(updatequery, [token, req.body.email], function (err, rowsUpdate) {
+                    if (err) {
+
+                        res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                        return;
+
+                    }else {
+
+                        rows[0].email_verification_code = token;
+                        sendVerificationEmail(req, rows[0], res, emailserver);
+                        res.render('login.ejs', {message:  'New verification email sended. Please look your email', customer: req.query.customer, openTokenRequest:false});
+                        return;
+                    }
+                });
+
+
+            });
+        });
+
+    });
+
+
+    app.get('/verify-email', function (req, res) {
+
+        if (req.query.token != null) {
+            req.getConnection(function (err, connection) {
+                var query = connection.query('select * from users where email_verification_code= ?', [req.query.token], function (err, rows) {
+
+                    if (err) {
+                        res.render('login.ejs', {
+                            message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                            customer: req.query.customer,
+                            openTokenRequest: true
+
+                        });
+                    }else {
+                        if (rows.length) {
+
+                            var updatequery = "update users set email_verification_code =? , is_email_verification=?  where email_verification_code=?";
+
+                            connection.query(updatequery, [null, 1, req.query.token], function (err, rows) {
+                                if (err) {
+                                    res.render('login.ejs', {
+                                        message: 'Your token expired. You can get new token email under the below. Please type your email adress',
+                                        customer: req.query.customer,
+                                        openTokenRequest: true
+
+                                    });
+                                } else {
+
+                                    res.render('login.ejs', {
+                                        message: 'Your email is verifed. You can login now.',
+                                        customer: req.query.customer,
+                                        openTokenRequest: false
+                                    });
+                                }
+                            });
+                        }else{
+                            res.render('login.ejs', {
+                                message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                                customer: req.query.customer,
+                                openTokenRequest: true
+
+                            });
+                        }
+                    }
+
+
+                });
+            });
+        } else {
+            res.render('signup.ejs', {message: req.flash('signupMessage'), customer: req.query.customer});
+        }
+
+    });
+
     // SIGNUP =================================
     // show the signup form
     app.get('/signup', function (req, res) {
-        var sql = "SELECT id FROM translators" +
-            " WHERE  translators.email = ?";
+        var sql = "SELECT id FROM translators WHERE  translators.email = ?";
 
         if (!req.query.customer) {
             req.getConnection(function (err, connection) {
@@ -136,58 +237,82 @@ module.exports = function (app, passport, winston) {
 
     });
 
-
     // process the signup form
     app.post('/signup', function (req, res, next) {
-        passport.authenticate('local-signup', function (err, user, info) {
+        req.assert('email', 'A valid email is required').isEmail();  //Validate email
+        req.assert('name', 'Name field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
+        req.assert('surname', 'Surname field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
+        req.assert('password', 'Surname field can not be empty and has to be minimum 2 character maximum 20').len(6, 20);
 
-                if (err) {
-                    return next(err);
+        req.getValidationResult().then(function (result) {
+            if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
+                if (req.body.linkedincycle) {
+                    return res.redirect("/logout");
+                } else {
+                    return res.redirect('/login');
                 }
-                if (!user) {
-                    return res.redirect('/signup');
-                }
-                req.logIn(user, function (err) {
-                    if (user.is_translator) {
-                        var input = JSON.parse(JSON.stringify(req.body));
+            } else {
+                passport.authenticate('local-signup', function (err, user, info) {
 
-                        req.getConnection(function (err, connection) {
-
-                                var data = {
-                                    name: input.name,
-                                    surname: input.surname,
-                                    email: input.email
-                                };
-
-                                langListCarrier = input.langListCarrier;
-                                var values = [];
-                                langListCarrier.split(";").filter(function (e) {
-                                    return e
-                                }).forEach(function (item) {
-                                    values.push([user.id, item.split(",")[0], item.split(",")[1]]);
-                                });
-                                var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
-                                    if (err2) {
-                                        console.log("Error inserting : %s ", err2);
-                                    }
-
-                                    res.redirect('/profilet');
-                                });
-
-                            }
-                        );
+                    if (err) {
+                        return next(err);
                     }
-                    else if (user.is_customer) {
-                        {
-                            res.redirect('/profile');
+                    if (!user) {
+                        return res.redirect('/signup');
+                    }
+                    req.logIn(user, function (err) {
+                        if (user.is_translator) {
+                            var input = JSON.parse(JSON.stringify(req.body));
+
+                            req.getConnection(function (err, connection) {
+
+                                    var data = {
+                                        name: input.name,
+                                        surname: input.surname,
+                                        email: input.email
+                                    };
+
+                                    langListCarrier = input.langListCarrier;
+                                    var values = [];
+                                    langListCarrier.split(";").filter(function (e) {
+                                        return e
+                                    }).forEach(function (item) {
+                                        values.push([user.id, item.split(",")[0], item.split(",")[1]]);
+                                    });
+                                    var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
+                                        if (err2) {
+                                            console.log("Error inserting : %s ", err2);
+                                        }
+
+                                        sendVerificationEmail(req, user, res, emailserver);
+                                    });
+
+                                }
+                            );
                         }
-                    }
-                });
+                        else if (user.is_customer) {
+                            {
+                                sendVerificationEmail(req, user, res, emailserver);
+                            }
+                        }
+                    });
+                })(req, res, next);
             }
-        )
-        (req, res, next);
-    })
-    ;
+        });
+    });
+
+
+    function sendVerificationEmail(req, user, res, emailserver) {
+        emailserver.send({
+            text:    "Maximus Email Verification link is " + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
+            from:    "linpretinfo@gmail.com",
+            to:     user.email,
+            cc:      "semih.kahya08@gmail.com",
+            subject: "Maximus Email Verification"
+        }, function(err, message) { console.log(err || message); });
+
+        res.redirect('/signup-success');
+    }
 
 // SIGNUP =================================
 // show the signup form
@@ -195,10 +320,17 @@ module.exports = function (app, passport, winston) {
         res.render('signup.ejs', {message: req.flash('signupMessage')});
     });
 
+
+
+    // show the signup success page
+    app.get('/signup-success', function (req, res) {
+        res.render('signup-success.ejs', {message: "Verification email send your email address"});
+    });
+
 // process the signup form
     app.post('/signup',
         passport.authenticate('local-signup', {
-                successRedirect: '/profile', // redirect to the secure profile section
+                successRedirect: '/signup-success', // redirect to the secure profile section
                 failureRedirect: '/signup', // redirect back to the signup page if there is an error
                 failureFlash: true // allow flash messages
             }
@@ -207,16 +339,30 @@ module.exports = function (app, passport, winston) {
 
 // linkedin -------------------------------
     app.get('/auth/linkedin',
-        passport.authenticate('linkedin', {state: 'SOME STATE'}),
-        function (req, res) {
+        passport.authenticate('linkedin', function (req, res) {
             // The request will be redirected to LinkedIn for authentication, so this
             // function will not be called.
-        });
+            console.log("here another");
+        }));
 
-    app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    }));
+    app.get('/auth/linkedin/callback', passport.authenticate('linkedin',
+        {
+            successRedirect: '/selector',
+            failureRedirect: '/login'
+        }));
+
+    app.get('/selector', isLoggedIn , function (req, res) {
+        if (req.user.isNew) {
+            return res.redirect('/profile/select');
+        }
+        if (req.user.is_translator) {
+            return res.redirect('/profilet');
+        }
+        if (req.user.is_customer) {
+            return res.redirect('/profile');
+        }
+    });
+
 
 // facebook -------------------------------
 
@@ -241,7 +387,6 @@ module.exports = function (app, passport, winston) {
             successRedirect: '/profile',
             failureRedirect: '/'
         }));
-
 
 // google ---------------------------------
 

@@ -6,9 +6,9 @@
     "protocol":"http"
   },
   "mysql": {
-    "host": "172.17.0.2",
+    "host": "localhost",
     "user": "root",
-    "password" : "admin123",
+    "password" : "anadolu",
     "port": 3306,
     "database":"maximus",
     "multipleStatements": "true"
@@ -35,8 +35,8 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://localhost:4300/paymentResult",
-    "api" : {
+    "callbackUrl": "http://localhost:4300/paymentResult",
+    "api": {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
