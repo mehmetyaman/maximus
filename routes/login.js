@@ -1,5 +1,6 @@
 var http = require('http');
 var moment = require('moment');
+var config = require('config');
 var randomstring = require("randomstring");
 
 module.exports = function (app, passport, winston, emailserver) {
@@ -48,13 +49,16 @@ module.exports = function (app, passport, winston, emailserver) {
                                     'tsu.user_id = ? and ' +
                                     'tsd.translation_session_id=ts.id and ' +
                                     'tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
+
+
                                     res.render('profile.ejs', {
                                         user: req.user,
                                         langs: languages,
                                         lists: sessions,
                                         cats: categories,
                                         demandedTranslators: demandedTranslators,
-                                        moment: moment
+                                        moment: moment,
+                                        config: config
                                     });
                                 });
                             })

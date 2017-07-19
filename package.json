@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
-    "preinstall": "npm install config bower iyzipay && bower install bootstrap jquery eonasdan-bootstrap-datetimepicker#latest"
+    "preinstall": "npm install mysql config bower iyzipay && bower install bootstrap jquery eonasdan-bootstrap-datetimepicker#latest"
   },
   "dependencies": {
     "bcrypt-nodejs": "latest",
@@ -22,7 +22,7 @@
     "express-validator": "^3.2.1",
     "iyzipay": "^2.0.25",
     "method-override": "~1.0.0",
-    "mongoose": "^4.4.20",
+    "mongoose": "~4.4",
     "morgan": "^1.6.0",
     "mysql": "^2.2.0",
     "node-schedule": "^1.2.3",

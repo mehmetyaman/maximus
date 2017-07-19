@@ -111,6 +111,7 @@ heroku config:get JAWSDB_URL  // to learn host,username,pass..
 
 heroku addons:create mongolab
 heroku config:get MONGODB_URI
+heroku run bash
 
 git commit -a
 git push heroku HEAD:master

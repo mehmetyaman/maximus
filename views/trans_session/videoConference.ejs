@@ -9,19 +9,19 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 
     <!-- custom layout for HTML5 audio/video elements-->
-    <script src="/../js/socket.io.js"></script>
-    <script src="/../js/RTCMultiConnection.min.js"></script>
+    <script src="<%=config.get("socketURL")%>socket.io/socket.io.js"></script>
+    <script src="/../js/RTCMultiConnection.js"></script>
     <script src="/../js/getMediaElement.js"></script>
 
     <!-- custom layout for HTML5 audio/video elements -->
-    <script src="https://cdn.webrtc-experiment.com:443/FileBufferReader.js"></script>
+    <script src="/../js/FileBufferReader.js"></script>
 
 </head>
 
 <script>
+
     $(document).ready(function () {
         disableInputButtons();
-
 
         $('#close_btn').click(function() {
             $('#room_activity').removeClass('open');
@@ -42,9 +42,7 @@
             $('#room_activity').addClass('open');
         });
 
-        // ......................................................
-        // ................FileSharing/TextChat Code.............
-        // ......................................................
+        // FileSharing/TextChat Code
         document.getElementById('share-file').onclick = function() {
             var fileSelector = new FileSelector();
             fileSelector.selectSingleFile(function(file) {
@@ -71,69 +69,70 @@
         }
 
         var chatContainer = document.getElementById('chat-output');
-            function appendDIV(event) {
-                if($('#chat_wrapper').hasClass('notvisible')){
+
+        function appendDIV(event) {
+            if($('#chat_wrapper').hasClass('notvisible')){
                 $('#chat_wrapper').removeClass('notvisible');
                 $('#chat_wrapper_content').addClass('is-visible');
             }
             var div = document.createElement('div');
             div.innerHTML = event.data  || event;
-            chatContainer.insertBefore(div, chatContainer.firstChild);
+            chatContainer.insertAfter(div, chatContainer.firstChild);
             div.tabIndex = 0;
             div.focus();
             document.getElementById('input-text-chat').focus();
         }
 
+        var connection = new RTCMultiConnection();
+        // socket.io server
+        connection.socketURL = "<%=config.get("socketURL")%>";
+        // connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
 
+        connection.socketMessageEvent = 'video-conference-demo';
+        connection.maxParticipantsAllowed = '3';
+        connection.userid='<%=peerId%>';
+        connection.enableFileSharing = true;
+        connection.videochatid='<%=roomId%>';
 
-    var connection = new RTCMultiConnection();
+        connection.session = {
+            audio: true,
+            video: true,
+            data: true
+        };
 
-    // by default, socket.io server is assumed to be deployed on your own URL
-    //  connection.socketURL = '/';
+        connection.sdpConstraints.mandatory = {
+            OfferToReceiveAudio: true,
+            OfferToReceiveVideo: true
+        };
 
-    // comment-out below line if you do not have your own socket.io server
-    connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
+        var i=0;
+        connection.videosContainer = document.getElementById('video-wrapper');
+        connection.onstream = function (event) {
+            ++i;
+            i==1 ? mute=true : mute=false;
 
-    connection.socketMessageEvent = 'video-conference-demo';
-    connection.maxParticipantsAllowed = '3';
- //   connection.userid='<%//=peerId%>';
-    connection.enableFileSharing = true;
+          // if(event.userid=='admin' && i>1){  // if it is not my local stream
+          //     parts = connection.getAllParticipants().length;
+          //     connection.getNumberOfBroadcastViewers ('6', function () {
+          //     alert(numberOfBroadcastViewers);
+          // });
+          // alert(parts);
+          // }
 
-    connection.session = {
-        audio: true,
-        video: true,
-        data: true
-    };
+          // var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
 
-    connection.sdpConstraints.mandatory = {
-        OfferToReceiveAudio: true,
-        OfferToReceiveVideo: true
-    };
-
-    var i=0;
-    connection.videosContainer = document.getElementById('video-wrapper');
-    connection.onstream = function (event) {
-        ++i;
-        i==1 ? mute='true' : mute='false';
-        i==1 ? autplay='false' : autplay='true';
-        i==1 ? vol='0' : vol='';
-       // alert("i="+ i);
-       // alert("id="+event.userid);
-
-        //   var width = parseInt(connection.videosContainer.clientWidth / 2) - 20;
         var mediaElement = getMediaElement(event.mediaElement, {
             title: event.userid,
             //    buttons: ['full-screen'],
-             buttons: ['volume-slider'],
-         //   buttons: [''],
+            //    buttons: ['volume-slider'],
+            buttons: [''],
             //    width: width,
             muted: mute,
-            autoplay: autplay,
-        //    volume: vol,
-        //    showOnMouseEnter: false
+            autoplay: true,
+            //    volume: vol,
+            //    showOnMouseEnter: false
         });
         addNewVideoBox(event.userid, mediaElement);
-        //    connection.videosContainer.appendChild(mediaElement);
 
         setTimeout(function () {
   //          mediaElement.media.play();
@@ -145,7 +144,6 @@
     connection.onstreamended = function (event) {
         var mediaElement = document.getElementById(event.streamid);
         if (mediaElement) {
-            // mediaElement.parentNode.removeChild(mediaElement);
             removeVideoBox(event.userid);
         }
     };
@@ -153,45 +151,30 @@
     connection.onmessage = appendDIV;
     connection.filesContainer = document.getElementById('file-container');
 
-
     connection.onRoomFull =  function (event) {
-        alert("session is full! max. participants=4");
+        alert("session is full! max. participants="+connection.maxParticipantsAllowed);
+    }
+
+    connection.onUserIdAlreadyTaken = function (event) {
+        alert("you already have active session!");
     }
 
     function disableInputButtons() {
         document.getElementById('room-id').disabled = true;
     }
-
-    /*
-     function showRoomURL(roomid) {
-     var roomHashURL = '#' + roomid;
-     var roomQueryStringURL = '?roomid=' + roomid;
-
-     var html = '<h2>Unique URL for your room:</h2><br>';
-
-     html += 'Hash URL: <a href="' + roomHashURL + '" target="_blank">' + roomHashURL + '</a>';
-     html += '<br>';
-     html += 'QueryString URL: <a href="' + roomQueryStringURL + '" target="_blank">' + roomQueryStringURL + '</a>';
-
-     var roomURLsDiv = document.getElementById('room-urls');
-     roomURLsDiv.innerHTML = html;
-
-     roomURLsDiv.style.display = 'block';
-     }
-     */
+        /*
     (function () {
         var params = {},
                 r = /([^&=]+)=?([^&]*)/g;
-
         function d(s) {
             return decodeURIComponent(s.replace(/\+/g, ' '));
         }
-
         var match, search = window.location.search;
         while (match = r.exec(search.substring(1)))
             params[d(match[1])] = d(match[2]);
         window.params = params;
     })();
+
 
     var roomid = '';
     if (localStorage.getItem(connection.socketMessageEvent)) {
@@ -199,11 +182,12 @@
     } else {
         roomid = connection.token();
     }
- /*   document.getElementById('room-id').value = roomid;
+
+    document.getElementById('room-id').value = roomid;
+
     document.getElementById('room-id').onkeyup = function () {
         localStorage.setItem(connection.socketMessageEvent, this.value);
     };
- */
 
     var hashString = location.hash.replace('#', '');
     if (hashString.length && hashString.indexOf('comment-') == 0) {
@@ -232,11 +216,12 @@
 
         disableInputButtons();
     }
-
+  */
     function addNewVideoBox(userId, video) {
+
         var divHtml = $("#video-wrapper").html() +
                 "<div class=\"video-frame-wrapper splitscreen-wrapper ui-draggable ui-droppable _1\" id=\"videoFrame_" + userId + "\" >" +
-//                "<span>"+this.userToken+"</span>"+
+//              "<span>"+this.userToken+"</span>"+
                 "<div class=\"video-box\"> " +
                 "<div class=\"video-frame\" > " +
                 "<div class=\"video-stream-container\" id=\"myVideoContainer_" + userId + "\" >" +
@@ -265,22 +250,20 @@
             $(this).removeClass(lastClass);
             $(this).addClass('_' + i);
         });
-
         if (i > 1) {
             $("#video-wrapper").attr("class", "div" + i);
         }
     }
 
-        connection.openOrJoin("<%=roomId%>", function (isRoomExists, roomid) {
+    connection.openOrJoin("<%=roomId%>", function (isRoomExists, roomid) {
 
-            //    alert("isRoomExists="+isRoomExists);
-
-            if (!isRoomExists) {
-                //  showRoomURL(roomid);
-            }
-        });
-
+        if (!isRoomExists) {
+            //  alert("room is created!");
+            console.log("room is created! id="+roomid);
+        }
     });
+
+  });
 
 </script>
 

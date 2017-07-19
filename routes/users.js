@@ -131,6 +131,23 @@ module.exports = function (app) {
         });
     });
 
+    //for rest call without redirection
+    app.get('/userData/:id', isLoggedIn, function (req, res) {
+        var userid = req.params.id;
+        req.getConnection(function (err, connection) {
+            connection.query('SELECT * FROM users where id=?', [userid] ,function (err, rows) {
+                if (err) {
+                    console.log("Error /user/:id : %s ", err);
+                    res.status(500).send(err);
+                } else {
+                    res.send(rows[0]);
+                }
+
+            });
+        });
+    });
+
+
 };
 
 function do_queries(connection, userid, callback) {
@@ -145,9 +162,12 @@ function do_queries(connection, userid, callback) {
         if (err2) {
             callback(err2);
             return;
+        }else{
+            callback(null, rows2);
+            return;
         }
 
-        i = 0;
+       /* i = 0;
         rows2.forEach(function (videoChat) {
             var peers;
             Peer.find({"videoChatId": videoChat.id}, function (err, peers) {
@@ -163,6 +183,7 @@ function do_queries(connection, userid, callback) {
                 }
             });
         });
+        */
     });
 }
 
