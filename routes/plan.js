@@ -26,12 +26,13 @@ module.exports = function (app, winston, emailServer) {
                     if (err) {
                         console.log("Error Selecting : %s ", err);
                     }
-                    if(invitations.length>0){
+                    if (invitations.length > 0) {
                         var data = {
                             translation_session_id: req.query.sessionId,
                             user_id: req.user.id
                         }
-                        var query3 = connection.query("INSERT INTO `translation_session_users` set ?", [data], function (err3, rows3) {
+
+                        var query3 = connection.query("insert into translation_session_users set ?", [data], function (err3, rows3) {
                             if (err3) {
                                 connection.rollback(function () {
                                     throw err;
@@ -40,15 +41,14 @@ module.exports = function (app, winston, emailServer) {
                                 res.status(500).json({error: err3});
                             }
 
-                            if(req.user.is_customer){
+                            if (req.user.is_customer) {
                                 res.redirect("/profile");
-                            } else if(req.user.is_translator){
+                            } else if (req.user.is_translator) {
                                 res.redirect("/profilet");
                             }
                         });
-                    };
-                    // res == true
-                    console.log(res);
+                    }
+                    ;
 
                 });
         });
@@ -63,36 +63,48 @@ module.exports = function (app, winston, emailServer) {
             length: 32
         });
 
-        var data = {
-            invitation_token: token,
-            email: participant,
-            translation_session_id: sessionId
-        }
+
         req.getConnection(function (err, connection) {
-            var query2 = connection.query("INSERT INTO `translation_session_invitations` set ?", [data], function (err2, rows2) {
 
-                if (err2) {
-                    connection.rollback(function () {
-                        throw err;
-                    });
-                    console.log("Error inserting : %s ", err2);
-                    res.status(500).json({error: err2});
-                }
+            var firstquery = connection.query("select * from translation_session_users tsu, users us where us.id =" +
+                " tsu.user_id and us.email =? and tsu.translation_session_id=? ", [participant, sessionId], function (err3, session_users) {
 
-                emailServer.send({
-                    text: "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan-assign?sessionId=' + sessionId + '&invitation_token=' + token,
-                    from: "linpretinfo@gmail.com",
-                    to: participant,
-                    cc: "kaplanerbil@gmail.com",
-                    subject: "Linpret Translation Meeting Invitation "
-                }, function (err, message) {
-                    if (err) {
-                        res.send(500)
+                if (session_users.length > 0) {
+                    console.log("user has already assigned for this session");
+                    res.send(200);
+                } else {
+                    var data = {
+                        invitation_token: token,
+                        email: participant,
+                        translation_session_id: sessionId
                     }
-                    console.log(err || message);
-                });
 
-                res.send(200);
+                    var query2 = connection.query("INSERT INTO `translation_session_invitations` set ?", [data], function (err2, rows2) {
+
+                        if (err2) {
+                            connection.rollback(function () {
+                                throw err;
+                            });
+                            console.log("Error inserting : %s ", err2);
+                            res.status(500).json({error: err2});
+                        }
+
+                        emailServer.send({
+                            text: "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan-assign?sessionId=' + sessionId + '&invitation_token=' + token,
+                            from: "linpretinfo@gmail.com",
+                            to: participant,
+                            cc: "kaplanerbil@gmail.com",
+                            subject: "Linpret Translation Meeting Invitation "
+                        }, function (err, message) {
+                            if (err) {
+                                res.send(500)
+                            }
+                            console.log(err || message);
+                        });
+
+                        res.send(200);
+                    });
+                }
             });
         })
     });
