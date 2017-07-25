@@ -1,4 +1,3 @@
-
 var Iyzipay = require('iyzipay');
 var config = require('config');
 
@@ -19,12 +18,12 @@ module.exports = function (app) {
             token: token
         }, function (err, result) {
             console.log(err, result);
-            var status=result.status;
-            var errorCode=result.errorCode;
-            var errorMessage=result.errorMessage;
+            var status = result.status;
+            var errorCode = result.errorCode;
+            var errorMessage = result.errorMessage;
 
             var message;
-            if(result.status=='success') {
+            if (result.status == 'success') {
                 message = "Ödemeniz Başarıyla Gerçekleştirildi!";
                 req.getConnection(function (err, connection) {
                     connection.query("UPDATE translation_session set is_paid = 1 WHERE id = ? ", [conversationId], function (err, rows) {
@@ -33,38 +32,33 @@ module.exports = function (app) {
                     });
 
                 });
-            }else {
+            } else {
                 message = errorMessage;
             }
 
-            res.render('paymentResult',{
-                page_title: "Payment result",
-                data: rows, result:result.status, message:message});
+            res.redirect('/profile');
 
         });
 
 
     });
 
-    app.get('/payment/:price/:currency/:sessionId', isLoggedIn, function (req, res) {
+    app.post('/payment', isLoggedIn, function (req, res) {
 
         var iyzipay = new Iyzipay(
             config.get("iyzico_client.api")
         );
 
-          function paymentForm(done) {
-            var price=req.params.price;
-            var currency=req.params.currency;
-            var sessionId=req.params.sessionId;
+        function paymentForm(done) {
 
             var request = {
                 locale: Iyzipay.LOCALE.EN,
-                conversationId: sessionId,
-                price: price,
-                paidPrice: price,
-              //  currency: Iyzipay.CURRENCY.TRY,
-                currency: currency,
-                basketId: 'B67832',
+                conversationId: req.body.sessionId,
+                price: req.body.amount,
+                paidPrice: req.body.amount,
+                //  currency: Iyzipay.CURRENCY.TRY,
+                currency: req.body.currency,
+                basketId: '',
                 paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
                 callbackUrl: config.get("iyzico_client.callbackUrl"),
                 enabledInstallments: [2, 3, 6, 9],
@@ -84,18 +78,18 @@ module.exports = function (app) {
                     zipCode: '34732'
                 },
                 shippingAddress: {
-                    contactName: 'Jane Doe',
-                    city: 'Istanbul',
-                    country: 'Turkey',
-                    address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-                    zipCode: '34742'
+                    contactName: req.body.shippingAddress.firstName + " " + req.body.shippingAddress.lastName,
+                    city: req.body.shippingAddress.city,
+                    country: req.body.shippingAddress.country,
+                    address: req.body.shippingAddress.address,
+                    zipCode: req.body.shippingAddress.pinCode
                 },
                 billingAddress: {
-                    contactName: 'Jane Doe',
-                    city: 'Istanbul',
-                    country: 'Turkey',
-                    address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-                    zipCode: '34742'
+                    contactName: req.body.billingAddress.firstName + " " + req.body.billingAddress.lastName,
+                    city: req.body.billingAddress.city,
+                    country: req.body.billingAddress.country,
+                    address: req.body.billingAddress.address,
+                    zipCode: req.body.billingAddress.pinCode
                 },
                 basketItems: [
                     {
@@ -134,8 +128,7 @@ module.exports = function (app) {
         }
 
         paymentForm(function (result) {
-            console.log('awqwaw');
-            res.redirect(result.paymentPageUrl);
+            res.send(result.paymentPageUrl);
         })
 
     });

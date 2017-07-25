@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS `translator_lang`;
 DROP TABLE IF EXISTS `languages`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `categories`;
+drop table IF EXISTS `translation_session_invitations`;
 
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
