@@ -6,9 +6,9 @@
     "protocol":"http"
   },
   "mysql": {
-    "host": "172.17.0.2",
+    "host": "localhost",
     "user": "root",
-    "password" : "admin123",
+    "password" : "anadolu",
     "port": 3306,
     "database":"maximus",
     "multipleStatements": "true"
