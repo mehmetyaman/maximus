@@ -7,7 +7,8 @@ DROP TABLE IF EXISTS `translator_lang`;
 DROP TABLE IF EXISTS `languages`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `categories`;
-drop table IF EXISTS `translation_session_invitations`;
+DROP TABLE IF EXISTS `translator_sessions_mean_star`;
+DROP TABLE IF EXISTS `translation_session_star_and_comment`;
 
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -158,7 +159,38 @@ CREATE TABLE `translation_session_invitations` (
   CONSTRAINT `fk_translation_session_invitations_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
+);
+
+CREATE TABLE `translation_session_star_and_comment` (
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
+  `user_id`                INT(11) UNSIGNED NOT NULL,
+  `star`                   INT(11) UNSIGNED NOT NULL,
+  `comment`                VARCHAR(250) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translation_session_star_and_comment_idx` (`user_id`),
+  KEY `fk_translation_session_star_and_comment_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translation_session_star_and_comment_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translation_session_star_and_comment_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+CREATE TABLE `translator_sessions_mean_star` (
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`                INT(11) UNSIGNED NOT NULL,
+  `mean_star`              INT(11) UNSIGNED NOT NULL,
+  `star_count`              INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translator_sessions_mean_star_idx` (`user_id`),
+  KEY `fk_translator_sessions_mean_star_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translator_sessions_mean_star_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 )
+
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
@@ -169,7 +201,3 @@ ALTER TABLE maximus.users
   ADD password_verification_code VARCHAR(200) NULL;
 ALTER TABLE maximus.users
   ADD is_email_verification TINYINT(1) DEFAULT '0';
-
-ALTER TABLE maximus.users ADD email_verification_code VARCHAR(200) NULL;
-ALTER TABLE maximus.users ADD password_verification_code VARCHAR(200) NULL;
-ALTER TABLE maximus.users ADD is_email_verification TINYINT(1) default '0';

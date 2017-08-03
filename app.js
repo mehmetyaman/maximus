@@ -82,6 +82,7 @@ require('./routes/payment')(app);
 require('./routes/plan')(app, winston, emailServer); // load our routes and pass in our app and fully configured passport
 require('./routes/profile-selection')(app);
 require('./routes/selection')(app);
+require('./routes/sessionComments')(app);
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));
