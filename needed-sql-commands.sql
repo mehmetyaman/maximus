@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `translator_sessions_mean_star`;
 DROP TABLE IF EXISTS `translation_session_star_and_comment`;
+DROP TABLE IF EXISTS `translation_session_invitations`;
 
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -150,9 +151,9 @@ CREATE TABLE `translation_session_demands` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `translation_session_invitations` (
-  `id`    INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(200)     NOT NULL,
-  `invitation_token` VARCHAR(64)      NOT NULL,
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email`                  VARCHAR(200)     NOT NULL,
+  `invitation_token`       VARCHAR(64)      NOT NULL,
   `translation_session_id` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_invitations_idx` (`translation_session_id`),
@@ -166,10 +167,10 @@ CREATE TABLE `translation_session_star_and_comment` (
   `translation_session_id` INT(11) UNSIGNED NOT NULL,
   `user_id`                INT(11) UNSIGNED NOT NULL,
   `star`                   INT(11) UNSIGNED NOT NULL,
-  `comment`                VARCHAR(250) DEFAULT NULL,
+  `comment`                VARCHAR(250)              DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_translation_session_star_and_comment_idx` (`user_id`),
-  KEY `fk_translation_session_star_and_comment_idx` (`translation_session_id`),
+  KEY `fk_translation_session_star_comment_user_id_idx` (`user_id`),
+  KEY `fk_translation_session_star_comment_translation_session_id_idx` (`translation_session_id`),
   CONSTRAINT `fk_translation_session_star_and_comment_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -179,13 +180,14 @@ CREATE TABLE `translation_session_star_and_comment` (
 );
 
 CREATE TABLE `translator_sessions_mean_star` (
-  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `user_id`                INT(11) UNSIGNED NOT NULL,
-  `mean_star`              INT(11) UNSIGNED NOT NULL,
-  `star_count`              INT(11) UNSIGNED NOT NULL,
+  `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`    INT(11) UNSIGNED NOT NULL,
+  `mean_star`  INT(11) UNSIGNED NOT NULL,
+  `star_count` INT(11) UNSIGNED NOT NULL,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_translator_sessions_mean_star_idx` (`user_id`),
-  KEY `fk_translator_sessions_mean_star_idx` (`translation_session_id`),
+  KEY `fk_translator_sessions_mean_star_user_id_idx` (`user_id`),
+  KEY `fk_translator_sessions_mean_star_translation_session_id_idx` (`translation_session_id`),
   CONSTRAINT `fk_translator_sessions_mean_star_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
