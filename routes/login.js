@@ -250,7 +250,7 @@ module.exports = function (app, passport, winston, emailserver) {
                 if (req.body.linkedincycle) {
                     return res.redirect("/logout");
                 } else {
-                    return res.redirect('/login');
+                    return res.redirect('/signup');
                 }
             } else {
                 passport.authenticate('local-signup', function (err, user, info) {
