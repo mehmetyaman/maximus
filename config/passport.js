@@ -137,12 +137,12 @@ module.exports = function (passport) {
                         return done(err);
                     }
 
-                    if(rows[0].is_email_verification == 0){
-                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
-                    }
-
                     if (!rows.length) {
                         return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    }
+
+                    if(rows[0].is_email_verification == 0){
+                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
                     }
 
                     // if the user is found but the password is wrong

@@ -6,8 +6,12 @@
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
     <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap-validator/dist/validator.js"></script>
+
     <script type="text/javascript"
             src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet"
           href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
@@ -275,8 +279,7 @@
                         <span>
                             <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#paymentModal" data-amount="150" data-currency="try"
-                                    data-sessionNumber="<%= items.id %>"
-                            >Payment</button>
+                                    data-sessionNumber="<%= items.id %>">Payment</button>
                         </span>
             </div>
             <div class="col-md-2">
@@ -324,154 +327,157 @@
             <% } %>
         </div>
         <% }) %>
-        <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                    aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="paymentModalLabel">New message</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="col-md-12  col-sm-12  col-xs-8 " style="background:#fff; padding:30px;">
+        <form role="form" data-toggle="validator" id="modalForm" name="modalForm">
+            <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="paymentModalLabel">New message</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12  col-sm-12  col-xs-8 " style="background:#fff; padding:30px;">
 
 
-                            <div class="col-md-6 col-sm-6 col-xs-12">
-                                <h3 class="text-center">Billing Address</h3>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <h3 class="text-center">Billing Address</h3>
 
-                                <hr>
+                                    <hr>
 
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="billingFirstName" id="billingFirstName" class="form-control
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingFirstName" id="billingFirstName" class="form-control
                                         input-sm"
-                                               placeholder="First Name">
+                                                   placeholder="First Name">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="billingLastName" id="billingLastName"
-                                               class="form-control input-sm" placeholder="Last Name">
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingLastName" id="billingLastName"
+                                                   class="form-control input-sm" placeholder="Last Name">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="billingEmail" id="billingEmail" class="form-control
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="email" name="billingEmail" id="billingEmail" class="form-control
                                         input-sm" placeholder="Email id">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="billingMobile" id="billingMobile" class="form-control
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingMobile" id="billingMobile" class="form-control
                                         input-sm" placeholder="Mobile no">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
                                             <textarea class="form-control" name="billingAddress" id="billingAddress">
                                             </textarea>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="billingCountry" id="billingCountry" class="form-control
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingCountry" id="billingCountry" class="form-control
                                         input-sm" placeholder="country">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="billingCity" id="billingCity" class="form-control
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingCity" id="billingCity" class="form-control
                                         input-sm"
-                                               placeholder="city">
+                                                   placeholder="city">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="billingPinCode" id="billingPinCode" class="form-control
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingPinCode" id="billingPinCode" class="form-control
                                         input-sm" placeholder="pincode">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
 
-                            <div class="col-md-6 shipping col-sm-6 col-xs-12">
-                                <h3 class="text-center">Shipping Address</h3>
+                                <div class="col-md-6 shipping col-sm-6 col-xs-12">
+                                    <h3 class="text-center">Shipping Address</h3>
 
-                                <hr>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingFirstName" id="shippingFirstName"
-                                               class="form-control input-sm" placeholder="First Name">
+                                    <hr>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingFirstName" id="shippingFirstName"
+                                                   class="form-control input-sm" placeholder="First Name">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingLastName" id="shippingLastName" class="form-control
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingLastName" id="shippingLastName" class="form-control
                                         input-sm"
-                                               placeholder="Last Name">
+                                                   placeholder="Last Name">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingEmail" id="shippingEmail"
-                                               class="form-control input-sm" placeholder="Email id">
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingEmail" id="shippingEmail"
+                                                   class="form-control input-sm" placeholder="Email id">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingMobile" id="shippingMobile" class="form-control
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingMobile" id="shippingMobile" class="form-control
                                         input-sm"
-                                               placeholder="Mobile no">
+                                                   placeholder="Mobile no">
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-12 col-sm-12 col-md-12">
-                                    <div class="form-group">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
                                             <textarea class="form-control" name="shippingAddress" id="shippingAddress">
                                             </textarea>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingCountry" id="shippingCountry"
-                                               class="form-control input-sm" placeholder="country">
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingCountry" id="shippingCountry"
+                                                   class="form-control input-sm" placeholder="country">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingCity" id="shippingCity"
-                                               class="form-control input-sm" placeholder="city">
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingCity" id="shippingCity"
+                                                   class="form-control input-sm" placeholder="city">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-12 col-sm-4 col-md-4">
-                                    <div class="form-group">
-                                        <input type="text" name="shippingPinCode" id="shippingPinCode" class="form-control
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="shippingPinCode" id="shippingPinCode" class="form-control
                                         input-sm"
-                                               placeholder="pincode">
+                                                   placeholder="pincode">
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
-
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="hidden" id="paymentAmountHidden" name="paymentAmountHidden">
-                        <input type="hidden" id="paymentCurrencyHidden" name="paymentCurrencyHidden">
-                        <input type="hidden" id="paymentSessionIdHidden" name="paymentSessionIdHidden">
+                        <div class="modal-footer">
+                            <input type="hidden" id="paymentAmountHidden" name="paymentAmountHidden">
+                            <input type="hidden" id="paymentCurrencyHidden" name="paymentCurrencyHidden">
+                            <input type="hidden" id="paymentSessionIdHidden" name="paymentSessionIdHidden">
 
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="paymentButton"
-                                name="paymentButton">Pay
-                        </button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="paymentButton"
+                                    name="paymentButton">Pay
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
     <% } %>
     </div>
@@ -546,9 +552,9 @@
         var modal = $("#paymentModal");
 
         var data = {
-            amount : $('#paymentAmountHidden').val(),
-            currency :$('#paymentCurrencyHidden').val(),
-            sessionId :$('#paymentSessionIdHidden').val(),
+            amount: $('#paymentAmountHidden').val(),
+            currency: $('#paymentCurrencyHidden').val(),
+            sessionId: $('#paymentSessionIdHidden').val(),
             billingAddress: {
                 firstName: $('#billingFirstName').val(),
                 lastName: $('#billingLastName').val(),
@@ -557,7 +563,7 @@
                 country: $('#billingCountry').val(),
                 city: $('#billingCity').val(),
                 pinCode: $('#billingPinCode').val(),
-                address:$('#billingAddress').val()
+                address: $('#billingAddress').val()
             },
             shippingAddress: {
                 firstName: $('#shippingFirstName').val(),
@@ -567,7 +573,7 @@
                 country: $('#shippingCountry').val(),
                 city: $('#shippingCity').val(),
                 pinCode: $('#shippingPinCode').val(),
-                address:$('#shippingAddress').val()
+                address: $('#shippingAddress').val()
             }
         }
         $.post("/payment", data, function (data) {

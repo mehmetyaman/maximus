@@ -10,7 +10,7 @@ module.exports = function (app) {
                 'ts.id = tsu.translation_session_id and ' +
                 'tsu.user_id = ? and ' +
                 'tsd.translation_session_id=ts.id and ' +
-                'tsd.user_id = u.id and ts.id=? ', [req.user.id,session_id ], function (err3, demandedTranslators) {
+                'tsd.user_id = u.id and ts.id=? ', [req.user.id, session_id], function (err3, demandedTranslators) {
                 res.render('selection.ejs', {
                     user: req.user,
                     demandedTranslators: demandedTranslators
@@ -22,26 +22,41 @@ module.exports = function (app) {
     app.get('/selection/session/:id/translator/:translator_id', isLoggedIn, function (req, res, next) {
         var session_id = req.params.id;
         var translator_id = req.params.translator_id;
-        
+
+        var ts = {
+            translation_session_id: session_id,
+            user_id: translator_id
+        };
+
         req.getConnection(function (err3, connection) {
-            var query = connection.query('update  translation_session set translator_id=? where id=? ', [translator_id, session_id], function (err3, rows) {
-                if (err3) {
-                    connection.rollback(function () {
-                        throw err;
+            connection.query("INSERT INTO translation_session_users set ? ", ts, function (err6, rows6) {
+                    if (err6) {
+                        console.log("Error inserting : %s ", err6);
+                        res.status(500).json({error: err6});
+                    }
+
+                    var query = connection.query('update  translation_session set translator_id=?' +
+                        ' where id=? ', [translator_id, session_id], function (err6, rows6) {
+                        if (err6) {
+                            connection.rollback(function () {
+                                throw err;
+                            });
+                            console.log("Error inserting : %s ", err6);
+                            res.status(500).json({error: err6});
+                        }
+
+                        res.redirect('/profile');
                     });
-                    console.log("Error inserting : %s ", err3);
-                    res.status(500).json({error: err3});
                 }
-
-                res.redirect('/profile');
-            });
+            );
         })
-    });
-}
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
+    })
 
-    res.redirect('/');
-}
+    function isLoggedIn(req, res, next) {
+        if (req.isAuthenticated())
+            return next();
 
+        res.redirect('/');
+    }
+
+}
