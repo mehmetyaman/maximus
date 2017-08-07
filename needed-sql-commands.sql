@@ -1,12 +1,12 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
-DROP TABLE IF EXISTS `translation_session_demands`;
-DROP TABLE IF EXISTS `translation_session_users`;
-DROP TABLE IF EXISTS `translation_session`;
-DROP TABLE IF EXISTS `translator_lang`;
 DROP TABLE IF EXISTS `languages`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `translator_lang`;
+DROP TABLE IF EXISTS `translation_session`;
+DROP TABLE IF EXISTS `translation_session_users`;
+DROP TABLE IF EXISTS `translation_session_demands`;
 DROP TABLE IF EXISTS `translator_sessions_mean_star`;
 DROP TABLE IF EXISTS `translation_session_star_and_comment`;
 DROP TABLE IF EXISTS `translation_session_invitations`;
