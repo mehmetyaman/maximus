@@ -2,8 +2,8 @@
 {
   "app": {
     "port": 443,
-    "url":"maxsimus.herokuapp.com",
-    "protocol":"https"
+    "url":"198.199.64.171",
+    "protocol":"http"
   },
   "mysql": {
     "host": "maximus.crndlsr14dxi.us-west-2.rds.amazonaws.com",
@@ -36,7 +36,7 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://maxsimus.herokuapp.com/paymentResult",
+    "callbackUrl" : "http://198.199.64.171:443/paymentResult",
     "api" : {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
