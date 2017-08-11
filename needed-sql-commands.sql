@@ -1,15 +1,15 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
-DROP TABLE IF EXISTS `languages`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `categories`;
-DROP TABLE IF EXISTS `translator_lang`;
-DROP TABLE IF EXISTS `translation_session`;
-DROP TABLE IF EXISTS `translation_session_users`;
-DROP TABLE IF EXISTS `translation_session_demands`;
-DROP TABLE IF EXISTS `translator_sessions_mean_star`;
 DROP TABLE IF EXISTS `translation_session_star_and_comment`;
 DROP TABLE IF EXISTS `translation_session_invitations`;
+DROP TABLE IF EXISTS `translator_sessions_mean_star`;
+DROP TABLE IF EXISTS `translation_session_demands`;
+DROP TABLE IF EXISTS `translation_session_users`;
+DROP TABLE IF EXISTS `translation_session`;
+DROP TABLE IF EXISTS `translator_lang`;
+DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `languages`;
 
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -45,15 +45,12 @@ INSERT INTO `languages` VALUES ('ar', 'Arabic'), ('ch', 'Chinese'), ('en', 'Engl
 
 CREATE TABLE `categories` (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `category_short_desc` CHAR(20)         NOT NULL,
+  `category_short_desc` CHAR(100)         NOT NULL,
   PRIMARY KEY (`id`),
   `category_long_desc`  VARCHAR(100),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
 
-INSERT INTO `categories`
-VALUES (1, 'Medical', 'Medical'), (2, 'Science', 'Science'), (3, 'Entertainment', 'Entertainment'),
-  (4, 'Education', 'Education'), (5, 'Engineering', 'Engineering');
 
 CREATE TABLE `translator_lang` (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
