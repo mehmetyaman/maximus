@@ -20,6 +20,7 @@
     "express-myconnection": "1.0.4",
     "express-session": "~1.0.0",
     "express-validator": "^3.2.1",
+    "i18n": "^0.8.3",
     "iyzipay": "^2.0.25",
     "method-override": "~1.0.0",
     "mongoose": "~4.4",
