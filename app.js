@@ -1,8 +1,8 @@
 /**
  * Module dependencies.
  */
-
 var express = require('express'), expressValidator = require('express-validator');
+var i18n = require("i18n");
 var app = express();
 var env = require('dotenv').load();
 var winston = require('winston');
@@ -20,7 +20,6 @@ var emailServer = email.server.connect({
 });
 
 // send the message and get a callback with an error or details of the message that was sent
-
 
 // set up our express application
 app.use(express.logger('dev')); // log every request to the console
@@ -55,7 +54,7 @@ var session = require('express-session');
 app.use(morgan('dev')); // log every request to the console
 app.use(cookieParser()); // read cookies (needed for auth)
 app.use(bodyParser()); // get information from html forms
-
+app.use(i18n.init);
 
 /*------------------------------------------
  connection peer, register as middleware
@@ -98,6 +97,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
 app.use(expressValidator());
+
+i18n.configure({
+    locales:['en', 'de', 'tr'],
+    directory: __dirname + '/locales'
+});
 
 // development only
 if ('development' == app.get('env')) {
