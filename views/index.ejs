@@ -36,8 +36,129 @@
         <a href="/auth/linkedin" class="btn btn-default"><span class="fa fa-user"></span>Login with LinkedIn</a>
         <a href="/signup?customer=true" class="btn btn-default"><span class="fa fa-user"></span>Customer Signup</a>
         <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Translater Signup</a>
+        <a href="/documentTranslation" class="btn btn-default"><span class="fa fa-user"></span>Yazılı Çeviri İsteği<%= __('Hello') %></a>
     </div>
 
+    <div id="plannerDiv" style="display: none">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+                <h4>Select Languages</h4>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" id="desc" class="form-control" placeholder="Description"
+                           aria-describedby="basic-addon2">
+                    <span class="input-group-addon">Description</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang1">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Language
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang2">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-2">
+                <h4>Category</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select
+                            Category
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="cat">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <span class="caret"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class='col-sm-3'>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            Interval in Min
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="interval">
+                            <li><a href="#">30</a></li>
+                            <li><a href="#">60</a></li>
+                            <li><a href="#">90</a></li>
+                            <li><a href="#">120</a></li>
+                            <li><a href="#">150</a></li>
+                            <li><a href="#">180</a></li>
+                            <li><a href="#">210</a></li>
+                            <li><a href="#">240</a></li>
+                            <li><a href="#">270</a></li>
+                            <li><a href="#">300</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-3'>
+                <div class="form-group">
+                    <div class='input-group date' id='plandate'>
+                        <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="button" id="post-btn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
