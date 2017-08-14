@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Selection Linpret Language Services</title>
+    <title><%= __('Selection Linpret Language Services')%></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
@@ -26,10 +26,10 @@
         <% if (demandedTranslators) { %>
         <div class="row">
             <div class="col-md-3">
-                <span>Name</span>
+                <span><%= __('Name')%></span>
             </div>
             <div class="col-md-3">
-                <span>SurName</span>
+                <span><%= __('SurName')%></span>
             </div>
             <div class="col-md-3">
             </div>
@@ -52,7 +52,7 @@
             <div class="col-md-3">
                 <a href="/selection/session/<%= demanded.session_id %>/translator/<%= demanded.user_id %>"
                    class="btn btn-large btn-info"
-                   target="_self">Select</a>
+                   target="_self"><%= __('Select')%></a>
             </div>
         </div>
         <% }) %>
