@@ -31,12 +31,24 @@
     </div>
 
     <div class=" text-center">
-        <h2>Linpret Translation Services</h2>
-        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span>Login</a>
-        <a href="/auth/linkedin" class="btn btn-default"><span class="fa fa-user"></span>Login with LinkedIn</a>
-        <a href="/signup?customer=true" class="btn btn-default"><span class="fa fa-user"></span>Customer Signup</a>
-        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Translater Signup</a>
-        <a href="/documentTranslation" class="btn btn-default"><span class="fa fa-user"></span>Yazılı Çeviri İsteği<%= __('Hello') %></a>
+        <h2><%= __
+            ('Linpret Translation Services')
+            %></h2>
+        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= __
+            ('Login')
+            %></a>
+        <a href="/auth/linkedin" class="btn btn-default"><span class="fa fa-user"></span><%= __
+            ('Login with LinkedIn')
+            %></a>
+        <a href="/signup?customer=true" class="btn btn-default"><span class="fa fa-user"></span><%= __
+            ('Customer Signup')
+            %></a>
+        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span><%= __
+            ('Translater Signup')
+            %></a>
+        <a href="/documentTranslation" class="btn btn-default"><span class="fa fa-user"></span><%= __
+            ('Text Translation Request')
+            %></a>
     </div>
 
     <div id="plannerDiv" style="display: none">
@@ -44,7 +56,9 @@
             <div class="col-md-8">
             </div>
             <div class="col-md-4">
-                <h4>Select Languages</h4>
+                <h4><%= __
+                    ('Select Languages')
+                    %></h4>
             </div>
         </div>
 
@@ -56,7 +70,7 @@
                 <div class="input-group">
                     <input type="text" id="desc" class="form-control" placeholder="Description"
                            aria-describedby="basic-addon2">
-                    <span class="input-group-addon"><%= __('Description')%></span>
+                    <span class="input-group-addon"><%= __('Description') %></span>
                 </div>
             </div>
         </div>
@@ -69,7 +83,7 @@
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <%= __('Select Language')%>
+                            <%= __('Select Language') %>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="lang1">
                         </ul>
@@ -81,7 +95,7 @@
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <%= __('Select Language')%>
+                            <%= __('Select Language') %>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="lang2">
                         </ul>
@@ -98,7 +112,7 @@
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <%= __('Select Category')%>
+                            <%= __('Select Category') %>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="cat">
                         </ul>
@@ -121,7 +135,7 @@
                 <div class="form-group">
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                            <%= __('Duration (In Mins)')%>
+                            <%= __('Duration (In Mins)') %>
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu" id="interval">
                             <li><a href="#">30</a></li>
@@ -154,7 +168,7 @@
             </div>
             <div class='col-sm-2'>
                 <div class="form-group">
-                    <button class="btn btn-primary" type="button" id="post-btn"><%= __('Create')%></button>
+                    <button class="btn btn-primary" type="button" id="post-btn"><%= __('Create') %></button>
                 </div>
             </div>
         </div>
