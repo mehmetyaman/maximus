@@ -29,7 +29,7 @@
 <div class="container">
     <div class="col-sm-6 col-sm-offset-3">
 
-        <h1><span class="fa fa-sign-in"></span> Signup</h1>
+        <h1><span class="fa fa-sign-in"></span><%= __('Sign Up')%></h1>
         <% if (message.length > 0) { %>
         <div class="alert alert-danger"><%= message %></div>
         <% } %>
@@ -37,7 +37,7 @@
         <!-- LOGIN FORM -->
         <form action="/signup<% if (customer) { %>?customer=true<% } %>" method="post">
             <div class="form-group">
-                <label>Name</label>
+                <label><%= __('Name')%></label>
                 <input type="text" class="form-control" name="name"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.firstName %>"
@@ -45,7 +45,7 @@
                 >
             </div>
             <div class="form-group">
-                <label>SurName</label>
+                <label><%= __('SurName')%></label>
                 <input type="text" class="form-control" name="surname"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.lastName %>"
@@ -53,7 +53,7 @@
                 >
             </div>
             <div class="form-group">
-                <label>Email</label>
+                <label><%= __('Email')%></label>
                 <input type="text" class="form-control" name="email"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.emailAddress %>"
@@ -68,11 +68,11 @@
                 <% } %>
             </div>
             <div class="form-group">
-                <label>Password</label>
+                <label><%= __('Password')%></label>
                 <input type="password" class="form-control" name="password">
             </div>
             <div class="form-group">
-                <label>Re-Password</label>
+                <label><%= __('Re-Password')%></label>
                 <input type="password" class="form-control" name="repassword">
             </div>
             <% if (!customer) { %>
@@ -110,28 +110,28 @@
             <div class="form-group">
                 <table id="langTable">
                     <tr id="langRow">
-                        <td class="label">From:</td>
+                        <td class="label"><%= __('From:')%></td>
                         <td>
                             <div class="styled-select blue semi-square">
                                 <select id="langFrom">
-                                    <option value="-1" selected="selected">Choose</option>
+                                    <option value="-1" selected="selected"><%= __('Choose')%></option>
                                     <% dataLang.forEach(function (langObj) { %>
                                     <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
                                     <% }) %>
                                 </select>
                             </div>
-                        <td class="label">To:</td>
+                        <td class="label"><%= __('To:')%></td>
                         <td>
                             <div class="styled-select blue semi-square">
                                 <select id="langTo">
-                                    <option value="-1" selected="selected">Choose</option>
+                                    <option value="-1" selected="selected"><%= __('Choose')%></option>
                                     <% dataLang.forEach(function (langObj) { %>
                                     <option value="<%= langObj.lang_short %>"><%= langObj.lang_desc %></option>
                                     <% }) %>
                                 </select>
                             </div>
                         </td>
-                        <td><input type="button" class="add-row" value="Add Row"></td>
+                        <td><input type="button" class="add-row" value="<%= __('Add Row')%>"></td>
                     <tr/>
                 </table>
                 </td>
@@ -142,16 +142,16 @@
                         <table class="langTable">
                             <thead>
                             <tr>
-                                <th>Language</th>
-                                <th>From</th>
-                                <th>To</th>
+                                <th><%= __('Language')%></th>
+                                <th><%= __('From')%></th>
+                                <th><%= __('To')%></th>
                             </tr>
                             </thead>
                             <tbody class="langTableBody">
                             <input type="hidden" id="langListCarrier" name="langListCarrier"/>
                             </tbody>
                         </table>
-                        <button type="button" class="delete-row">Delete Row</button>
+                        <button type="button" class="delete-row"><%= __('Delete Row')%></button>
                     </td>
                     <td></td>
                 </tr>
@@ -159,13 +159,13 @@
             </div>
             <% } %>
 
-            <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+            <button type="submit" class="btn btn-warning btn-lg"><%= __('Sign Up')%></button>
         </form>
 
         <hr>
 
-        <p>Already have an account? <a href="/login">Login</a></p>
-        <p>Or go <a href="/">home</a>.</p>
+        <p><%= __('Already have an account?')%><a href="/login"><%= __('Login')%></a></p>
+        <p><%= __('Or go')%> <a href="/"><%= __('Home')%></a>.</p>
 
     </div>
 </div>

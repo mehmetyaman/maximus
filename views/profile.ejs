@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Profile Linpret Language Services</title>
+    <title><%= __('Profile Linpret Language Services') %></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
@@ -79,11 +79,12 @@
                         <strong>email</strong>: <%= user.email %><br>
                     </p>
                     <% } else { %>
-                    <a href="/connect/local" class="btn btn-default"><%= __('Connect Local')%></a>
+                    <a href="/connect/local" class="btn btn-default"><%= __('Connect Local') %></a>
                     <% } %>
-                    <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout')%></a>
+                    <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout') %></a>
                     <h1><span class="fa fa-anchor"></span></h1>
-                    <button class="btn btn-primary" type="button" onclick="changePassword();"><%= __('Change Password')%></button>
+                    <button class="btn btn-primary" type="button"
+                            onclick="changePassword();"><%= __('Change Password') %></button>
                 </div>
             </div>
         </div>
@@ -91,7 +92,8 @@
             <div class="col-md-6">
             </div>
             <div class="col-md-6">
-                <button class="btn btn-primary" type="button" onclick="planner();"><%= __('New Translation Session Plan')%></button>
+                <button class="btn btn-primary" type="button"
+                        onclick="planner();"><%= __('New Translation Session Plan') %></button>
             </div>
         </div>
         <br/>
@@ -100,7 +102,7 @@
                 <div class="col-md-8">
                 </div>
                 <div class="col-md-4">
-                    <h4><%= __('Select Languages')%></h4>
+                    <h4><%= __('Select Languages') %></h4>
                 </div>
             </div>
 
@@ -109,9 +111,9 @@
                 </div>
                 <div class="col-md-6">
                     <div class="input-group">
-                        <input type="text" id="desc" class="form-control" placeholder="<%= __('Description')%>"
+                        <input type="text" id="desc" class="form-control" placeholder="<%= __('Description') %>"
                                aria-describedby="basic-addon2">
-                        <span class="input-group-addon"><%= __('Description')%></span>
+                        <span class="input-group-addon"><%= __('Description') %></span>
                     </div>
                 </div>
             </div>
@@ -120,11 +122,11 @@
                 <div class="col-md-6">
                 </div>
                 <div class="col-md-2">
-                    <h4><%= __('Language')%></h4>
+                    <h4><%= __('Language') %></h4>
                     <div class="form-group">
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                <%= __('Select Language')%>
+                                <%= __('Select Language') %>
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="lang1">
                                 <% langs.forEach(function (language) { %>
@@ -139,7 +141,7 @@
                     <div class="form-group">
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                <%= __('Select Language')%>
+                                <%= __('Select Language') %>
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="lang2">
                                 <% langs.forEach(function (language) { %>
@@ -159,7 +161,7 @@
                     <div class="form-group">
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                <%= __('Select Category')%>
+                                <%= __('Select Category') %>
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="cat">
                                 <% cats.forEach(function (category) { %>
@@ -186,7 +188,7 @@
                     <div class="form-group">
                         <div class="dropdown">
                             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                <%= __('Duration (In Mins)')%>
+                                <%= __('Duration (In Mins)') %>
                                 <span class="caret"></span></button>
                             <ul class="dropdown-menu" id="interval">
                                 <li><a href="#">30</a></li>
@@ -219,7 +221,7 @@
                 </div>
                 <div class='col-sm-2'>
                     <div class="form-group">
-                        <button class="btn btn-primary" type="button" id="post-btn"><%= __('Create')%></button>
+                        <button class="btn btn-primary" type="button" id="post-btn"><%= __('Create') %></button>
                     </div>
                 </div>
             </div>
@@ -227,25 +229,25 @@
         <% if (lists) { %>
         <div class="row">
             <div class="col-md-2">
-                <span><%= __('Subject')%></span>
+                <span><%= __('Subject') %></span>
             </div>
             <div class="col-md-1">
-                <span><%= __('Duration (In Mins)')%></span>
+                <span><%= __('Duration (In Mins)') %></span>
             </div>
             <div class="col-md-1">
-                <span><%= __('Languages')%></span>
+                <span><%= __('Languages') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Start Date')%></span>
+                <span><%= __('Start Date') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Connect')%></span>
+                <span><%= __('Connect') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Payment')%></span>
+                <span><%= __('Payment') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Invite')%></span>
+                <span><%= __('Invite') %></span>
             </div>
         </div>
         <% lists.forEach(function (items) { %>
@@ -264,11 +266,11 @@
             </div>
             <% if(items.is_paid == 1){ %>
             <div class="col-md-2">
-                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect')%></a></span>
+                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
                 <span id="participants-span-<%= items.id %>"></span>
             </div>
             <div class="col-md-2">
-                <span style="color: #00CC00"><%= __('Paid')%></span>
+                <span style="color: #00CC00"><%= __('Paid') %></span>
             </div>
             <% } else{ %>
             <div class="col-md-2">
@@ -278,7 +280,7 @@
                         <span>
                             <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#paymentModal" data-amount="150" data-currency="try"
-                                    data-sessionNumber="<%= items.id %>"><%= __('Payment')%></button>
+                                    data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
                         </span>
             </div>
             <div class="col-md-2">
@@ -287,7 +289,7 @@
             <% } %>
             <div class="col-md-2">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inviteModal">
-                    <%= __('Invite Participant')%>
+                    <%= __('Invite Participant') %>
                 </button>
 
                 <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel"
@@ -295,7 +297,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="inviteModalLabel"><%= __('Participant User Name')%></h5>
+                                <h5 class="modal-title" id="inviteModalLabel"><%= __('Participant User Name') %></h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -303,7 +305,8 @@
                             <div class="modal-body">
                                 <form>
                                     <div class="form-group">
-                                        <label for="participant-name" class="form-control-label"><%= __('User Name:')%></label>
+                                        <label for="participant-name"
+                                               class="form-control-label"><%= __('User Name:') %></label>
                                         <input type="text" class="form-control" id="participant-name"
                                                name="participant-name">
                                     </div>
@@ -323,7 +326,8 @@
                 </div>
             </div>
             <% if(!items.translator_id){ %>
-            <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>"><%= __('Select Translater') %></a>
+            <a class="btn btn-large btn-info"
+               href="selection/session/<%= items.id %>"><%= __('Select Translater') %></a>
             <% } %>
         </div>
         <% }) %>
@@ -332,7 +336,8 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="<%= __('Close') %>"><span
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="<%= __('Close') %>"><span
                                         aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" id="paymentModalLabel"><%= __('New message') %></h4>
                         </div>
@@ -542,7 +547,7 @@
         var modal = $(this)
 
 
-        modal.find('.modal-title').text(<%= __('Payment amount ') %> + amount + currency)
+        modal.find('.modal-title').text(<%= __('Payment amount ') %> +amount + currency)
 
         $('#paymentAmountHidden').val(amount)
         $('#paymentCurrencyHidden').val(currency)
@@ -585,23 +590,23 @@
 
     $("#post-btn").click(function () {
         if ($("#desc").val() === undefined) {
-            alert(<%= __('Lütfen tanımlama giriniz') %>);
+            alert(<%= __('Fill in the description field, please') %>);
             return false;
         }
         if (lang1 === undefined) {
-            alert(<%= __('Lütfen dil seçiniz') %>);
+            alert(<%= __('Select a language, please!') %>);
             return false;
         }
         if (lang2 === undefined) {
-            alert(<%= __('Lütfen dil seçiniz') %>);
+            alert(<%= __('Select a language, please!') %>);
             return false;
         }
         if (lang1 === lang2) {
-            alert(<%= __('İki dil birbirinden farklı olmalıdır!') %>);
+            alert(<%= __('Languages has to be different!') %>);
             return false;
         }
         if (intervalval === undefined) {
-            alert(<%= __('Lütfen süre belirletiniz') %>);
+            alert(<%= __('Select a duration, please!') %>);
             return false;
         }
         var formdata = {
