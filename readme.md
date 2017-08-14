@@ -128,3 +128,16 @@ heroku addons:open mongolab
 ## Validation for input fields please check
 
 https://www.npmjs.com/package/express-validator
+
+
+## Testing application
+
+for testing purpose you need to use mocha with chai,
+
+for all testing files use
+
+	mocha test
+
+for spesicified tests use
+
+	mocha test/addition.js
