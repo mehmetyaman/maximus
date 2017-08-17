@@ -305,7 +305,7 @@ module.exports = function (app, passport, winston, emailserver) {
 
     function sendVerificationEmail(req, user, res, emailserver) {
         emailserver.send({
-            text:    "Maximus Email Verification link is " + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
+            text:    "Linpret Email Verification link:" + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
             from:    "linpretinfo@gmail.com",
             to:     user.email,
             cc:      "semih.kahya08@gmail.com",
@@ -374,7 +374,7 @@ module.exports = function (app, passport, winston, emailserver) {
                         res.end( "Opps someting is wrong. Please try again." );
                     }else{
                         emailserver.send({
-                            text:    "Maximus Password Verification link is " + req.protocol + '://' + req.get('host') + '/verify-password?token='+ code,
+                            text:    "Linpret Password Verification link:" + req.protocol + '://' + req.get('host') + '/verify-password?token='+ code,
                             from:    "linpretinfo@gmail.com",
                             to:     req.query.email,
                             cc:      "semih.kahya08@gmail.com",
@@ -406,7 +406,7 @@ module.exports = function (app, passport, winston, emailserver) {
                     return;
                 }else{
                     emailserver.send({
-                        text:    "Maximus Password Verification link is " + req.protocol + '://' + req.get('host') + '/verify-password?token='+ rows[0].password_verification_code,
+                        text:    "Linpret Password Verification link:" + req.protocol + '://' + req.get('host') + '/verify-password?token='+ rows[0].password_verification_code,
                         from:    "linpretinfo@gmail.com",
                         to:     rows[0].email,
                         cc:      "semih.kahya08@gmail.com",
