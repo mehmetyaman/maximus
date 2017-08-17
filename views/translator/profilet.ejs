@@ -38,17 +38,22 @@
             <div class="col-md-12">
                 <div class="page-header text-center">
                     <% if (user.email) { %>
-                    <p>
-                        <strong>id</strong>: <%= user.id %><br>
-                        <strong>email</strong>: <%= user.email %><br>
+                    <p align="right">
+                        <strong><%= user.email %> - <%= user.id %></strong>
                     </p>
                     <% } else { %>
-                    <a href="/connect/local" class="btn btn-default">Connect Local</a>
+                    <p align="right">
+                        <a href="/connect/local" class="btn btn-default"><%= __('Connect Local') %></a>
+                    </p>
                     <% } %>
-                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
-                    <button class="btn btn-primary" type="button" onclick="changePassword();">Change Password</button>
+                    <p align="right">
+                        <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout') %></a>
+                    </p>
                     <h1><span class="fa fa-anchor"></span></h1>
-
+                    <p align="right">
+                        <button class="btn btn-primary" type="button"
+                                onclick="changePassword();"><%= __('Change Password') %></button>
+                    </p>
                 </div>
             </div>
         </div>
@@ -56,19 +61,19 @@
         <% if (lists) { %>
         <div class="row">
             <div class="col-md-2">
-                <span>Konu</span>
+                <span><%= __('Subject') %></span>
+            </div>
+            <div class="col-md-1">
+                <span><%= __('Duration (In Mins)') %></span>
+            </div>
+            <div class="col-md-1">
+                <span><%= __('Languages') %></span>
             </div>
             <div class="col-md-2">
-                <span>Sure (dk)</span>
+                <span><%= __('Start Date') %></span>
             </div>
             <div class="col-md-2">
-                <span>Diller</span>
-            </div>
-            <div class="col-md-2">
-                <span>Baslangic Trh</span>
-            </div>
-            <div class="col-md-2">
-                <span>Translator Id</span>
+                <span><%= __('Connect') %></span>
             </div>
         </div>
         <% lists.forEach(function (items) { %>
@@ -88,15 +93,15 @@
             <% if(items.translator_id == 0){ %>
             <div class="col-md-2">
                 <% if(items.is_demanded){ %>
-                <a href="#">Demanded</a>
+                <a href="#"><%= __('Demanded') %></a>
                 <% } else { %>
-                <a href="#" onclick="demand(<%= items.id %>);">Demand Now</a>
+                <a href="#" onclick="demand(<%= items.id %>);"><%= __('Demand Now') %></a>
                 <% } %>
             </div>
             <% }else{ %>
             <div class="col-md-2">
                 <span><%= items.translator_id %></span>
-                <span><a href="/videoConference/<%= items.id %>">Connect</a></span>
+                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
             </div>
             <% } %>
 
@@ -156,9 +161,9 @@
         if (newItem.translator_id == 0) {
             newhtml += '      <div class="col-md-2">';
             if (newItem.demand_id) {
-                newhtml += '      <a href="#">Demanded</a>';
+                newhtml += '      <a href="#"><%= __('Demanded') %></a>';
             } else {
-                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ');">Demand Now</a>';
+                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ');"><%= __('Demand Now') %></a>';
             }
             newhtml += '</div>';
         } else {
