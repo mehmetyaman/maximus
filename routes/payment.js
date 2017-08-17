@@ -77,12 +77,13 @@ module.exports = function (app) {
                     country: 'Turkey',
                     zipCode: '34732'
                 },
+                // shipping address is same with billing addrress
                 shippingAddress: {
-                    contactName: req.body.shippingAddress.firstName + " " + req.body.shippingAddress.lastName,
-                    city: req.body.shippingAddress.city,
-                    country: req.body.shippingAddress.country,
-                    address: req.body.shippingAddress.address,
-                    zipCode: req.body.shippingAddress.pinCode
+                    contactName: req.body.billingAddress.firstName + " " + req.body.billingAddress.lastName,
+                    city: req.body.billingAddress.city,
+                    country: req.body.billingAddress.country,
+                    address: req.body.billingAddress.address,
+                    zipCode: req.body.billingAddress.pinCode
                 },
                 billingAddress: {
                     contactName: req.body.billingAddress.firstName + " " + req.body.billingAddress.lastName,
