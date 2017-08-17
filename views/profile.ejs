@@ -74,18 +74,22 @@
             <div class="col-md-12">
                 <div class="page-header text-center">
                     <% if (user.email) { %>
-                    <p>
-                        <strong>id</strong>: <%= user.id %><br>
-                        <strong>email</strong>: <%= user.email %><br>
-                        <strong>password</strong>: <%= user.password %>
+                    <p align="right">
+                        <strong><%= user.email %> - <%= user.id %></strong>
                     </p>
                     <% } else { %>
-                    <a href="/connect/local" class="btn btn-default"><%= __('Connect Local') %></a>
+                    <p align="right">
+                        <a href="/connect/local" class="btn btn-default"><%= __('Connect Local') %></a>
+                    </p>
                     <% } %>
-                    <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout') %></a>
+                    <p align="right">
+                        <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout') %></a>
+                    </p>
                     <h1><span class="fa fa-anchor"></span></h1>
-                    <button class="btn btn-primary" type="button"
-                            onclick="changePassword();"><%= __('Change Password') %></button>
+                    <p align="right">
+                        <button class="btn btn-primary" type="button"
+                                onclick="changePassword();"><%= __('Change Password') %></button>
+                    </p>
                 </div>
             </div>
         </div>
@@ -340,13 +344,12 @@
                             <button type="button" class="close" data-dismiss="modal"
                                     aria-label="<%= __('Close') %>"><span
                                         aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="paymentModalLabel"><%= __('New message') %></h4>
                         </div>
                         <div class="modal-body">
                             <div class="col-md-12  col-sm-12  col-xs-8 " style="background:#fff; padding:30px;">
 
 
-                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
                                     <h3 class="text-center"><%= __('Billing Address') %></h3>
 
                                     <hr>
@@ -406,68 +409,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-                                <div class="col-md-6 shipping col-sm-6 col-xs-12">
-                                    <h3 class="text-center"><%= __('Shipping Address') %></h3>
-
-                                    <hr>
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingFirstName" id="shippingFirstName"
-                                                   class="form-control input-sm" placeholder="<%= __('First Name') %>">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingLastName" id="shippingLastName" class="form-control
-                                        input-sm"
-                                                   placeholder="<%= __('Last Name') %>">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingEmail" id="shippingEmail"
-                                                   class="form-control input-sm" placeholder="<%= __('Email Id') %>">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-6 col-sm-6 col-md-6">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingMobile" id="shippingMobile" class="form-control
-                                        input-sm"
-                                                   placeholder="<%= __('Mobile No') %>">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-12 col-md-12">
-                                        <div class="form-group">
-                                            <textarea class="form-control" name="shippingAddress" id="shippingAddress">
-                                            </textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingCountry" id="shippingCountry"
-                                                   class="form-control input-sm" placeholder="<%= __('Country') %>">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingCity" id="shippingCity"
-                                                   class="form-control input-sm" placeholder="<%= __('City') %>">
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-4 col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" name="shippingPinCode" id="shippingPinCode" class="form-control
-                                        input-sm"
-                                                   placeholder="pincode">
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -547,8 +488,8 @@
         var currency = button.data('currency')
         var modal = $(this)
 
-
-        modal.find('.modal-title').text(<%= __('Payment amount ') %> +amount + currency)
+        var val = '<%= __('Payment amount ') %>' + "" + amount + "" + currency
+        modal.find('.modal-title').text(val)
 
         $('#paymentAmountHidden').val(amount)
         $('#paymentCurrencyHidden').val(currency)
@@ -591,23 +532,23 @@
 
     $("#post-btn").click(function () {
         if ($("#desc").val() === undefined) {
-            alert(<%= __('Fill in the description field, please') %>);
+            alert('<%= __('Fill in the description field, please') %>');
             return false;
         }
         if (lang1 === undefined) {
-            alert(<%= __('Select a language, please!') %>);
+            alert('<%= __('Select a language, please!') %>');
             return false;
         }
         if (lang2 === undefined) {
-            alert(<%= __('Select a language, please!') %>);
+            alert('<%= __('Select a language, please!') %>');
             return false;
         }
         if (lang1 === lang2) {
-            alert(<%= __('Languages has to be different!') %>);
+            alert('<%= __('Languages has to be different!') %>');
             return false;
         }
         if (intervalval === undefined) {
-            alert(<%= __('Select a duration, please!') %>);
+            alert('<%= __('Select a duration, please!') %>');
             return false;
         }
         var formdata = {

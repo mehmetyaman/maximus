@@ -115,6 +115,7 @@ mongoose.connect(config.get('mongo.url')); // connect to our database
 require('./config/passport')(passport); // pass passport for configuration
 
 app.use(app.router);
+console.log(i18n.getLocale());
 
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
