@@ -56,7 +56,7 @@
   "Or go": "Or go",
   "Home": "Home",
   "Login Linpret Language Services": "Login Linpret Language Services",
-  "EMail": "EMail",
+  "Email": "Email",
   "Need an account?": "Need an account?",
   "For translators": "For translators",
   "Password Change": "Password Change",
@@ -64,5 +64,7 @@
   "Signup success": "Signup success",
   "Email Verification": "Email Verification",
   "Email verification send your email address. Please check your email.": "Email verification send your email address. Please check your email.",
-  "Go to Login": "Go to Login"
+  "Go to Login": "Go to Login",
+  "Selection Linpret Language Services": "Selection Linpret Language Services",
+  "Paid": "Paid"
 }
