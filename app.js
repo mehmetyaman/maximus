@@ -89,6 +89,7 @@ require('./routes/plan')(app, winston, emailServer); // load our routes and pass
 require('./routes/profile-selection')(app);
 require('./routes/selection')(app);
 require('./routes/sessionComments')(app);
+require('./routes/signup')(app, passport, emailServer);
 
 // all environments
 app.set('port', process.env.PORT || config.get('app.port'));

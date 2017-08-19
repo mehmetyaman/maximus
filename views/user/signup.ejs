@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+    <title>Sign Up Linpret Language Services</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body {
+            padding-top: 80px;
+        }
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+        <img style="max-width:150px; margin-top: -7px;"
+             src="/../images/linpret_logo_3.png">
+    </a>
+</div>
+<div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+
+        <h1><span class="fa fa-sign-in"></span><%= __('Sign Up')%></h1>
+        <% if (messages.length > 0) {%>
+        <div class="alert alert-danger">
+            <% messages.forEach(function(message) {%>
+            <%= message %><br>
+            <% });%>
+        </div>
+        <%} %>
+
+        <!-- LOGIN FORM -->
+        <form action="/signup" method="post">
+            <div class="form-group">
+                <label><%= __('Name')%></label>
+                <input type="text" class="form-control" name="name"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.firstName %>"
+                        <% }  else if(formData != null){ %>
+                       value="<%= formData.name %>"
+                        <%}%>
+                >
+            </div>
+            <div class="form-group">
+                <label><%= __('SurName')%></label>
+                <input type="text" class="form-control" name="surname"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.lastName %>"
+                        <% }  else if(formData != null){ %>
+                       value="<%= formData.surname %>"
+                        <%}%>
+                >
+            </div>
+            <div class="form-group">
+                <label><%= __('Email')%></label>
+                <input type="text" class="form-control" name="email"
+                        <% if (typeof linkedinprofile == 'object') { %>
+                       value="<%= linkedinprofile.emailAddress %>"
+                        <% }  else if(formData != null){ %>
+                       value="<%= formData.email %>"
+                        <%}%>
+                >
+                <% if (typeof linkedinprofile == 'object') { %>
+                <input type="hidden" name="linkedincycle" id="linkedincycle" value="true">
+                <%
+                } %>
+            </div>
+            <div class="form-group">
+                <label><%= __('Password')%></label>
+                <input type="password" class="form-control" name="password">
+            </div>
+            <div class="form-group">
+                <label><%= __('Re-Password')%></label>
+                <input type="password" class="form-control" name="repassword">
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg"><%= __('Sign Up')%></button>
+        </form>
+
+        <hr>
+
+        <p><%= __('Already have an account?')%><a href="/login"><%= __('Login')%></a></p>
+        <p><%= __('Or go')%> <a href="/"><%= __('Home')%></a>.</p>
+
+    </div>
+</div>
+</body>
+</html>
