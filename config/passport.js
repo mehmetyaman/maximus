@@ -142,7 +142,7 @@ module.exports = function (passport) {
                     }
 
                     if(rows[0].is_email_verification == 0){
-                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
+                        return done(null, false, req.flash('loginMessage', 'You must verify your account via email which you received when you signed up.'));
                     }
 
                     // if the user is found but the password is wrong

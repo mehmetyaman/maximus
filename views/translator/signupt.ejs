@@ -30,18 +30,24 @@
     <div class="col-sm-6 col-sm-offset-3">
 
         <h1><span class="fa fa-sign-in"></span><%= __('Sign Up')%></h1>
-        <% if (message.length > 0) { %>
-        <div class="alert alert-danger"><%= message %></div>
-        <% } %>
+        <% if (messages.length > 0) {%>
+            <div class="alert alert-danger">
+            <% messages.forEach(function(message) {%>
+                <%= message %><br>
+            <% });%>
+            </div>
+        <%} %>
 
         <!-- LOGIN FORM -->
-        <form action="/signup<% if (customer) { %>?customer=true<% } %>" method="post">
+        <form action="/signupt" method="post">
             <div class="form-group">
                 <label><%= __('Name')%></label>
                 <input type="text" class="form-control" name="name"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.firstName %>"
-                        <% } %>
+                        <% } else if(formData != null){ %>
+                       value="<%= formData.name %>"
+                        <%}%>
                 >
             </div>
             <div class="form-group">
@@ -49,7 +55,9 @@
                 <input type="text" class="form-control" name="surname"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.lastName %>"
-                        <% } %>
+                        <% } else if(formData != null){ %>
+                       value="<%= formData.surname %>"
+                        <%}%>
                 >
             </div>
             <div class="form-group">
@@ -57,15 +65,14 @@
                 <input type="text" class="form-control" name="email"
                         <% if (typeof linkedinprofile == 'object') { %>
                        value="<%= linkedinprofile.emailAddress %>"
-                        <% } %>
+                        <% }else if(formData != null){ %>
+                       value="<%= formData.email %>"
+                        <%}%>
                 >
                 <% if (typeof linkedinprofile == 'object') { %>
                 <input type="hidden" name="linkedincycle" id="linkedincycle" value="true">
                 <%
                 } %>
-                <% if (customer) { %>
-                <input type="hidden" name="isCustomer" id="isCustomer" value="true">
-                <% } %>
             </div>
             <div class="form-group">
                 <label><%= __('Password')%></label>
@@ -75,7 +82,6 @@
                 <label><%= __('Re-Password')%></label>
                 <input type="password" class="form-control" name="repassword">
             </div>
-            <% if (!customer) { %>
             <script type="text/javascript">
                 $(document).ready(function () {
                     $("#langListCarrier").val("");
@@ -90,9 +96,10 @@
 
                         var langFrom = $("#langFrom option:selected").text();
                         var langTo = $("#langTo option:selected").text();
-                        var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + langFrom + "</td><td>" + langTo + "</td></tr>";
+                        var pricePerHour = $("#pricePerHour").val()
+                        var markup = "<tr><td><input type='checkbox' name='record'></td><td>" + langFrom + "</td><td>" + langTo + "</td><td>" + pricePerHour + "$</td></tr>";
 
-                        $("#langListCarrier").val($("#langListCarrier").val() + ($("#langFrom option:selected").val() + "," + "" + $("#langTo option:selected").val()) + ';');
+                        $("#langListCarrier").val($("#langListCarrier").val() + $("#langFrom option:selected").val() + "," + $("#langTo option:selected").val() + "," + pricePerHour +';');
                         $(".langTableBody").append(markup);
                     });
 
@@ -110,7 +117,7 @@
             <div class="form-group">
                 <table id="langTable">
                     <tr id="langRow">
-                        <td class="label"><%= __('From:')%></td>
+                        <td><label><%= __('From:')%></label></td>
                         <td>
                             <div class="styled-select blue semi-square">
                                 <select id="langFrom">
@@ -120,7 +127,7 @@
                                     <% }) %>
                                 </select>
                             </div>
-                        <td class="label"><%= __('To:')%></td>
+                        <td><label><%= __('To:')%></label></td>
                         <td>
                             <div class="styled-select blue semi-square">
                                 <select id="langTo">
@@ -130,6 +137,10 @@
                                     <% }) %>
                                 </select>
                             </div>
+                        </td>
+                        <td><label><%= __('Price Per Hour')%>:</label></td>
+                        <td>
+                            <input type="number" min="1" max="999" step="any" name="pricePerHour" id="pricePerHour"/>$
                         </td>
                         <td><input type="button" class="add-row" value="<%= __('Add Row')%>"></td>
                     <tr/>
@@ -145,6 +156,7 @@
                                 <th><%= __('Language')%></th>
                                 <th><%= __('From')%></th>
                                 <th><%= __('To')%></th>
+                                <th><%= __('Price Per Hour')%></th>
                             </tr>
                             </thead>
                             <tbody class="langTableBody">
@@ -157,7 +169,6 @@
                 </tr>
                 </table>
             </div>
-            <% } %>
 
             <button type="submit" class="btn btn-warning btn-lg"><%= __('Sign Up')%></button>
         </form>

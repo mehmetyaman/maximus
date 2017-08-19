@@ -200,4 +200,6 @@ ALTER TABLE maximus.users
   ADD password_verification_code VARCHAR(200) NULL;
 ALTER TABLE maximus.users
   ADD is_email_verification TINYINT(1) DEFAULT '0';
+ALTER TABLE `maximus`.`translator_lang`
+ADD COLUMN `price_per_hour` DECIMAL(5,2) NULL AFTER `lang_to`;
 

@@ -61,14 +61,12 @@ module.exports = function (app) {
     });
 
     app.post('/send-session-comments', function (req, res) {
-
-
         if(req.query.sessionId){
             req.getConnection(function (err, connection) {
                 connection.query("select * from translation_session where id =? ", [req.query.sessionId], function (sessionErr, session) {
                     if (sessionErr) {
                         console.log("Error Selecting : %s ", sessionErr);
-                        req.flash('message', 'Oops! something wrong. Please try again');
+                        req.flash('message', 'Oops! something went wrong. Please try again');
                         res.redirect('/sessionComments');
                     }else{
 
@@ -84,7 +82,7 @@ module.exports = function (app) {
                         connection.query("INSERT INTO translation_session_star_and_comment set ? ", starAndComment, function (starCommentErr, starComment) {
                             if (starCommentErr) {
                                 console.log("Error Selecting : %s ", starCommentErr);
-                                req.flash('message', 'Oops! something wrong. Please try again');
+                                req.flash('message', 'Oops! something went wrong. Please try again');
                                 res.redirect('/sessionComments');
                             }
                         });
@@ -92,7 +90,7 @@ module.exports = function (app) {
                         connection.query("select * from translator_sessions_mean_star where user_id =? ", [translatorId], function (starMeanErr, starMean) {
                             if (starMeanErr) {
                                 console.log("Error Selecting : %s ", starMeanErr);
-                                req.flash('message', 'Oops! something wrong. Please try again');
+                                req.flash('message', 'Oops! something went wrong. Please try again');
                                 res.redirect('/sessionComments');
                             }
 
@@ -107,7 +105,7 @@ module.exports = function (app) {
                                 connection.query("INSERT INTO translator_sessions_mean_star set ? ", mean, function (insertStarErr, insertStar) {
                                     if (insertStarErr) {
                                         console.log("Error Selecting : %s ", insertStarErr);
-                                        req.flash('message', 'Oops! something wrong. Please try again');
+                                        req.flash('message', 'Oops! something went wrong. Please try again');
                                         res.redirect('/sessionComments');
                                     }
                                 });
@@ -120,9 +118,9 @@ module.exports = function (app) {
                                 connection.query("update translator_sessions_mean_star set mean_star =? , star_count=?  where user_id=? ", [mean.mean_star,mean.star_count,mean.user_id], function (updateMeanErr, updateMean) {
                                     if (updateMeanErr) {
                                         console.log("Error Selecting : %s ", updateMeanErr);
-                                        res.end( "Oops! something wrong. Please try again " );
+                                        res.end( "Oops! something went wrong. Please try again " );
                                     }
-                                    req.flash('message', 'Your comment successfully sended');
+                                    req.flash('message', 'Your comment has been successfully sent!');
                                     res.redirect('/profile');
                                 });
                             }
@@ -135,7 +133,7 @@ module.exports = function (app) {
 
             });
         }else{
-            res.end( "Opps someting is wrong. Please try again." );
+            res.end( "Opps someting went wrong. Please try again." );
         }
     });
 

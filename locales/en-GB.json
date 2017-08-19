@@ -50,7 +50,7 @@
   "To:": "To:",
   "Add Row": "Add Row",
   "From": "From",
-  "To": "To",
+  "To": "Too",
   "Delete Row": "Delete Row",
   "Already have an account?": "Already have an account?",
   "Or go": "Or go",
@@ -63,7 +63,7 @@
   "Change": "Change",
   "Signup success": "Signup success",
   "Email Verification": "Email Verification",
-  "Email verification send your email address. Please check your email.": "Email verification send your email address. Please check your email.",
+  "Email_verification_link_sent_msg": "Email verification link have been sent to your email address. Please check your email.",
   "Go to Login": "Go to Login",
   "Selection Linpret Language Services": "Selection Linpret Language Services",
   "Paid": "Paid"
