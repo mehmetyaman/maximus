@@ -90,11 +90,11 @@ module.exports = function (app, winston, emailServer) {
                         }
 
                         emailServer.send({
-                            text: "Linpret session invitation link is " + req.protocol + '://' + req.get('host') + '/plan-assign?sessionId=' + sessionId + '&invitation_token=' + token,
+                            text: res.__("Linpret session invitation link is ") + req.protocol + '://' + req.get('host') + '/plan-assign?sessionId=' + sessionId + '&invitation_token=' + token,
                             from: "linpretinfo@gmail.com",
                             to: participant,
                             cc: "kaplanerbil@gmail.com",
-                            subject: "Linpret Translation Meeting Invitation "
+                            subject: res.__("Linpret Translation Meeting Invitation ")
                         }, function (err, message) {
                             if (err) {
                                 res.send(500)

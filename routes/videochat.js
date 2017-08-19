@@ -42,7 +42,7 @@ module.exports = function (app) {
                     console.log("Error /videoChat/:id : %s ", err);
                     res.status(500).send(err);
                 }
-                res.render('trans_session/videoConference', {title: 'Video Conference', roomId:videoChatId, peerId:peerId, peers: peers, username:username, config:config});
+                res.render('trans_session/videoConference', {title: res.__('Video Conference'), roomId:videoChatId, peerId:peerId, peers: peers, username:username, config:config});
             });
 
         });
@@ -52,7 +52,7 @@ module.exports = function (app) {
     app.get('/peertest/:sessionId', function (req, res) {
         var sessionId = req.params.sessionId;
         console.log(sessionId);
-        res.render('trans_session/peer_test', {title: 'YAMANIZM CORP', sessionID: sessionId});
+        res.render('trans_session/peer_test', {title: res.__('Linpret Language Services'), sessionID: sessionId});
     });
 
     app.get('/videoChat/:id', function (req, res) {
@@ -80,7 +80,7 @@ module.exports = function (app) {
                     });
                 }else{
                     console.log("Error /videoChat/:id : %s ", err);
-                    res.status(500).send("You already have an active session!");
+                    res.status(500).send(res.__("You already have an active session!"));
                 }
             });
 
@@ -132,7 +132,7 @@ module.exports = function (app) {
                             res.status(500).send(err);
                         }else{
                             videoChat.peers=peers;
-                            res.render('trans_session/videoChats', {page_title: 'Active Video Conferences', videoChats: videoChats, user: req.user});
+                            res.render('trans_session/videoChats', {page_title: res.__('Active Video Conferences'), videoChats: videoChats, user: req.user});
                         }
                     });
                 });
@@ -148,7 +148,7 @@ module.exports = function (app) {
                 console.log("Error /videoChat/save/:id : %s ", err);
                 res.status(500).send(err);
             } else {
-                res.send("VideoChat has created!");
+                res.send(res.__("VideoChat has created!"));
             }
         });
     });
@@ -182,7 +182,7 @@ module.exports = function (app) {
                 console.log("Error /videoChat/remove/:id : %s ", err);
                 res.status(500).send(err);
             } else {
-                res.send("VideoChat has deleted!");
+                res.send(res.__("VideoChat has deleted!"));
             }
         });
     });
@@ -196,7 +196,7 @@ module.exports = function (app) {
                 res.status(500).send(err);
             } else {
                 console.log("Peer has deleted!");
-                res.send("Peer has deleted!");
+                res.send(res.__("Peer has deleted!"));
             }
         });
     });
@@ -211,7 +211,7 @@ module.exports = function (app) {
                 res.status(500).send(err);
             } else {
                 console.log("Peer has attended!");
-                res.send("Peer has attended!");
+                res.send(res.__("Peer has attended!"));
             }
 
         });

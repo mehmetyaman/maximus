@@ -56,7 +56,6 @@
 	"Or go": "Or go",
 	"Home": "Home",
 	"Login Linpret Language Services": "Login Linpret Language Services",
-	"Email": "Email",
 	"Need an account?": "Need an account?",
 	"For translators": "For translators",
 	"Password Change": "Password Change",
@@ -66,5 +65,19 @@
 	"Email verification send your email address. Please check your email.": "Email verification send your email address. Please check your email.",
 	"Go to Login": "Go to Login",
 	"Selection Linpret Language Services": "Selection Linpret Language Services",
-	"Paid": "Paid"
+	"Paid": "Paid",
+	"Linpret Password Verification": "Linpret Password Verification",
+	"Password change request send your email adress. Please check your email": "Password change request send your email adress. Please check your email",
+	"Linpret session invitation link is ": "Linpret session invitation link is ",
+	"Linpret Translation Meeting Invitation ": "Linpret Translation Meeting Invitation ",
+	"A valid email is required": "A valid email is required",
+	"Name field can not be empty and has to be minimum 2 character maximum 25": "Name field can not be empty and has to be minimum 2 character maximum 25",
+	"Surname field can not be empty and has to be minimum 2 character maximum 25": "Surname field can not be empty and has to be minimum 2 character maximum 25",
+	"Surname field can not be empty and has to be minimum 2 character maximum 20": "Surname field can not be empty and has to be minimum 2 character maximum 20",
+	"Linpret Email Verification link:": "Linpret Email Verification link:",
+	"Linpret Email Verification": "Linpret Email Verification",
+	"Verification email send your email address": "Verification email send your email address",
+	"Your email is verifed. You can login now.": "Your email is verifed. You can login now.",
+	"Demand Now": "Demand Now",
+	"Demanded": "Demanded"
 }
