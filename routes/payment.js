@@ -1,10 +1,54 @@
 var Iyzipay = require('iyzipay');
 var config = require('config');
+var paypal = require('paypal-rest-sdk');
+
+
 
 module.exports = function (app) {
 
     var conversationId;
     var token;
+
+    app.post('/payment/paypal/pay', isLoggedIn, function (req, res) {
+
+        var create_payment_json = {
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"
+            },
+            "redirect_urls": {
+                "return_url": "http://return.url",
+                "cancel_url": "http://cancel.url"
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "item",
+                        "sku": "item",
+                        "price": "1.00",
+                        "currency": "USD",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "currency": "USD",
+                    "total": "1.00"
+                },
+                "description": "This is the payment description."
+            }]
+        };
+
+
+        paypal.payment.create(create_payment_json, function (error, payment) {
+            if (error) {
+                throw error;
+            } else {
+                console.log("Create Payment Response");
+                console.log(payment);
+            }
+        });
+
+    })
 
     app.post('/paymentResult', isLoggedIn, function (req, res) {
         var rows = req.params;
@@ -24,7 +68,7 @@ module.exports = function (app) {
 
             var message;
             if (result.status == 'success') {
-                message = "Ödemeniz Başarıyla Gerçekleştirildi!";
+                message = res.__("Payment process is succeed!");
                 req.getConnection(function (err, connection) {
                     connection.query("UPDATE translation_session set is_paid = 1 WHERE id = ? ", [conversationId], function (err, rows) {
                         if (err)

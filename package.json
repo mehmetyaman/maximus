@@ -37,6 +37,7 @@
     "passport-linkedin-oauth2": "^1.5.0",
     "passport-local": "~0.1.6",
     "passport-twitter": "~1.0.2",
+    "paypal-rest-sdk": "^1.7.1",
     "randomstring": "^1.1.5",
     "should": "^11.2.1",
     "socket.io": "^2.0.3",

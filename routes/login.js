@@ -138,7 +138,7 @@ module.exports = function (app, passport, winston, emailserver) {
 
                 connection.query(updatequery, [token, req.body.email], function (err, rowsUpdate) {
                     if (err) {
-                        res.render('login.ejs', {message: 'Oops something went wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                        res.render('login.ejs', {message: 'Oops! something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
                         return;
                     }else {
                         rows[0].email_verification_code = token;

@@ -192,15 +192,7 @@ module.exports = function (app, passport, emailserver) {
         res.render('signup-success.ejs', {message: "A verification email have been sent to your email address"});
     });
 
-// process the signup form
-    app.post('/signup',
-        passport.authenticate('local-signup', {
-                successRedirect: '/signup-success', // redirect to the secure profile section
-                failureRedirect: '/signup', // redirect back to the signup page if there is an error
-                failureFlash: true // allow flash messages
-            }
-        )
-    );
+
 };
 
 // route middleware to ensure user is logged in

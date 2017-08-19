@@ -83,8 +83,8 @@ module.exports = function (passport) {
                         var newUserMysql = {
                             email: username,
                             password: bcrypt.hashSync(password, null, null),
-                            is_customer: req.query.customer ? 1 : 0,
-                            is_translator: !req.query.customer ? 1 : 0,
+                            is_customer: req.body.isCustomer=="1" ? 1 : 0,
+                            is_translator: req.body.isCustomer=="0" ? 1 : 0,
                             name: req.body.name,
                             surname: req.body.surname,
                             email_verification_code: randomstring.generate({
@@ -184,7 +184,7 @@ module.exports = function (passport) {
                     connection.query(updatequery, [token, username], function (err, rows) {
                         if (err) {
 
-                            return done(null, false, req.flash('loginMessage', 'Oops something wrong. Please try again'));
+                            return done(null, false, req.flash('loginMessage', 'Oops! something wrong. Please try again'));
 
                         }else {
 
