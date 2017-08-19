@@ -81,5 +81,7 @@
 	"Demand Now": "Demand Now",
 	"Demanded": "Demanded",
 	"Please type your new password": "Please type your new password",
-	"Your password is change.": "Your password is change."
+	"Your password is change.": "Your password is change.",
+	"Your verification token expired. You can get new verification token. Please type your email adress": "Your verification token expired. You can get new verification token. Please type your email adress",
+	"Send Password Verification Mail": "Send Password Verification Mail"
 }
