@@ -18,6 +18,13 @@ var emailServer = email.server.connect({
     host: "smtp.gmail.com",
     ssl: true
 });
+var paypal = require('paypal-rest-sdk');
+
+paypal.configure({
+    'mode': 'sandbox', //sandbox or live
+    'client_id': 'EBWKjlELKMYqRNQ6sYvFo64FtaRLRR5BdHEESmha49TM',
+    'client_secret': 'EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM'
+});
 
 // send the message and get a callback with an error or details of the message that was sent
 

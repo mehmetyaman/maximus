@@ -121,12 +121,12 @@ module.exports = function (app, passport, winston, emailserver) {
         req.getConnection(function (err, connection) {
             connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
                 if (err) {
-                    res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                    res.render('login.ejs', {message: res.__('Oops something wrong. Please try again'), customer: req.query.customer, openTokenRequest:true});
                     return;
                 }
 
                 if (!rows.length) {
-                    res.render('login.ejs', {message:  'No user found.', customer: req.query.customer, openTokenRequest:true});
+                    res.render('login.ejs', {message:  res.__('No user found.'), customer: req.query.customer, openTokenRequest:true});
                     // req.flash is the way to set flashdata using connect-flash
                     return;
                 }
@@ -139,14 +139,15 @@ module.exports = function (app, passport, winston, emailserver) {
                 connection.query(updatequery, [token, req.body.email], function (err, rowsUpdate) {
                     if (err) {
 
-                        res.render('login.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                        res.render('login.ejs', {message: res.__('Oops something wrong. Please try again'), customer: req.query.customer, openTokenRequest:true});
                         return;
 
                     }else {
 
                         rows[0].email_verification_code = token;
                         sendVerificationEmail(req, rows[0], res, emailserver);
-                        res.render('login.ejs', {message:  'New verification email sended. Please look your email', customer: req.query.customer, openTokenRequest:false});
+                        res.render('login.ejs', {message:  res.__('New verification email sended. Please look your' +
+                            ' email'), customer: req.query.customer, openTokenRequest:false});
                         return;
                     }
                 });
@@ -166,7 +167,8 @@ module.exports = function (app, passport, winston, emailserver) {
 
                     if (err) {
                         res.render('login.ejs', {
-                            message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                            message: res.__('Your verification token expired. You can get new verification token.' +
+                                ' Please type your email adress'),
                             customer: req.query.customer,
                             openTokenRequest: true
 
@@ -179,7 +181,8 @@ module.exports = function (app, passport, winston, emailserver) {
                             connection.query(updatequery, [null, 1, req.query.token], function (err, rows) {
                                 if (err) {
                                     res.render('login.ejs', {
-                                        message: 'Your token expired. You can get new token email under the below. Please type your email adress',
+                                        message: res.__('Your token expired. You can get new token email under the' +
+                                            ' below. Please type your email adress'),
                                         customer: req.query.customer,
                                         openTokenRequest: true
 
@@ -187,7 +190,7 @@ module.exports = function (app, passport, winston, emailserver) {
                                 } else {
 
                                     res.render('login.ejs', {
-                                        message: 'Your email is verifed. You can login now.',
+                                        message: res.__('Your email is verifed. You can login now.'),
                                         customer: req.query.customer,
                                         openTokenRequest: false
                                     });
@@ -195,7 +198,8 @@ module.exports = function (app, passport, winston, emailserver) {
                             });
                         }else{
                             res.render('login.ejs', {
-                                message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                                message: res.__('Your verification token expired. You can get new verification' +
+                                    ' token. Please type your email adress'),
                                 customer: req.query.customer,
                                 openTokenRequest: true
 
@@ -240,10 +244,10 @@ module.exports = function (app, passport, winston, emailserver) {
 
     // process the signup form
     app.post('/signup', function (req, res, next) {
-        req.assert('email', 'A valid email is required').isEmail();  //Validate email
-        req.assert('name', 'Name field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
-        req.assert('surname', 'Surname field can not be empty and has to be minimum 2 character maximum 25').len(2, 25);
-        req.assert('password', 'Surname field can not be empty and has to be minimum 2 character maximum 20').len(6, 20);
+        req.assert('email', res.__('A valid email is required')).isEmail();  //Validate email
+        req.assert('name', res.__('Name field can not be empty and has to be minimum 2 character maximum 25')).len(2, 25);
+        req.assert('surname', res.__('Surname field can not be empty and has to be minimum 2 character maximum 25')).len(2, 25);
+        req.assert('password', res.__('Surname field can not be empty and has to be minimum 2 character maximum 20')).len(6, 20);
 
         req.getValidationResult().then(function (result) {
             if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
@@ -305,11 +309,11 @@ module.exports = function (app, passport, winston, emailserver) {
 
     function sendVerificationEmail(req, user, res, emailserver) {
         emailserver.send({
-            text:    "Linpret Email Verification link:" + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
+            text:    res.__("Linpret Email Verification link:") + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
             from:    "linpretinfo@gmail.com",
             to:     user.email,
             cc:      "semih.kahya08@gmail.com",
-            subject: "Linpret Email Verification"
+            subject: res.__("Linpret Email Verification")
         }, function(err, message) { console.log(err || message); });
 
         res.redirect('/signup-success');
@@ -332,7 +336,8 @@ module.exports = function (app, passport, winston, emailserver) {
 
                         if (err) {
                             res.render('password-change.ejs', {
-                                message: 'Your password verification token expired. You can get new verification token. Please type your email adress',
+                                message: res.__('Your password verification token expired. You can get new' +
+                                    ' verification token. Please type your email adress'),
                                 openTokenRequest: true
 
                             });
@@ -340,13 +345,14 @@ module.exports = function (app, passport, winston, emailserver) {
                             if (rows.length) {
 
                                 res.render('password-change.ejs', {
-                                    message: 'Please type your new password',
+                                    message: res.__('Please type your new password'),
                                     openTokenRequest: false
 
                                 });
                             }else{
                                 res.render('password-change.ejs', {
-                                    message: 'Your verification token expired. You can get new verification token. Please type your email adress',
+                                    message: res.__('Your verification token expired. You can get new verification' +
+                                        ' token. Please type your email adress'),
                                     openTokenRequest: true
 
                                 });
@@ -371,18 +377,18 @@ module.exports = function (app, passport, winston, emailserver) {
 
                     if (err) {
                         console.log("Error Updating : %s ", err);
-                        res.end( "Opps someting is wrong. Please try again." );
+                        res.end( res.__("Opps someting is wrong. Please try again.") );
                     }else{
                         emailserver.send({
                             text:    "Linpret Password Verification link:" + req.protocol + '://' + req.get('host') + '/verify-password?token='+ code,
                             from:    "linpretinfo@gmail.com",
                             to:     req.query.email,
                             cc:      "semih.kahya08@gmail.com",
-                            subject: "Linpret Password Verification"
+                            subject: res.__("Linpret Password Verification")
                         }, function(err, message) { console.log(err || message); });
                     }
 
-                    res.end( "Password change request send your email adress. Please check your email" );
+                    res.end( res.__("Password change request send your email adress. Please check your email") );
 
                 });
 
@@ -397,24 +403,24 @@ module.exports = function (app, passport, winston, emailserver) {
         req.getConnection(function (err, connection) {
             connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
                 if (err) {
-                    res.render('password-change.ejs', {message: 'Oops something wrong. Please try again', customer: req.query.customer, openTokenRequest:true});
+                    res.render('password-change.ejs', {message: res.__('Oops something wrong. Please try again'), customer: req.query.customer, openTokenRequest:true});
                     return;
                 }
 
                 if (!rows.length) {
-                    res.render('password-change.ejs', {message:  'No user found.', customer: req.query.customer, openTokenRequest:true});
+                    res.render('password-change.ejs', {message:  res.__('No user found.'), customer: req.query.customer, openTokenRequest:true});
                     return;
                 }else{
                     emailserver.send({
-                        text:    "Linpret Password Verification link:" + req.protocol + '://' + req.get('host') + '/verify-password?token='+ rows[0].password_verification_code,
+                        text:    res.__("Linpret Password Verification link:") + req.protocol + '://' + req.get('host') + '/verify-password?token='+ rows[0].password_verification_code,
                         from:    "linpretinfo@gmail.com",
                         to:     rows[0].email,
                         cc:      "semih.kahya08@gmail.com",
-                        subject: "Linpret Password Verification"
+                        subject: res.__("Linpret Password Verification")
                     }, function(err, message) { console.log(err || message); });
 
                     res.render('login.ejs', {
-                        message: 'Your password change request is sended. Please check your emails.',
+                        message: res.__('Your password change request is sended. Please check your emails.'),
                         customer: req.query.customer,
                         openTokenRequest: false
                     });
@@ -429,7 +435,7 @@ module.exports = function (app, passport, winston, emailserver) {
     app.post('/change-password', function (req, res, next) {
 
         if(req.body.password != req.body.repassword){
-            res.render('password-change.ejs', {message: 'Please use same password again', customer: req.query.customer, openTokenRequest:false});
+            res.render('password-change.ejs', {message: res.__('Please use same password again'), customer: req.query.customer, openTokenRequest:false});
             return;
         }else {
 
@@ -437,7 +443,7 @@ module.exports = function (app, passport, winston, emailserver) {
                 connection.query("SELECT * FROM users WHERE email = ?", [req.body.email], function (err, rows) {
                     if (err) {
                         res.render('password-change.ejs', {
-                            message: 'Oops something wrong. Please try again',
+                            message: res.__('Oops something wrong. Please try again'),
                             customer: req.query.customer,
                             openTokenRequest: false
                         });
@@ -446,7 +452,7 @@ module.exports = function (app, passport, winston, emailserver) {
 
                     if (!rows.length) {
                         res.render('password-change.ejs', {
-                            message: 'No user found.',
+                            message: res.__('No user found.'),
                             customer: req.query.customer,
                             openTokenRequest: false
                         });
@@ -464,7 +470,7 @@ module.exports = function (app, passport, winston, emailserver) {
                         if (err) {
 
                             res.render('password-change.ejs', {
-                                message: 'Oops something wrong. Please try again',
+                                message: res.__('Oops something wrong. Please try again'),
                                 customer: req.query.customer,
                                 openTokenRequest: false
                             });
@@ -473,7 +479,7 @@ module.exports = function (app, passport, winston, emailserver) {
                         } else {
 
                             res.render('login.ejs', {
-                                message: 'Your password is change.',
+                                message: res.__('Your password is change.'),
                                 customer: req.query.customer,
                                 openTokenRequest: false
                             });
@@ -497,7 +503,7 @@ module.exports = function (app, passport, winston, emailserver) {
 
     // show the signup success page
     app.get('/signup-success', function (req, res) {
-        res.render('signup-success.ejs', {message: "Verification email send your email address"});
+        res.render('signup-success.ejs', {message: res.__("Verification email send your email address")});
     });
 
 // process the signup form
