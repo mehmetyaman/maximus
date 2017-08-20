@@ -11,15 +11,65 @@
     <script type="text/javascript"
             src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 
-
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet"
           href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
     <style>
         body {
-            padding-top: 80px;
-            word-wrap: break-word;
+            padding-top: 20px;
         }
+        .topcorner{
+            top:0;
+            right:0;
+            padding: 9px;
+        }
+
+        #navigation {
+            position: absolute;
+            top:0;
+            right:0;
+        }
+
+        #navMain {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding: 9px;
+        }
+        #navMain > li {
+            float: right;
+            position: relative;
+            background-color: #00B7FF;
+            padding: 6px 6px;
+        }
+        #navMain > li > a {
+            padding: 0px 0px;
+        }
+
+        #navMain ul {
+            display: none;
+            position: absolute;
+            list-style: none;
+            left: 0;
+            padding: 0;
+            margin: 0;
+        }
+        #navMain ul li a {
+            display: block;
+            color: white;
+        }
+        #navMain li:hover ul {
+            display: block;
+        }
+        #navMain li ul:hover {
+            display: block;
+        }
+
+        #navMain li ul {
+            position: relative;
+            background-color: #337ab7;
+         }
+
     </style>
     <script>
         <%
@@ -62,37 +112,27 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+    <a class="navbar-brand" rel="home" href="#" title="Linpret">
         <img style="max-width:150px; margin-top: -7px;"
              src="/../images/linpret_logo_3.png">
     </a>
 </div>
+    <nav id="navigation">
+        <ul id="navMain">
+            <li><a href="#"><strong><%= user.email %>, id=<%= user.id %></strong></a>
+                <ul>
+                    <div>
+                    <li><a href="/connect/local" ><%= __('Connect Local') %></a></li>
+                    <li><a href="/logout" ><%= __('Logout') %></a></li>
+                    <li><a href="#" onclick="changePassword();"><%= __('Change Password') %></a></li>
+                    </div>
+                </ul>
+            </li>
+        </ul>
+    </nav>
 <form id="plan-form">
     <div class="container">
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header text-center">
-                    <% if (user.email) { %>
-                    <p align="right">
-                        <strong><%= user.email %> - <%= user.id %></strong>
-                    </p>
-                    <% } else { %>
-                    <p align="right">
-                        <a href="/connect/local" class="btn btn-default"><%= __('Connect Local') %></a>
-                    </p>
-                    <% } %>
-                    <p align="right">
-                        <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout') %></a>
-                    </p>
-                    <h1><span class="fa fa-anchor"></span></h1>
-                    <p align="right">
-                        <button class="btn btn-primary" type="button"
-                                onclick="changePassword();"><%= __('Change Password') %></button>
-                    </p>
-                </div>
-            </div>
-        </div>
+    <br><br><br><br><br><br>
         <div class="row">
             <div class="col-md-6">
             </div>
@@ -234,25 +274,25 @@
         <% if (lists) { %>
         <div class="row">
             <div class="col-md-2">
-                <span><%= __('Subject') %></span>
+                <span style="font-weight: bold;"><%= __('Subject') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
             </div>
             <div class="col-md-1">
-                <span><%= __('Duration (In Mins)') %></span>
+                <span style="font-weight: bold;"><%= __('Languages') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Start Date') %></span>
             </div>
             <div class="col-md-1">
-                <span><%= __('Languages') %></span>
+                <span style="font-weight: bold;"><%= __('Connect') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Start Date') %></span>
+                <span style="font-weight: bold;"><%= __('Payment') %></span>
             </div>
             <div class="col-md-2">
-                <span><%= __('Connect') %></span>
-            </div>
-            <div class="col-md-2">
-                <span><%= __('Payment') %></span>
-            </div>
-            <div class="col-md-2">
-                <span><%= __('Invite') %></span>
+                <span style="font-weight: bold;"><%= __('Invite') %></span>
             </div>
         </div>
         <% lists.forEach(function (items) { %>
@@ -260,7 +300,7 @@
             <div class="col-md-2">
                 <span><%= items.description %></span>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <span><%= items.duration %></span>
             </div>
             <div class="col-md-1">
@@ -270,7 +310,7 @@
                 <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
             </div>
             <% if(items.is_paid == 1){ %>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
                 <span id="participants-span-<%= items.id %>"></span>
             </div>
@@ -278,7 +318,7 @@
                 <span style="color: #00CC00"><%= __('Paid') %></span>
             </div>
             <% } else{ %>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <span style="color: #00CC00"></span>
             </div>
             <div class="col-md-2">
@@ -332,7 +372,7 @@
             </div>
             <% if(!items.translator_id){ %>
             <a class="btn btn-large btn-info"
-               href="selection/session/<%= items.id %>"><%= __('Select Translater') %></a>
+               href="selection/session/<%= items.id %>"><%= __('Select Translator') %></a>
             <% } %>
         </div>
         <% }) %>

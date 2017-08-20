@@ -118,7 +118,7 @@
 	"Login": "Login",
 	"Login with LinkedIn": "Login with LinkedIn",
 	"Customer Signup": "Customer Signup",
-	"Translater Signup": "Translater Signup",
+	"Translator Signup": "Translator Signup",
 	"Text Translation Request": "Text Translation Request",
 	"Select Languages": "Select Languages",
 	"Description": "Description",
@@ -180,8 +180,10 @@
 	"Participant User Name": "Participant User Name",
 	"User Name:": "User Name:",
 	"Send Invitation": "Send Invitation",
-	"Select Translater": "Select Translater",
+	"Select Translator": "Select Translator",
 	"Selection Linpret Language Services": "Selection Linpret Language Services",
 	"Select": "Select",
-	"Video Conference": "Video Conference"
+	"Video Conference": "Video Conference",
+	"Connect Local": "Connect Local",
+	"My Profile": "My Profile"
 }
