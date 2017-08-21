@@ -83,6 +83,16 @@ module.exports = function (app) {
         });
     });
 
+    app.get('/profile', isLoggedIn, function (req, res) {
+        res.render('translator/profile.ejs', { user: req.user});
+    });
+
+    app.get('/profile/:id', isLoggedIn, function (req, res) {
+        loadTranslator(req, res, function (translator) {
+            res.render('translator/profile.ejs', {user: req.user, translator: translator[0]});
+        })
+    });
+
     app.post('/assign/translator/:translator_id/session/:session_id', isLoggedIn, function (req, res) {
         var translator_id = req.params.translator_id;
         var session_id = req.params.session_id;
@@ -107,32 +117,69 @@ module.exports = function (app) {
                 if (err) {
                     console.log("Error inserting : %s ", err);
                 }
-
                 res.redirect('dashboardt');
-
             });
 
         });
     });
 
-    app.get('/translator/:id', isLoggedIn, function (req, res) {
+    function loadTranslator(req, res, callback) {
         var id = req.params.id;
         req.getConnection(function (err, connection) {
-
-            do_queries(connection, id, function (err, rows, rows2) {
+            var sql1 = "SELECT * FROM users WHERE id = ?";
+            connection.query(sql1, [id], function (err, rows) {
                 if (err)
                     console.log(err);
-                else
-                    res.render('translator/translator', {
-                        page_title: "Translator page",
-                        data: rows,
-                        lists: rows2,
-                        user: req.user,
-                        moment: moment,
+
+                req.getConnection(function (err2, connection2) {
+                    var sql2 = "SELECT (select lang_desc from languages where lang_short=lang_from) lang_from," +
+                        " (select lang_desc from languages where lang_short=lang_to) lang_to," +
+                        " price_per_hour" +
+                        " FROM translator_lang " +
+                        " WHERE translator_id = ?";
+                    connection2.query(sql2, [id], function (err2, rows2) {
+                        if (err)
+                            console.log(err);
+                        rows[0].languages = rows2;
+                        callback(rows);
                     });
+                });
             });
         });
+    }
+
+    app.get('/translator/:id', isLoggedIn, function (req, res) {
+        loadTranslator(req, res, function (translator) {
+            res.contentType('application/json');
+            res.end(JSON.stringify(translator, null, 2));
+        })
+    })
+
+    app.get('/searchTranslator', function(req,res){
+        var trimmedKey = req.query.key.replace(/\s/g,'');
+        var sql = "SELECT u.id,name, surname, email FROM users u," +
+            " (SELECT t.id" +
+            " FROM users t" +
+            " LEFT JOIN translator_lang tl" +
+            " ON t.id=tl.translator_id " +
+            " GROUP BY t.id) AS JOINRESULT" +
+            " WHERE u.id = JOINRESULT.id " +
+            " and IS_TRANSLATOR='1' " +
+            " and  concat(name,surname,email) like '%"+trimmedKey+"%' ";
+        req.getConnection(function (err, connection) {
+            connection.query(sql,
+                function (err, rows, fields) {
+                    if (err) throw err;
+                    //var data = [];
+                    //for (i = 0; i < rows.length; i++) {
+                    //    data.push("name:"+rows[i].name + " " + rows[i].surname + " " + rows[i].email + " ");
+                    //}
+                    res.contentType('application/json');
+                    res.end(JSON.stringify(rows,null,2));
+                });
+        });
     });
+
 };
 
 

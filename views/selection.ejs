@@ -1,64 +1,245 @@
-<!doctype html>
 <html>
 <head>
-    <title><%= __('Selection Linpret Language Services')%></title>
+    <title><%= __('Dashboard Linpret Language Services') %></title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
-    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
-    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap3-typeahead/bootstrap3-typeahead.min.js"></script>
+
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet"
-          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
     <style>
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            translators = [];
+            map = {};
+            $('.typeahead').typeahead({
+                limit: 10,
+                hint: true,
+                highlight: true, /* Enable substring highlighting */
+                minLength: 1, /* Specify minimum characters required for showing suggestions */
+                source: function (query, process) {
+                    return $.get('/searchTranslator', {key: query}, function (data) {
+                        var valueHint;
+                        translators = [];
+                        map = {};
+                        $.each(data, function (i, translator) {
+                            valueHint = translator.name + " " +translator.surname + " " + translator.email;
+                            map[valueHint] = translator;
+                            translators.push(valueHint);
+                        });
+                        return process(translators);
+                    });
+
+                },
+                updater:function (item) {
+                    translatorId = map[item].id;
+                    $("#translatorList tbody").html("");
+                    $.get('/translator/'+translatorId, {}, function (data) {
+                        var i=0;
+                        $.each(data, function (i, translator) {
+                            var newRowContent = "<tr><td>" +
+                                    ++i +
+                                "</td><td>" +
+                                translator.name +
+                                "</td><td>" +
+                                translator.surname +
+                                "</td><td>" +
+                                translator.email +
+                                "</td><td>";
+                              translator.languages.length>0 ? newRowContent +=translator.languages[0].price_per_hour : newRowContent +="-";
+                            newRowContent +="</td><td><a href='/profile/" +
+                                translator.id +
+                                "'>Profile</a></td></tr>";
+
+                            $(newRowContent).appendTo($("#translatorList"));
+                        });
+                        $('#detailed_information').show();
+                    });
+                    //dont forget to return the item to reflect them into input
+                    return item;
+                }
+            });
+        });
+
+    </script>
+
+    <style type="text/css">
+
         body {
             padding-top: 20px;
-            word-wrap: break-word;
         }
+        .topcorner{
+            top:0;
+            right:0;
+            padding: 9px;
+        }
+
+        #navigation {
+            position: absolute;
+            top:0;
+            right:0;
+        }
+
+        #navMain {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding: 9px;
+        }
+        #navMain > li {
+            float: right;
+            position: relative;
+            background-color: #00B7FF;
+            padding: 6px 6px;
+        }
+        #navMain > li > a {
+            padding: 0px 0px;
+        }
+
+        #navMain ul {
+            display: none;
+            position: absolute;
+            list-style: none;
+            left: 0;
+            padding: 0;
+            margin: 0;
+        }
+        #navMain ul li a {
+            display: block;
+            color: white;
+        }
+        #navMain li:hover ul {
+            display: block;
+        }
+        #navMain li ul:hover {
+            display: block;
+        }
+
+        #navMain li ul {
+            position: relative;
+            background-color: #337ab7;
+        }
+
+        div.search{
+            position: relative;
+            margin: 30px;
+        }
+
+        .typeahead, .tt-query, .tt-hint {
+            border: 2px solid #CCCCCC;
+            border-radius: 8px;
+            outline: medium none;
+            padding: 8px 12px;
+            width: 396px;
+        }
+
+        .wrapper {
+            margin: auto;
+            width: 50%;
+        }
+
     </style>
+
 </head>
 <body>
-<form id="plan-form">
-    <div class="container">
+<div class="navbar-header">
+    <a class="navbar-brand" rel="home" href="/" title="Linpret">
+        <img style="max-width:150px; margin-top: -7px;" src="/../images/linpret_logo_3.png">
+    </a>
+</div>
+<nav id="navigation">
+    <ul id="navMain">
+        <li><a href="#"><strong><%= user.email %>, id=<%= user.id %></strong></a>
+            <ul>
+                <div>
+                    <li><a href="/connect/local" ><%= __('Connect Local') %></a></li>
+                    <li><a href="/logout" ><%= __('Logout') %></a></li>
+                    <li><a href="#" onclick="changePassword();"><%= __('Change Password') %></a></li>
+                </div>
+            </ul>
+        </li>
+    </ul>
+</nav>
 
-        <% if (demandedTranslators) { %>
-        <div class="row">
-            <div class="col-md-3">
-                <span><%= __('Name')%></span>
+<br><br><br><br>
+
+<section class="wrapper">
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab"href="#sectionA"><%= __('Translators who demanded') %></a></li>
+        <li><a data-toggle="tab" href="#sectionB"><%= __('Find Translator') %></a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="sectionA" class="tab-pane fade in active">
+            <% if (demandedTranslators && demandedTranslators.length > 0) { %>
+            <div class="row">
+                <div class="col-md-3">
+                    <span><%= __('Name') %></span>
+                </div>
+                <div class="col-md-3">
+                    <span><%= __('SurName') %></span>
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-3">
+                </div>
+                <div>
+                </div>
             </div>
-            <div class="col-md-3">
-                <span><%= __('SurName')%></span>
+            <% demandedTranslators.forEach(function (demanded) { %>
+            <div class="row">
+                <div class="col-md-3">
+                    <span><%= demanded.name %></span>
+                </div>
+                <div class="col-md-3">
+                    <span><%= demanded.surname %></span>
+                </div>
+                <div class="col-md-3">
+                    <img src="<%= demanded.picture_url %>">
+                </div>
+                <div class="col-md-3">
+                    <a href="/selection/session/<%= demanded.session_id %>/translator/<%= demanded.user_id %>"
+                       class="btn btn-large btn-info"
+                       target="_self"><%= __('Select') %></a>
+                </div>
             </div>
-            <div class="col-md-3">
+            <% }) %>
+            <% } else{ %>
+            <br>
+            <%= __('No any translator') %>
+            <% } %>
+        </div>
+        <div id="sectionB" class="tab-pane fade">
+            <h3><%= __('Type Translator\'s name or email:') %></h3>
+            <div class="search">
+                <input type="text" name="typeahead" class="typeahead tt-query"
+                       autocomplete="off" spellcheck="false" placeholder="Search">
             </div>
-            <div class="col-md-3">
-            </div>
-            <div>
+            <div id="detailed_information" style="display: none">
+                <table class="table" id="translatorList">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Price per hour</th>
+                            <th>Profile</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+
+                    </tbody>
+                </table>
             </div>
         </div>
-        <% demandedTranslators.forEach(function (demanded) { %>
-        <div class="row">
-            <div class="col-md-3">
-                <span><%= demanded.name %></span>
-            </div>
-            <div class="col-md-3">
-                <span><%= demanded.surname %></span>
-            </div>
-            <div class="col-md-3">
-                <img src="<%= demanded.picture_url %>">
-            </div>
-            <div class="col-md-3">
-                <a href="/selection/session/<%= demanded.session_id %>/translator/<%= demanded.user_id %>"
-                   class="btn btn-large btn-info"
-                   target="_self"><%= __('Select')%></a>
-            </div>
-        </div>
-        <% }) %>
     </div>
-    <% } %>
-    </div>
-</form>
+
+
+</section>
+
 </body>
 </html>
