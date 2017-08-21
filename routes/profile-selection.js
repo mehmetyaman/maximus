@@ -1,10 +1,10 @@
 module.exports = function (app) {
 
-    app.get('/profile/select', isLoggedIn, function (req, res, next) {
+    app.get('/dashboard/select', isLoggedIn, function (req, res, next) {
         res.render('profile-selection.ejs');
     });
 
-    app.post('/profile/select', isLoggedIn, function (req, res, next) {
+    app.post('/dashboard/select', isLoggedIn, function (req, res, next) {
         var selectedProfile = req.body['profile-selection'];
         var linkedinprofile = req.session.linkedinprofile;
         var is_customer = selectedProfile === "acustomer" ? 1 : 0;
@@ -37,7 +37,7 @@ module.exports = function (app) {
                         });
                     } else if (selectedProfile === "acustomer") {
                         // cont as a customer
-                        res.redirect('/profile');
+                        res.redirect('/dashboard');
                     }
 
                 });

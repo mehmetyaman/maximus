@@ -45,7 +45,7 @@ module.exports = function (app) {
                             res.status(500).json({error: err6});
                         }
 
-                        res.redirect('/profile');
+                        res.redirect('/dashboard');
                     });
                 }
             );

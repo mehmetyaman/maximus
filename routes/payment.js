@@ -80,7 +80,7 @@ module.exports = function (app) {
                 message = errorMessage;
             }
 
-            res.redirect('/profile');
+            res.redirect('/dashboard');
 
         });
 

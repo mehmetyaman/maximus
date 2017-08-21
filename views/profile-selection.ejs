@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-<form id="profile-selection" method="post" action="/profile/select" >
+<form id="profile-selection" method="post" action="/dashboard/select" >
     <div class="container">
         <div class="row">
             <div class="col-md-4">
@@ -67,7 +67,7 @@
 
 <script type="text/javascript">
     $("#post-btn1").click(function () {
-        $.post("/profile/select", {
+        $.post("/dashboard/select", {
                 selectedProfile: $('#profile-selection input:radio:checked').val()
             }, function (resp) {
                 window.location.href = resp.redirect;
