@@ -42,9 +42,9 @@ module.exports = function (app, winston, emailServer) {
                             }
 
                             if (req.user.is_customer) {
-                                res.redirect("/profile");
+                                res.redirect("/dashboard");
                             } else if (req.user.is_translator) {
-                                res.redirect("/profilet");
+                                res.redirect("/dashboardt");
                             }
                         });
                     }

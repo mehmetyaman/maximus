@@ -8,8 +8,8 @@ exports.index = function (req, res) {
 
 module.exports = function (app) {
 
-    // PROFILE SECTION =========================
-    app.get('/profilet', isLoggedIn, function (req, res) {
+    // DASHBOARD SECTION =========================
+    app.get('/dashboardt', isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
             var query = connection.query('select * from languages', function (err, langs) {
 
@@ -42,7 +42,7 @@ module.exports = function (app) {
                                                 })
                                             });
                                         }
-                                        res.render('translator/profilet.ejs', {
+                                        res.render('translator/dashboardt.ejs', {
                                             user: req.user,
                                             langs: langs,
                                             lists: appropriateRequests,
@@ -51,7 +51,7 @@ module.exports = function (app) {
                                         });
                                     });
                                 } else {
-                                    res.render('translator/profilet.ejs', {
+                                    res.render('translator/dashboardt.ejs', {
                                         user: req.user,
                                         langs: langs,
                                         lists: appropriateRequests,
@@ -76,7 +76,7 @@ module.exports = function (app) {
                 if (err)
                     console.log("Error Updating : %s ", err);
 
-                res.redirect('profilet');
+                res.redirect('dashboardt');
 
             });
 
@@ -92,7 +92,7 @@ module.exports = function (app) {
                 if (err)
                     console.log("Error Updating : %s ", err);
 
-                res.redirect('profilet');
+                res.redirect('dashboardt');
 
             });
 
@@ -108,7 +108,7 @@ module.exports = function (app) {
                     console.log("Error inserting : %s ", err);
                 }
 
-                res.redirect('profilet');
+                res.redirect('dashboardt');
 
             });
 

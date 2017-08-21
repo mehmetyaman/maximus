@@ -20,12 +20,12 @@ module.exports = function (app) {
                         console.log("Error Selecting : %s ", err);
                     }
                     if(user.is_translator){
-                        return res.redirect('/profilet');
+                        return res.redirect('/dashboardt');
                     }else{
 
                         var sessionId = req.query.sessionID;
                         if(!sessionId){
-                            return res.redirect('/profile');
+                            return res.redirect('/dashboard');
                         }else{
                             var session = "select * from translation_session where id =? ";
 
@@ -121,7 +121,7 @@ module.exports = function (app) {
                                         res.end( "Oops! something went wrong. Please try again " );
                                     }
                                     req.flash('message', 'Your comment has been successfully sent!');
-                                    res.redirect('/profile');
+                                    res.redirect('/dashboard');
                                 });
                             }
 
