@@ -8,7 +8,7 @@ module.exports = function (app, passport, emailserver) {
         var sql = "SELECT id FROM translators WHERE  translators.email = ?";
 
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, rows) {
+            connection.query('select * from languages', function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -27,7 +27,7 @@ module.exports = function (app, passport, emailserver) {
 
     app.get('/signupt', function (req, res) {
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, rows) {
+            connection.query('select * from languages', function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -95,7 +95,7 @@ module.exports = function (app, passport, emailserver) {
         req.assert('password', 'Passwords do not match').equals(req.body.repassword);
 
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, rows) {
+            connection.query('select * from languages', function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -134,13 +134,7 @@ module.exports = function (app, passport, emailserver) {
 
                                 req.getConnection(function (err, connection) {
 
-                                        var data = {
-                                            name: input.name,
-                                            surname: input.surname,
-                                            email: input.email
-                                        };
-
-                                        langListCarrier = input.langListCarrier;
+                                        var langListCarrier = input.langListCarrier;
                                         var values = [];
                                         langListCarrier.split(";").filter(function (e) {
                                             return e
@@ -148,7 +142,7 @@ module.exports = function (app, passport, emailserver) {
                                             var langs =  item.split(",");
                                             values.push([user.id, langs[0], langs[1], langs[2]]);
                                         });
-                                        var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to, price_per_hour) values ? ", [values], function (err2, rows2) {
+                                        connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to, price_per_hour) values ? ", [values], function (err2, rows2) {
                                             if (err2) {
                                                 console.log("Error inserting : %s ", err2);
                                             }
@@ -194,11 +188,3 @@ module.exports = function (app, passport, emailserver) {
 
 
 };
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
-}

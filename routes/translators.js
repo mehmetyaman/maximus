@@ -1,9 +1,8 @@
-/*
- * GET translators listing.
- */
+var util = require("../app/util");
+
 module.exports = function (app) {
 
-    app.post('/translators/edit/:id', isLoggedIn, function (req, res) {
+    app.post('/translators/edit/:id', util.isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
@@ -49,7 +48,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/translators/add', isLoggedIn, function (req, res) {
+    app.post('/translators/add', util.isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
 
@@ -92,7 +91,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/translators/add', isLoggedIn, function (req, res) {
+    app.post('/translators/add', util.isLoggedIn, function (req, res) {
 
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
@@ -144,7 +143,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/translators/edit/:id', isLoggedIn, function (req, res) {
+    app.get('/translators/edit/:id', util.isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -155,12 +154,12 @@ module.exports = function (app) {
                 "FROM users t LEFT JOIN translator_lang tl ON t.id=tl.translator_id GROUP BY t.id) AS JOINRESULT " +
                 "WHERE users.id = JOINRESULT.id and  users.id = ?";
 
-            var query = connection.query(sql, [id], function (err, rows) {
+            connection.query(sql, [id], function (err, rows) {
                 console.log(" Selecting : %s ", rows);
                 if (err) {
                     console.log("Error Selecting : %s ", err);
                 } else {
-                    var query = connection.query('select * from languages', function (err2, rows2) {
+                    connection.query('select * from languages', function (err2, rows2) {
                         console.log(" Selecting : %s ", rows2);
                         if (err2)
                             console.log("Error Selecting Languages : %s ", err2);
@@ -182,7 +181,7 @@ module.exports = function (app) {
 
     // show the home page (will also have our login links)
     // app.get('/translators', translators.list);
-    app.get('/translators', isLoggedIn, function (req, res) {
+    app.get('/translators', util.isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
             var sql = "SELECT * FROM users," +
@@ -197,7 +196,7 @@ module.exports = function (app) {
                 " GROUP BY t.id) AS JOINRESULT" +
                 " WHERE users.id = JOINRESULT.id";
 
-            var query = connection.query(sql, function (err, rows) {
+            connection.query(sql, function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -211,10 +210,10 @@ module.exports = function (app) {
     });
 
     // app.get('/translators/add', translators.add);
-    app.get('/translators/add', isLoggedIn, function (req, res) {
+    app.get('/translators/add', util.isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
-            var query = connection.query('select * from languages', function (err, rows) {
+            connection.query('select * from languages', function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -227,7 +226,7 @@ module.exports = function (app) {
     });
 
 
-    app.get('/translators/delete/:id', isLoggedIn, function (req, res) {
+    app.get('/translators/delete/:id', util.isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -251,11 +250,3 @@ module.exports = function (app) {
     });
 
 };
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
-}

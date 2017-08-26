@@ -6,10 +6,11 @@ var moment = require('moment');
 var config = require('config');
 var randomstring = require("randomstring");
 var bcrypt = require('bcrypt-nodejs');
+var util = require("../app/util");
 
 module.exports = function (app) {
 
-    app.get('/session-comments', isLoggedIn, function (req, res, next) {
+    app.get('/session-comments', util.isLoggedIn, function (req, res, next) {
         var qstr = "select * from users where email =? ";
 
         req.getConnection(function (err, connection) {
@@ -133,15 +134,9 @@ module.exports = function (app) {
 
             });
         }else{
-            res.end( "Opps someting went wrong. Please try again." );
+            req.flash('message', 'Oops! something went wrong. Please try again');
+            res.redirect('/sessionComments');
         }
     });
-
-    function isLoggedIn(req, res, next) {
-        if (req.isAuthenticated())
-            return next();
-
-        res.redirect('/');
-    }
 
 }

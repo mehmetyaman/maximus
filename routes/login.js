@@ -538,11 +538,12 @@ module.exports = function (app, passport, winston, emailserver) {
         });
     });
 
+    isLoggedIn:isLoggedIn
 }
 ;
 
 // route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
+var isLoggedIn=function (req, res, next) {
     if (req.isAuthenticated())
         return next();
 
