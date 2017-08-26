@@ -1,10 +1,12 @@
+var util = require('../app/util');
+
 module.exports = function (app) {
 
-    app.get('/selection/session/:id', isLoggedIn, function (req, res, next) {
+    app.get('/selection/session/:id', util.isLoggedIn, function (req, res, next) {
         var session_id = req.params.id;
 
         req.getConnection(function (err3, connection) {
-            var query = connection.query('select  u.id as user_id, u.name as name, u.surname as surname, ts.id as' +
+            connection.query('select  u.id as user_id, u.name as name, u.surname as surname, ts.id as' +
                 ' session_id, u.picture_url as picture_url from' +
                 ' translation_session ts, translation_session_users tsu, translation_session_demands tsd , users u where ' +
                 'ts.id = tsu.translation_session_id and ' +
@@ -19,7 +21,7 @@ module.exports = function (app) {
         })
     });
 
-    app.get('/selection/session/:id/translator/:translator_id', isLoggedIn, function (req, res, next) {
+    app.get('/selection/session/:id/translator/:translator_id', util.isLoggedIn, function (req, res, next) {
         var session_id = req.params.id;
         var translator_id = req.params.translator_id;
 
@@ -35,7 +37,7 @@ module.exports = function (app) {
                         res.status(500).json({error: err6});
                     }
 
-                    var query = connection.query('update  translation_session set translator_id=?' +
+                    connection.query('update  translation_session set translator_id=?' +
                         ' where id=? ', [translator_id, session_id], function (err6, rows6) {
                         if (err6) {
                             connection.rollback(function () {
@@ -52,11 +54,5 @@ module.exports = function (app) {
         })
     })
 
-    function isLoggedIn(req, res, next) {
-        if (req.isAuthenticated())
-            return next();
-
-        res.redirect('/');
-    }
 
 }

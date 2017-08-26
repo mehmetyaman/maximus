@@ -1,10 +1,11 @@
 var VideoChat = require('../app/models/videochat');
 var Peer = require('../app/models/videochatpeer');
 var moment = require('moment');
+var util = require("../app/util");
 
 module.exports = function (app) {
 
-    app.post('/users/edit/:id', isLoggedIn, function (req, res) {
+    app.post('/users/edit/:id', util.isLoggedIn, function (req, res) {
         var input = JSON.parse(JSON.stringify(req.body));
         var id = req.params.id;
 
@@ -44,7 +45,7 @@ module.exports = function (app) {
                 country_code: 'EN'
             };
 
-            var query = connection.query("INSERT INTO user set ? ", data, function (err, rows) {
+            connection.query("INSERT INTO user set ? ", data, function (err, rows) {
 
                 if (err)
                     console.log("Error inserting : %s ", err);
@@ -55,10 +56,10 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/users', isLoggedIn, function (req, res) {
+    app.get('/users', util.isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
 
-            var query = connection.query('SELECT * FROM users ', function (err, rows) {
+            connection.query('SELECT * FROM users ', function (err, rows) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
@@ -75,7 +76,7 @@ module.exports = function (app) {
         res.render('user/add_user', {page_title: "Add user"});
     });
 
-    app.get('/users/delete/:id', isLoggedIn, function (req, res) {
+    app.get('/users/delete/:id', util.isLoggedIn, function (req, res) {
 
         var id = req.params.id;
 
@@ -93,12 +94,12 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/users/edit/:id', isLoggedIn, function (req, res) {
+    app.get('/users/edit/:id', util.isLoggedIn, function (req, res) {
         var id = req.params.id;
 
         req.getConnection(function (err, connection) {
 
-            var query = connection.query('SELECT * FROM users WHERE id = ?', [id], function (err, rows) {
+            connection.query('SELECT * FROM users WHERE id = ?', [id], function (err, rows) {
 
                 if (err)
                     console.log("Error Selecting : %s ", err);
@@ -110,7 +111,7 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/user/:id', isLoggedIn, function (req, res) {
+    app.get('/user/:id', util.isLoggedIn, function (req, res) {
         var userid = req.params.id;
         req.getConnection(function (err, connection) {
 
@@ -132,7 +133,7 @@ module.exports = function (app) {
     });
 
     //for rest call without redirection
-    app.get('/userData/:id', isLoggedIn, function (req, res) {
+    app.get('/userData/:id', util.isLoggedIn, function (req, res) {
         var userid = req.params.id;
         req.getConnection(function (err, connection) {
             connection.query('SELECT * FROM users where id=?', [userid] ,function (err, rows) {
@@ -187,12 +188,5 @@ function do_queries(connection, userid, callback) {
     });
 }
 
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
-}
 
 

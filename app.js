@@ -74,12 +74,12 @@ app.use(
 // here after for logging and authentication eee
 
 //load users route
-var users = require('./routes/users');
-var translators = require('./routes/translators');
-var login = require('./routes/login');
+require('./routes/users');
+require('./routes/translators');
+require('./routes/login');
 // load our routes and pass in our app and fully configured passport
 require('./routes/login')(app, passport, winston, emailServer);
-var videochat = require('./routes/videochat');
+require('./routes/videochat');
 require('./routes/translators')(app);
 require('./routes/translator')(app);
 require('./routes/users')(app);
@@ -127,6 +127,7 @@ app.use(app.router);
 var server = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
+server.timeout = config.get('app.timeout')/2; // it multiply by 2. i dont understand why. bc of this i divided by 2
 
 var io = require('socket.io').listen(server);
 io.on('connection', function(socket) {
@@ -134,13 +135,3 @@ io.on('connection', function(socket) {
     socket.emit('announcements', { message: 'A new user has joined!' });
 });
 
-// route middleware to make sure a user is logged in
-function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
-        return next();
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
-}

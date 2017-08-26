@@ -1,6 +1,7 @@
-var VideoChat = require('../app/models/videochat');
+
 var Peer = require('../app/models/videochatpeer');
 var moment = require('moment');
+var util = require('../app/util');
 
 exports.index = function (req, res) {
     res.render('index', {moment: moment});
@@ -9,9 +10,9 @@ exports.index = function (req, res) {
 module.exports = function (app) {
 
     // DASHBOARD SECTION =========================
-    app.get('/dashboardt', isLoggedIn, function (req, res) {
+    app.get('/dashboardt', util.isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, langs) {
+            connection.query('select * from languages', function (err, langs) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
@@ -21,18 +22,18 @@ module.exports = function (app) {
                         'where (ts.translator_id = ? or ts.translator_id = 0 ) and ' +
                         'exists ( select * from translator_lang tl where (tl.translator_id=?) ' +
                         'and ((lang1=lang_from and lang2=lang_to) or (lang1=lang_to and lang2=lang_from)))';
-                    var query = connection.query(sql, [req.user.id, req.user.id], function (err1, translationRequests) {
+                    connection.query(sql, [req.user.id, req.user.id], function (err1, translationRequests) {
 
                         if (err1) {
                             console.log("Error Selecting : %s ", err1);
                         }
 
                         req.getConnection(function (err3, connection) {
-                            var query = connection.query('select * from categories', function (err3, categories) {
+                            connection.query('select * from categories', function (err3, categories) {
                                 var appropriateRequests = translationRequests;
                                 if (appropriateRequests.length > 0) {
                                     var sqlForDemands = "select * from translation_session_demands where user_id=?";
-                                    var query = connection.query(sqlForDemands, req.user.id, function (errDemands, demands) {
+                                    connection.query(sqlForDemands, req.user.id, function (errDemands, demands) {
                                         if (demands.length > 0) {
                                             appropriateRequests.forEach(function (request) {
                                                 demands.forEach(function (demand) {
@@ -67,7 +68,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/assignSession/:id', isLoggedIn, function (req, res) {
+    app.post('/assignSession/:id', util.isLoggedIn, function (req, res) {
         var id = req.params.id;
 
         req.getConnection(function (err, connection) {
@@ -83,17 +84,17 @@ module.exports = function (app) {
         });
     });
 
-    app.get('/profile', isLoggedIn, function (req, res) {
+    app.get('/profile', util.isLoggedIn, function (req, res) {
         res.render('translator/profile.ejs', { user: req.user});
     });
 
-    app.get('/profile/:id', isLoggedIn, function (req, res) {
+    app.get('/profile/:id', util.isLoggedIn, function (req, res) {
         loadTranslator(req, res, function (translator) {
             res.render('translator/profile.ejs', {user: req.user, translator: translator[0]});
         })
     });
 
-    app.post('/assign/translator/:translator_id/session/:session_id', isLoggedIn, function (req, res) {
+    app.post('/assign/translator/:translator_id/session/:session_id', util.isLoggedIn, function (req, res) {
         var translator_id = req.params.translator_id;
         var session_id = req.params.session_id;
         req.getConnection(function (err, connection) {
@@ -109,7 +110,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post('/demand/:id', isLoggedIn, function (req, res) {
+    app.post('/demand/:id', util.isLoggedIn, function (req, res) {
         req.getConnection(function (err, connection) {
             connection.query("insert into translation_session_demands (user_id, translation_session_id) values (?," +
                 " ?) ", [req.user.id, req.params.id], function (err, rows) {
@@ -148,7 +149,7 @@ module.exports = function (app) {
         });
     }
 
-    app.get('/translator/:id', isLoggedIn, function (req, res) {
+    app.get('/translator/:id', util.isLoggedIn, function (req, res) {
         loadTranslator(req, res, function (translator) {
             res.contentType('application/json');
             res.end(JSON.stringify(translator, null, 2));
@@ -200,21 +201,20 @@ function do_queries(connection, id, callback) {
     var sql2 = "select * from translation_session where (translator_id=? or translator_id = 0) " +
         "order by start_date,start_time";
 
-    var query = connection.query(sql1, [id], function (err, rows) {
+    connection.query(sql1, [id], function (err, rows) {
         if (err) {
             callback(err);
             return;
         }
-        var query2 = connection.query(sql2, [id], function (err2, rows2) {
+        connection.query(sql2, [id], function (err2, rows2) {
             if (err2) {
                 callback(err2);
                 return;
             }
 
-            i = 0;
+            var i = 0;
             if (rows2.length > 0) {
                 rows2.forEach(function (videoChat) {
-                    var peers;
                     Peer.find({"videoChatId": videoChat.id}, function (err, peers) {
                         if (err) {
                             callback(err);
@@ -234,14 +234,6 @@ function do_queries(connection, id, callback) {
 
         });
     });
-}
-
-// route middleware to ensure user is logged in
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
 }
 
 

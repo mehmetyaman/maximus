@@ -2,10 +2,11 @@ var VideoChat = require('../app/models/videochat');
 var Peer = require('../app/models/videochatpeer');
 var path = require('path');
 var config = require('config');
+var util = require("../app/util");
 
 module.exports = function (app) {
 
-    app.get('/videoConference/:id', isLoggedIn, function (req, res) {
+    app.get('/videoConference/:id', util.isLoggedIn, function (req, res) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
         var username=req.user.email;
@@ -217,12 +218,5 @@ module.exports = function (app) {
         });
     });
 
-    // route middleware to ensure user is logged in
-    function isLoggedIn(req, res, next) {
-        if (req.isAuthenticated())
-            return next();
-
-        res.redirect('/');
-    }
 
 }
