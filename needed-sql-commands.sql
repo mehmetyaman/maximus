@@ -202,4 +202,9 @@ ALTER TABLE maximus.users
   ADD is_email_verification TINYINT(1) DEFAULT '0';
 ALTER TABLE `maximus`.`translator_lang`
 ADD COLUMN `price_per_hour` DECIMAL(5,2) NULL AFTER `lang_to`;
+ALTER TABLE `maximus`.`translation_session_users`
+ADD COLUMN `is_admin` TINYINT(1) NULL AFTER `user_id`;
+ALTER TABLE `maximus`.`translation_session`
+ADD COLUMN `created_date` DATE NULL AFTER `is_paid`,
+ADD COLUMN `created_user` VARCHAR(45) NULL AFTER `created_date`;
 

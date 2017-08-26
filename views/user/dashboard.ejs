@@ -6,7 +6,6 @@
     <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
     <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/bower_components/bootstrap-validator/dist/validator.js"></script>
 
     <script type="text/javascript"
             src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
@@ -80,7 +79,11 @@
     <script>
         <%
         if(lists){
-        lists.forEach(function (items) {
+            var hasAnyAdminSession=false
+            lists.forEach(function (items) {
+                if(items.is_admin==1){
+                    hasAnyAdminSession = true;
+                }
         %>
 
         $.get("/peers/<%= items.id %>", function (participants) {
@@ -136,7 +139,7 @@
         </li>
     </ul>
 </nav>
-<form id="plan-form">
+<div id="plan-form">
     <div class="container">
         <br><br><br><br><br><br>
         <div class="row">
@@ -160,8 +163,6 @@
                         </button>
                     </div>
                     <div class="modal-body">
-
-
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="input-group">
@@ -264,7 +265,7 @@
                                 <div class="form-group">
                                     <div class='input-group date' id='plandate'>
                                         <input type='text' class="form-control"/>
-                    <span class="input-group-addon">
+                                        <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
                                     </div>
@@ -274,116 +275,107 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary" type="button"
-                                id="post-btn"><%= __('Create') %></button>
+                                id="createSession"><%= __('Create') %></button>
                     </div>
                 </div>
             </div>
         </div>
-        <% if (lists) { %>
-        <div class="row">
-            <div class="col-md-2">
-                <span style="font-weight: bold;"><%= __('Subject') %></span>
-            </div>
-            <div class="col-md-2">
-                <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
-            </div>
-            <div class="col-md-1">
-                <span style="font-weight: bold;"><%= __('Languages') %></span>
-            </div>
-            <div class="col-md-2">
-                <span style="font-weight: bold;"><%= __('Start Date') %></span>
-            </div>
-            <div class="col-md-1">
-                <span style="font-weight: bold;"><%= __('Connect') %></span>
-            </div>
-            <div class="col-md-2">
-                <span style="font-weight: bold;"><%= __('Payment') %></span>
-            </div>
-            <div class="col-md-2">
-                <span style="font-weight: bold;"><%= __('Invite') %></span>
-            </div>
-        </div>
-        <% lists.forEach(function (items) { %>
-        <div class="row">
-            <div class="col-md-2">
-                <span><%= items.description %></span>
-            </div>
-            <div class="col-md-2">
-                <span><%= items.duration %></span>
-            </div>
-            <div class="col-md-1">
-                <span><%= items.lang1 %> > <%= items.lang2 %></span>
-            </div>
-            <div class="col-md-2">
-                <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
-            </div>
-            <% if(items.is_paid == 1){ %>
-            <div class="col-md-1">
-                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
-                <span id="participants-span-<%= items.id %>"></span>
-            </div>
-            <div class="col-md-2">
-                <span style="color: #00CC00"><%= __('Paid') %></span>
-            </div>
-            <% } else{ %>
-            <div class="col-md-1">
-                <span style="color: #00CC00"></span>
-            </div>
-            <div class="col-md-2">
-                        <span>
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#paymentModal" data-amount="150" data-currency="try"
-                                    data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
-                        </span>
-            </div>
-            <div class="col-md-2">
-                <span style="color: #00CC00"></span>
-            </div>
-            <% } %>
-            <div class="col-md-2">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#inviteModal">
-                    <%= __('Invite Participant') %>
-                </button>
 
-                <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="inviteModalLabel"><%= __('Participant User Name') %></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="participant-name"
-                                               class="form-control-label"><%= __('User Name:') %></label>
-                                        <input type="text" class="form-control" id="participant-name"
-                                               name="participant-name">
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= __('Close')
-                                    %></button>
-                                <button type="button" class="btn btn-primary" id="invite-btn"
-                                        session-id="<%= items.id %>"
-                                        name="invite-btn">
-                                    <%= __('Send Invitation') %>
-                                </button>
-                            </div>
-                        </div>
+            <% if (lists) { %>
+                <div class="row">
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Subject') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Languages') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Date') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Time') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Connect') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Payment') %></span>
+                    </div>
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Interpreter') %></span>
+                    </div>
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Invite') %></span>
                     </div>
                 </div>
+            <% lists.forEach(function (items) { %>
+            <div class="row x">
+                <div class="col-md-2">
+                    <span><%= items.description %></span>
+                </div>
+                <div class="col-md-1">
+                    <span><%= items.duration %></span>
+                </div>
+                <div class="col-md-1">
+                    <span><%= items.lang1 %> > <%= items.lang2 %></span>
+                </div>
+                <div class="col-md-1">
+                    <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+                </div>
+                <div class="col-md-1">
+                    <span> <%= moment(items.start_date).format('hh:mm') %></span>
+                </div>
+                <div class="col-md-1">
+                    <% if(items.is_paid == 1){ %>
+                        <a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a>
+                        <span id="participants-span-<%= items.id %>"></span>
+                    <%}else{%>
+                        <%= __('Waiting for payment') %>
+                    <%}%>
+                </div>
+                <div class="col-md-1">
+                    <% if(items.is_admin == 1){%>
+
+                            <% if(items.is_paid != 1){ %>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#paymentModal" data-amount="150" data-currency="try"
+                                        data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
+                            <%}else{%>
+                                Paid
+                            <%}%>
+                    <%}%>
+                </div>
+                <div class="col-md-2">
+                    <% if(items.is_admin == 1){%>
+                        <% if(!items.translator_id){ %>
+                                <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">
+                                    <%= __('Select Interpreter') %></a>
+                        <% } else{%>
+                             <%= items.translator_id %>
+                        <%}%>
+                    <%}%>
+                </div>
+
+                <div class="col-md-2">
+                    <% if(items.is_admin == 1){%>
+                        <% if(items.other_participant_id == null){ %>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#inviteModal" data-sessionid="<%= items.id %>">
+                                <%= __('Invite Participant') %>
+                            </button>
+                        <%}else{%>
+                            Invited userid:<%= items.other_participant_id %>
+                        <%}%>
+                    <%}else{%>
+                        Invitation sent by userid:<%= items.other_participant_id %>
+                    <%}%>
+                </div>
             </div>
-            <% if(!items.translator_id){ %>
-            <a class="btn btn-large btn-info"
-               href="selection/session/<%= items.id %>"><%= __('Select Translator') %></a>
-            <% } %>
-        </div>
-        <% }) %>
+            <% }) %>
+
         <form role="form" data-toggle="validator" id="modalForm" name="modalForm">
             <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel">
                 <div class="modal-dialog" role="document">
@@ -474,9 +466,42 @@
                 </div>
             </div>
         </form>
+        <form role="form">
+            <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog"
+                 aria-labelledby="inviteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inviteModalLabel"><%= __('Participant User Name') %></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="participant-name"
+                                           class="form-control-label"><%= __('User Name:') %></label>
+                                    <input type="text" class="form-control" id="participant-name"
+                                           name="participant-name">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= __('Close')
+                                %></button>
+                            <button type="button" class="btn btn-primary" id="invite-btn" data-sessionid="0">
+                                <%= __('Send Invitation') %>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
     <% } %>
     </div>
+</div>
 </form>
 <script type="text/javascript">
     var intervalval, lang1, lang2, catval;
@@ -512,15 +537,22 @@
         });
     }
 
+    $('#inviteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var sessionid = button.data('sessionid')
+        $("#invite-btn").attr("data-sessionid" , sessionid);
+    });
+
     $("#invite-btn").click(function () {
-        var participantName = $("#participant-name").val();
+        var participantName = $("#participant-name").val()
+        var sessionid = $(this).data('sessionid')
         var data = {
             participantName: participantName,
-            sessionId: $("#invite-btn").attr('session-id')
+            sessionId: sessionid
         }
         $.post("/add-participant", data, function (data) {
-            $("#participant-name").val('');
-            $('#inviteModal').modal('toggle');
+            $("#participant-name").val('')
+            $('#inviteModal').modal('toggle')
         });
     });
 
@@ -574,7 +606,7 @@
 
     })
 
-    $("#post-btn").click(function () {
+    $("#createSession").click(function () {
         if ($("#desc").val() === undefined) {
             alert('<%= __('Fill in the description field, please') %>');
             return false;

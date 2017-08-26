@@ -26,31 +26,41 @@ module.exports = function (app, passport, winston, emailserver) {
 
 
     // dashboard SECTION =========================
-    app.get('/dashboard', isLoggedIn, function (req, res) {
+    app.get('/dashboard', isLoggedIn, function (req, res, next) {
         req.getConnection(function (err, connection) {
-            var query = connection.query('select * from languages', function (err, languages) {
+            connection.query('select * from languages', function (err, languages) {
 
                 if (err) {
                     console.log("Error Selecting : %s ", err);
+                    return next(err);
                 }
-                req.getConnection(function (err1, connection) {
-                    var query = connection.query('select ts.* from translation_session_users tu, translation_session' +
-                        ' ts  where tu.user_id = ? and tu.translation_session_id = ts.id', req.user.id, function (err1, sessions) {
+                    connection.query('select ts.*, tsu.is_admin, ' +
+                        ' (select user_id from translation_session_users ' +
+                        ' where translation_session_id=tsu.translation_session_id ' +
+                        ' and user_id!=tsu.user_id) as other_participant_id ' +
+                        ' from  translation_session_users tsu, translation_session ts' +
+                        ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
+                        req.user.id, function (err1, sessions) {
 
                         if (err1) {
                             console.log("Error Selecting : %s ", err1);
+                            return next(err1);
                         }
 
-                        req.getConnection(function (err3, connection) {
-                            var query = connection.query('select * from categories', function (err3, categories) {
+                            connection.query('select * from categories', function (err2, categories) {
 
-                                var query = connection.query('select u.*, ts.id as session_id from' +
-                                    ' translation_session ts, translation_session_users tsu, translation_session_demands tsd , users u where ' +
-                                    'ts.id = tsu.translation_session_id and ' +
-                                    'tsu.user_id = ? and ' +
-                                    'tsd.translation_session_id=ts.id and ' +
-                                    'tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
+                                connection.query('select u.*, ts.id as session_id from' +
+                                    ' translation_session ts, translation_session_users tsu, ' +
+                                    ' translation_session_demands tsd , users u where ' +
+                                    ' ts.id = tsu.translation_session_id and ' +
+                                    ' tsu.user_id = ? and ' +
+                                    ' tsd.translation_session_id=ts.id and ' +
+                                    ' tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
 
+                                    if (err3) {
+                                        console.log("Error Selecting : %s ", err3);
+                                        return next(err3);
+                                    }
 
                                     res.render('user/dashboard.ejs', {
                                         user: req.user,
@@ -61,13 +71,11 @@ module.exports = function (app, passport, winston, emailserver) {
                                         moment: moment,
                                         config: config
                                     });
+
                                 });
                             })
-                        })
                     });
-                });
-            });
-        });
+        }); });
 
     });
 

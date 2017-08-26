@@ -1,6 +1,5 @@
 var VideoChat = require('../app/models/videochat');
 var Peer = require('../app/models/videochatpeer');
-var path = require('path');
 var config = require('config');
 var util = require("../app/util");
 
@@ -60,7 +59,6 @@ module.exports = function (app) {
         var videoChatId = req.params.id;
         var peerId = req.user.id;
         var username=req.user.email;
-        var videoChat;
         VideoChat.find({"_id":videoChatId}, function (err, videoChat) {
             if (videoChat.length==0) {
                 createVideoChat(videoChatId, function (err) {
