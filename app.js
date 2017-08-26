@@ -111,10 +111,14 @@ i18n.configure({
     directory: __dirname + '/locales'
 });
 
-// development only
-if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
-}
+var errorHandler = express.errorHandler();
+app.use(function(err, req, res, next) {
+    if (app.get('env') === 'development') {
+        return errorHandler(err, req, res, next);
+    } else {
+        res.send(401);
+    }
+});
 console.log(app.get('env') + '=env  ,,  port=' + app.get('port'));
 
 // here after for logging and authentication

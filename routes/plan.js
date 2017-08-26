@@ -31,9 +31,9 @@ module.exports = function (app, winston, emailServer) {
                     if (invitations.length > 0) {
                         var data = {
                             translation_session_id: req.query.sessionId,
-                            user_id: req.user.id
+                            user_id: req.user.id,
+                            is_admin: 0
                         }
-
                         connection.query("insert into translation_session_users set ?", [data], function (err3, rows3) {
                             if (err3) {
                                 connection.rollback(function () {
@@ -49,8 +49,9 @@ module.exports = function (app, winston, emailServer) {
                                 res.redirect("/dashboardt");
                             }
                         });
+                    }else{
+                        return next(new Error("No invitation found!"));
                     }
-                    ;
 
                 });
         });
@@ -65,14 +66,13 @@ module.exports = function (app, winston, emailServer) {
             length: 32
         });
 
-
         req.getConnection(function (err, connection) {
 
             connection.query("select * from translation_session_users tsu, users us where us.id =" +
                 " tsu.user_id and us.email =? and tsu.translation_session_id=? ", [participant, sessionId], function (err3, session_users) {
 
                 if (session_users.length > 0) {
-                    console.log("user has already assigned for this session");
+                    console.log("user has already assigned to this session");
                     res.send(200);
                 } else {
                     var data = {
@@ -113,9 +113,7 @@ module.exports = function (app, winston, emailServer) {
 
     app.post('/plan', util.isLoggedIn, function (req, res, next) {
         var input = JSON.parse(JSON.stringify(req.body));
-
         req.getConnection(function (err, connection) {
-
             var data = {
                 lang1: input.lang1,
                 lang2: input.lang2,
@@ -125,7 +123,9 @@ module.exports = function (app, winston, emailServer) {
                 description: input.desc,
                 category_id: input.catval,
                 translator_id: 0,
-                is_paid: 0
+                is_paid: 0,
+                created_date: new Date(),
+                created_user: req.user.id
             }
             if (err) {
                 connection.rollback(function () {
@@ -135,7 +135,6 @@ module.exports = function (app, winston, emailServer) {
                 res.status(500).json({error: err});
             }
             connection.query("INSERT INTO `translation_session` set ?", [data], function (err2, rows2) {
-
                 if (err2) {
                     connection.rollback(function () {
                         throw err;
@@ -146,7 +145,8 @@ module.exports = function (app, winston, emailServer) {
                 var sessionId = rows2.insertId;
                 var data = {
                     translation_session_id: sessionId,
-                    user_id: req.user.id
+                    user_id: req.user.id,
+                    is_admin: 1
                 }
                 connection.query("INSERT INTO `translation_session_users` set ?", [data], function (err3, rows3) {
                     if (err3) {
