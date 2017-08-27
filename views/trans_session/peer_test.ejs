@@ -2,15 +2,15 @@
 <head>
     <title>Translation Session</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-    <script src="http://cdn.peerjs.com/0.3/peer.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.14/peer.js"></script>
     <script>
 
         // Compatibility shim
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
-        var peer = new Peer('<%=sessionID%>', {host: 'localhost', port: 9000, path: '/'});
-        peer.on('open', function(){
+    //    var peer = new Peer('<%=sessionID%>', {host: 'cryptic-headland-72907.herokuapp.com', port: 443, path: '/'});
+        var peer = new Peer({key: '72ojzzcbfs6pqfr'});
+        peer.on('open', function () {
             $('#my-id').text(peer.id);
         });
 
@@ -62,8 +62,8 @@
         }
 
         function step2 () {
-            $('#step1, #step3').hide();
-            $('#step2').show();
+    //        $('#step1, #step3').hide();
+    //        $('#step2').show();
         }
 
         function step3 (call) {
@@ -80,9 +80,9 @@
             // UI stuff
             window.existingCall = call;
             $('#their-id').text(call.peer);
-            call.on('close', step2);
-            $('#step1, #step2').hide();
-            $('#step3').show();
+       //     call.on('close', step2);
+        //    $('#step1, #step2').hide();
+       //     $('#step3').show();
         }
 
     </script>
