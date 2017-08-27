@@ -207,4 +207,8 @@ ADD COLUMN `is_admin` TINYINT(1) NULL AFTER `user_id`;
 ALTER TABLE `maximus`.`translation_session`
 ADD COLUMN `created_date` DATE NULL AFTER `is_paid`,
 ADD COLUMN `created_user` VARCHAR(45) NULL AFTER `created_date`;
+ALTER TABLE `maximus`.`translation_session`
+CHANGE COLUMN `start_date` `start_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `end_date` `end_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `created_date` `created_date` TIMESTAMP NULL DEFAULT NULL ;
 
