@@ -72,7 +72,7 @@ if (app.get('env') === 'development') {
 app.use(
   require('express-myconnection')(mysql, config.get('mysql'), 'pool') // or single
 )
-require('mongoose').connect(config.get('mongo.url')) // connect to our database
+// require('mongoose').connect(config.get('mongo.url')) // connect to our database
 
 // authentication check. all requests are
 var noAuthenticationNeededPaths = [
@@ -133,7 +133,7 @@ process.on('uncaughtException', function (err) {
   logger.error('uncaughtException = ' + err.stack)
 })
 
-var server = app.listen(app.get('port'), function () {
+var server = app.listen(process.env.PORT || app.get('port'), function () {
   logger.info('Listening on ' + app.get('port'))
 })
 server.timeout = config.get('app.timeout') / 2 // it multiply by 2. i dont understand why. bc of this i divided by 2

@@ -1,18 +1,18 @@
-
 {
   "app": {
-    "port": 90,
-    "url":"198.199.64.171",
-    "protocol":"http",
+    "port": 443,
+    "url":"https://rocky-citadel-53298.herokuapp.com",
+    "protocol":"https",
     "timeout":"10000"  //10 sec
   },
   "mysql": {
-    "host": "maximus.crndlsr14dxi.us-west-2.rds.amazonaws.com",
+    "host": "maximus2.crndlsr14dxi.us-west-2.rds.amazonaws.com",
     "user": "root",
     "password": "admin123",
     "port": 3306,
     "database": "maximus",
-    "multipleStatements": "true"
+    "multipleStatements": "true",
+    "acquireTimeout": 10000
   },
   "mongo": {
     "url" : "mongodb://localhost"
