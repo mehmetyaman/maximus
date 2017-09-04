@@ -9,7 +9,7 @@
     <!-- load fontawesome -->
     <style>
         body {
-            padding-top: 80px;
+            padding-top: 20px;
         }
     </style>
 </head>
@@ -24,20 +24,143 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" rel="home" href="#" title="Buy Sell Rent Everyting">
+        <a class="navbar-brand" rel="home" href="/" title="Linpret">
             <img style="max-width:150px; margin-top: -7px;"
                  src="/../images/linpret_logo_3.png">
         </a>
     </div>
 
     <div class=" text-center">
-        <h2>Linpret Translation Services</h2>
-        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span>Login</a>
-        <a href="/auth/linkedin" class="btn btn-default"><span class="fa fa-user"></span>Login with LinkedIn</a>
-        <a href="/signup?customer=true" class="btn btn-default"><span class="fa fa-user"></span>Customer Signup</a>
-        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span>Translater Signup</a>
+        <h2><%= __('Linpret Translation Services') %></h2>
+        <a href="/login" class="btn btn-default"><span class="fa fa-user"></span><%= __('Login') %></a>
+        <a href="/auth/linkedin" class="btn btn-default"><span class="fa fa-user"></span><%= __('Login with LinkedIn') %></a>
+        <a href="/signup" class="btn btn-default"><span class="fa fa-user"></span><%= __('Customer Signup') %></a>
+        <a href="/signupt" class="btn btn-default"><span class="fa fa-user"></span><%= __('Translator Signup') %></a>
+        <a href="/documentTranslation" class="btn btn-default"><span class="fa fa-user"></span><%= __('Text Translation Request') %></a>
     </div>
 
+    <div id="plannerDiv" style="display: none">
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-4">
+                <h4><%= __
+                    ('Select Languages')
+                    %></h4>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" id="desc" class="form-control" placeholder="Description"
+                           aria-describedby="basic-addon2">
+                    <span class="input-group-addon"><%= __('Description') %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <%= __('Select Language') %>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang1">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4>Language</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <%= __('Select Language') %>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="lang2">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-2">
+                <h4>Category</h4>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <%= __('Select Category') %>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="cat">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <span class="caret"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class='col-sm-3'>
+                <div class="form-group">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <%= __('Duration (In Mins)') %>
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="interval">
+                            <li><a href="#">30</a></li>
+                            <li><a href="#">60</a></li>
+                            <li><a href="#">90</a></li>
+                            <li><a href="#">120</a></li>
+                            <li><a href="#">150</a></li>
+                            <li><a href="#">180</a></li>
+                            <li><a href="#">210</a></li>
+                            <li><a href="#">240</a></li>
+                            <li><a href="#">270</a></li>
+                            <li><a href="#">300</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class='col-sm-3'>
+                <div class="form-group">
+                    <div class='input-group date' id='plandate'>
+                        <input type='text' class="form-control"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10">
+            </div>
+            <div class='col-sm-2'>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="button" id="post-btn"><%= __('Create') %></button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

@@ -1,0 +1,206 @@
+{
+	"Hello": "Hello en",
+	"Hello %s, how are you today?": "Hello %s, how are you today?",
+	"weekend": "weekend",
+	"Hello %s, how are you today? How was your %s.": "Hello %s, how are you today? How was your %s.",
+	"Hi": "Hi",
+	"Howdy": "Howdy",
+	"%s cat": {
+		"one": "%s cat",
+		"other": "%s cats"
+	},
+	"cat": {
+		"one": "%s cat",
+		"other": "%s cats"
+	},
+	"cats": {
+		"n": {
+			"one": "%s cat",
+			"other": "%s cats"
+		}
+	},
+	"nested": {
+		"deep": {
+			"plural": {
+				"one": "plural",
+				"other": "plurals"
+			}
+		},
+		"path": {
+			"sub": "nested.path.sub"
+		}
+	},
+	"There is one monkey in the %%s": {
+		"one": "There is one monkey in the %%s",
+		"other": "There are %d monkeys in the %%s"
+	},
+	"tree": "tree",
+	"There is one monkey in the %s": {
+		"one": "There is one monkey in the %s",
+		"other": "There are %d monkeys in the %s"
+	},
+	"There is one monkey in the tree": {
+		"one": "There is one monkey in the tree",
+		"other": "There are %d monkeys in the tree"
+	},
+	"plurals with intervals in string (no object)": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule",
+	"plurals with intervals in _other_ missing _one_": {
+		"other": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule"
+	},
+	"plurals with intervals as string": {
+		"one": "The default 'one' rule",
+		"other": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule"
+	},
+	"plurals with intervals as string (excluded)": {
+		"one": "The default 'one' rule",
+		"other": "[0] a zero rule|]2,5[ two to five (excluded)|and a catchall rule"
+	},
+	"plurals in any order": {
+		"one": "The default 'one' rule",
+		"other": "[0] a zero rule|and a catchall rule|[2,5] two to five (included)"
+	},
+	"plurals to eternity": "[0,] this will last forever|but only gt 0",
+	"plurals from eternity": "[,0] this was born long before|but only lt 0",
+	"Hello %s": "Hello %s",
+	"Hello {{name}}": "Hello {{name}}",
+	"Hello {{name}}, how was your %s?": "Hello {{name}}, how was your %s?",
+	"format": {
+		"date": "MM/DD/YYYY",
+		"time": "h:mm:ss a"
+	},
+	"greeting": {
+		"formal": "Hello",
+		"informal": "Hi",
+		"placeholder": {
+			"formal": "Hello %s",
+			"informal": "Hi %s",
+			"loud": "greeting.placeholder.loud"
+		},
+		"plurals": {
+			"one": "The default 'one' rule",
+			"other": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule"
+		}
+	},
+	"another": {
+		"nested": {
+			"extra": {
+				"deep": {
+					"example": {
+						"one": "The default 'one' rule",
+						"other": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule"
+					}
+				},
+				"lazy": {
+					"example": {
+						"other": "[0] a zero rule|[2,5] two to five (included)|and a catchall rule"
+					}
+				},
+				"mustache": {
+					"example": "[0] a zero rule for {{me}}|[2,5] two to five (included) for {{me}}|and a catchall rule for {{me}}"
+				},
+				"mustacheprintf": {
+					"example": "[0] %s is zero rule for {{me}}|[2,5] %s is between two and five (included) for {{me}}|and a catchall rule for {{me}} to get my number %s"
+				}
+			}
+		}
+	},
+	"nested.deep.plural": {
+		"one": "nested.deep.plural",
+		"other": 1
+	},
+	"ordered arguments": "%2$s then %1$s",
+	"ordered arguments with numbers": "%2$d then %1$s then %3$.2f",
+	"repeated argument": "%1$s, %1$s, %1$s",
+	". is first character": "Dot is first character",
+	"last character is .": "last character is Dot",
+	"few sentences. with .": "few sentences with Dot",
+	"Linpret Translation Services": "Linpret Translation Services",
+	"Login": "Login",
+	"Login with LinkedIn": "Login with LinkedIn",
+	"Customer Signup": "Customer Signup",
+	"Translator Signup": "Translator Signup",
+	"Text Translation Request": "Text Translation Request",
+	"Select Languages": "Select Languages",
+	"Description": "Description",
+	"Select Language": "Select Language",
+	"Select Category": "Select Category",
+	"Duration (In Mins)": "Duration (In Mins)",
+	"Create": "Create",
+	"Login Linpret Language Services": "Login Linpret Language Services",
+	"Email": "Email",
+	"Password": "Password",
+	"Need an account?": "Need an account?",
+	"Sign Up": "Sign Up",
+	"For translators": "For translators",
+	"Home": "Home",
+	"Name": "Name",
+	"SurName": "Surname",
+	"Re-Password": "Re-Password",
+	"From:": "From:",
+	"Choose": "Choose",
+	"To:": "To:",
+	"Add Row": "Add Row",
+	"Language": "Language",
+	"From": "From",
+	"To": "To",
+	"Delete Row": "Delete Row",
+	"Already have an account?": "Already have an account?",
+	"Or go": "Or go",
+	"Signup success": "Signup success",
+	"Email Verification": "Email Verification",
+	"Email_verification_link_sent_msg": "Email verification link have been sent to your email address. Please check your email.",
+	"Go to Login": "Go to Login",
+	"Logout": "Logout",
+	"Change Password": "Change Password",
+	"Subject": "Subject",
+	"Languages": "Languages",
+	"Start Date": "Start Date",
+	"Connect": "Connect",
+	"Demanded": "Demanded",
+	"Demand Now": "Demand Now",
+	"Price Per Hour": "Price Per Hour",
+	"Send Verification Mail": "Send Verification Mail",
+	"Dashboard Linpret Language Services": "Dashboard Linpret Language Services",
+	"New Translation Session Plan": "New Translation Session Plan",
+	"Payment": "Payment",
+	"Invite": "Invite",
+	"Close": "Close",
+	"Billing Address": "Billing Address",
+	"First Name": "First Name",
+	"Last Name": "Last Name",
+	"Email Id": "Email Id",
+	"Mobile no": "Mobile no",
+	"Pay": "Pay",
+	"Payment amount ": "Payment amount ",
+	"Fill in the description field, please": "Fill in the description field, please",
+	"Select a language, please!": "Select a language, please!",
+	"Languages has to be different!": "Languages has to be different!",
+	"Select a duration, please!": "Select a duration, please!",
+	"Invite Participant": "Invite Participant",
+	"Participant User Name": "Participant User Name",
+	"User Name:": "User Name:",
+	"Send Invitation": "Send Invitation",
+	"Select Translator": "Select Translator",
+	"Selection Linpret Language Services": "Selection Linpret Language Services",
+	"Select": "Select",
+	"Video Conference": "Video Conference",
+	"Connect Local": "Connect Local",
+	"My Profile": "My Profile",
+	"Linpret session invitation link is ": "Linpret session invitation link is ",
+	"Linpret Translation Meeting Invitation ": "Linpret Translation Meeting Invitation ",
+	"Submit": "Submit",
+	"No any translator who demanded": "No any translator who demanded",
+	"No any translator": "No any translator",
+	"Translators who demanded": "Translators who demanded",
+	"Find Translator": "Find Translator",
+	"Type Translator's name or email:": "Type Translator's name or email:",
+	"Profile Linpret Language Services": "Profile Linpret Language Services",
+	"Translation Session Plan Editor": "Translation Session Plan Editor",
+	"Other Participant": "Other Participant",
+	"Interpreter": "Interpreter",
+	"Select Interpreter": "Select Interpreter",
+	"Waiting for payment": "Waiting for payment",
+	"Date": "Date",
+	"Time": "Time",
+	"system_error": "Oops! Something Went Wrong. Please try again later."
+}

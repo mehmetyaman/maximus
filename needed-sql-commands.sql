@@ -1,12 +1,15 @@
 # noinspection SqlNoDataSourceInspectionForFile
 
+DROP TABLE IF EXISTS `translation_session_star_and_comment`;
+DROP TABLE IF EXISTS `translation_session_invitations`;
+DROP TABLE IF EXISTS `translator_sessions_mean_star`;
 DROP TABLE IF EXISTS `translation_session_demands`;
 DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
-DROP TABLE IF EXISTS `languages`;
-DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `languages`;
 
 CREATE TABLE `users` (
   `id`               INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -42,15 +45,12 @@ INSERT INTO `languages` VALUES ('ar', 'Arabic'), ('ch', 'Chinese'), ('en', 'Engl
 
 CREATE TABLE `categories` (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `category_short_desc` CHAR(20)         NOT NULL,
+  `category_short_desc` CHAR(100)         NOT NULL,
   PRIMARY KEY (`id`),
   `category_long_desc`  VARCHAR(100),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
 
-INSERT INTO `categories`
-VALUES (1, 'Medical', 'Medical'), (2, 'Science', 'Science'), (3, 'Entertainment', 'Entertainment'),
-  (4, 'Education', 'Education'), (5, 'Engineering', 'Engineering');
 
 CREATE TABLE `translator_lang` (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -148,16 +148,48 @@ CREATE TABLE `translation_session_demands` (
   DEFAULT CHARSET = utf8;
 
 CREATE TABLE `translation_session_invitations` (
-  `id`    INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(200)     NOT NULL,
-  `invitation_token` VARCHAR(64)      NOT NULL,
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `email`                  VARCHAR(200)     NOT NULL,
+  `invitation_token`       VARCHAR(64)      NOT NULL,
   `translation_session_id` INT(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_translation_session_invitations_idx` (`translation_session_id`),
   CONSTRAINT `fk_translation_session_invitations_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
+);
+
+CREATE TABLE `translation_session_star_and_comment` (
+  `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
+  `user_id`                INT(11) UNSIGNED NOT NULL,
+  `star`                   INT(11) UNSIGNED NOT NULL,
+  `comment`                VARCHAR(250)              DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translation_session_star_comment_user_id_idx` (`user_id`),
+  KEY `fk_translation_session_star_comment_translation_session_id_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translation_session_star_and_comment_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_translation_session_star_and_comment_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+CREATE TABLE `translator_sessions_mean_star` (
+  `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id`    INT(11) UNSIGNED NOT NULL,
+  `mean_star`  INT(11) UNSIGNED NOT NULL,
+  `star_count` INT(11) UNSIGNED NOT NULL,
+  `translation_session_id` INT(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_translator_sessions_mean_star_user_id_idx` (`user_id`),
+  KEY `fk_translator_sessions_mean_star_translation_session_id_idx` (`translation_session_id`),
+  CONSTRAINT `fk_translator_sessions_mean_star_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
 )
+
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
@@ -168,3 +200,15 @@ ALTER TABLE maximus.users
   ADD password_verification_code VARCHAR(200) NULL;
 ALTER TABLE maximus.users
   ADD is_email_verification TINYINT(1) DEFAULT '0';
+ALTER TABLE `maximus`.`translator_lang`
+ADD COLUMN `price_per_hour` DECIMAL(5,2) NULL AFTER `lang_to`;
+ALTER TABLE `maximus`.`translation_session_users`
+ADD COLUMN `is_admin` TINYINT(1) NULL AFTER `user_id`;
+ALTER TABLE `maximus`.`translation_session`
+ADD COLUMN `created_date` DATE NULL AFTER `is_paid`,
+ADD COLUMN `created_user` VARCHAR(45) NULL AFTER `created_date`;
+ALTER TABLE `maximus`.`translation_session`
+CHANGE COLUMN `start_date` `start_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `end_date` `end_date` TIMESTAMP NULL DEFAULT NULL ,
+CHANGE COLUMN `created_date` `created_date` TIMESTAMP NULL DEFAULT NULL ;
+

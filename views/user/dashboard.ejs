@@ -1,0 +1,645 @@
+<html>
+<head>
+    <title><%= __('Dashboard Linpret Language Services') %></title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript"
+            src="/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="/bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css"/>
+    <style>
+        body {
+            padding-top: 20px;
+        }
+
+        .topcorner {
+            top: 0;
+            right: 0;
+            padding: 9px;
+        }
+
+        #navigation {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        #navMain {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding: 9px;
+        }
+
+        #navMain > li {
+            float: right;
+            position: relative;
+            background-color: #00B7FF;
+            padding: 6px 6px;
+        }
+
+        #navMain > li > a {
+            padding: 0px 0px;
+        }
+
+        #navMain ul {
+            display: none;
+            position: absolute;
+            list-style: none;
+            left: 0;
+            padding: 0;
+            margin: 0;
+        }
+
+        #navMain ul li a {
+            display: block;
+            color: white;
+        }
+
+        #navMain li:hover ul {
+            display: block;
+        }
+
+        #navMain li ul:hover {
+            display: block;
+        }
+
+        #navMain li ul {
+            position: relative;
+            background-color: #337ab7;
+        }
+
+    </style>
+    <script>
+        <%
+        if(lists){
+            var hasAnyAdminSession=false
+            lists.forEach(function (items) {
+                if(items.is_admin==1){
+                    hasAnyAdminSession = true;
+                }
+        %>
+
+        $.get("/peers/<%= items.id %>", function (participants) {
+            index = 0;
+            text = "";
+            if (participants && participants.length > 0) {
+                participants.forEach(function (part) {
+                    $.get("/userData/" + part.userId, function (user) {
+                        text += user.name + " " + user.surname;
+                        if (++index != participants.length) {  // dont add "," after last one
+                            text += ", ";
+                        } else {
+                            text = "(" + text + ")";
+                            $("#participants-span-<%= items.id %>").html(text);
+                        }
+                    });
+
+                });
+
+            }
+        });
+        <%
+        });
+        }
+        %>
+    </script>
+</head>
+<body>
+
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" rel="home" href="/" title="Linpret">
+        <img style="max-width:150px; margin-top: -7px;"
+             src="/../images/linpret_logo_3.png">
+    </a>
+</div>
+<nav id="navigation">
+    <ul id="navMain">
+        <li><a href="#"><strong><%= user.email %>, id=<%= user.id %></strong></a>
+            <ul>
+                <div>
+                    <li><a href="/connect/local"><%= __('Connect Local') %></a></li>
+                    <li><a href="/logout"><%= __('Logout') %></a></li>
+                    <li><a href="#" onclick="changePassword();"><%= __('Change Password') %></a></li>
+                </div>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<div id="plan-form">
+    <div class="container">
+        <br><br><br><br><br><br>
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary" type="button" data-toggle="modal"
+                        data-target="#plannerModal"><%= __('New Translation Session Plan') %></button>
+            </div>
+        </div>
+        <br/>
+        <div class="modal fade" id="plannerModal" name="plannerModal" tabindex="-1" role="dialog"
+             aria-labelledby="plannerModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="plannerModalLabel"><%= __('Translation Session Plan Editor') %></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="text" id="desc" class="form-control"
+                                           placeholder="<%= __('Description') %>"
+                                           aria-describedby="basic-addon2">
+                                    <span class="input-group-addon"><%= __('Description') %></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4><%= __('Select Languages') %></h4>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4><%= __('Language') %></h4>
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <%= __('Select Language') %>
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="lang1">
+                                            <% langs.forEach(function (language) { %>
+                                            <li><a href="#"
+                                                   langval="<%= language.lang_short %>"><%= language.lang_desc %></a>
+                                            </li>
+                                            <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Language</h4>
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <%= __('Select Language') %>
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="lang2">
+                                            <% langs.forEach(function (language) { %>
+                                            <li><a href="#"
+                                                   langval="<%= language.lang_short %>"><%= language.lang_desc %></a>
+                                            </li>
+                                            <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Category</h4>
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <%= __('Select Category') %>
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="cat">
+                                            <% cats.forEach(function (category) { %>
+                                            <li><a href="#" catval="<%= category.id %>"><%= category
+                                                            .category_long_desc %></a></li>
+                                            <% }) %>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class='col-sm-6'>
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <%= __('Duration (In Mins)') %>
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="interval">
+                                            <li><a href="#">30</a></li>
+                                            <li><a href="#">60</a></li>
+                                            <li><a href="#">90</a></li>
+                                            <li><a href="#">120</a></li>
+                                            <li><a href="#">150</a></li>
+                                            <li><a href="#">180</a></li>
+                                            <li><a href="#">210</a></li>
+                                            <li><a href="#">240</a></li>
+                                            <li><a href="#">270</a></li>
+                                            <li><a href="#">300</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='col-sm-6'>
+                                <div class="form-group">
+                                    <div class='input-group date' id='plandate'>
+                                        <input type='text' class="form-control"/>
+                                        <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="button"
+                                id="createSession"><%= __('Create') %></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <% if (lists) { %>
+                <div class="row">
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Subject') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Languages') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Date') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Time') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Connect') %></span>
+                    </div>
+                    <div class="col-md-1">
+                        <span style="font-weight: bold;"><%= __('Payment') %></span>
+                    </div>
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Interpreter') %></span>
+                    </div>
+                    <div class="col-md-2">
+                        <span style="font-weight: bold;"><%= __('Invite') %></span>
+                    </div>
+                </div>
+            <% lists.forEach(function (items) { %>
+            <div class="row x">
+                <div class="col-md-2">
+                    <span><%= items.description %></span>
+                </div>
+                <div class="col-md-1">
+                    <span><%= items.duration %></span>
+                </div>
+                <div class="col-md-1">
+                    <span><%= items.lang1 %> > <%= items.lang2 %></span>
+                </div>
+                <div class="col-md-1">
+                    <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+                </div>
+                <div class="col-md-1">
+                    <span> <%= moment(items.start_date).format('hh:mm') %></span>
+                </div>
+                <div class="col-md-1">
+                    <% if(items.is_paid == 1){ %>
+                        <a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a>
+                        <span id="participants-span-<%= items.id %>"></span>
+                    <%}else{%>
+                        <%= __('Waiting for payment') %>
+                    <%}%>
+                </div>
+                <div class="col-md-1">
+                    <% if(items.is_admin == 1){%>
+
+                            <% if(items.is_paid != 1){ %>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#paymentModal" data-amount="150" data-currency="try"
+                                        data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
+                            <%}else{%>
+                                Paid
+                            <%}%>
+                    <%}%>
+                </div>
+                <div class="col-md-2">
+                    <% if(items.is_admin == 1){%>
+                        <% if(!items.translator_id){ %>
+                                <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">
+                                    <%= __('Select Interpreter') %></a>
+                        <% } else{%>
+                             <%= items.translator_id %>
+                        <%}%>
+                    <%}%>
+                </div>
+
+                <div class="col-md-2">
+                    <% if(items.is_admin == 1){%>
+                        <% if(items.other_participant_id == null){ %>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#inviteModal" data-sessionid="<%= items.id %>">
+                                <%= __('Invite Participant') %>
+                            </button>
+                        <%}else{%>
+                            Invited userid:<%= items.other_participant_id %>
+                        <%}%>
+                    <%}else{%>
+                        Invitation sent by userid:<%= items.other_participant_id %>
+                    <%}%>
+                </div>
+            </div>
+            <% }) %>
+
+        <form role="form" data-toggle="validator" id="modalForm" name="modalForm">
+            <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="<%= __('Close') %>"><span
+                                        aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12  col-sm-12  col-xs-8 " style="background:#fff; padding:30px;">
+
+
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <h3 class="text-center"><%= __('Billing Address') %></h3>
+
+                                    <hr>
+
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingFirstName" id="billingFirstName" class="form-control
+                                        input-sm"
+                                                   placeholder="<%= __('First Name') %>">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingLastName" id="billingLastName"
+                                                   class="form-control input-sm" placeholder="<%= __('Last Name') %>">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="email" name="billingEmail" id="billingEmail" class="form-control
+                                        input-sm" placeholder="<%= __('Email Id') %>">
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="billingMobile" id="billingMobile" class="form-control
+                                        input-sm" placeholder="<%= __('Mobile no') %>">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control" name="billingAddress" id="billingAddress">
+                                            </textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingCountry" id="billingCountry" class="form-control
+                                        input-sm" placeholder="country">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingCity" id="billingCity" class="form-control
+                                        input-sm"
+                                                   placeholder="city">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 col-md-4">
+                                        <div class="form-group">
+                                            <input type="text" name="billingPinCode" id="billingPinCode" class="form-control
+                                        input-sm" placeholder="pincode">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" id="paymentAmountHidden" name="paymentAmountHidden">
+                            <input type="hidden" id="paymentCurrencyHidden" name="paymentCurrencyHidden">
+                            <input type="hidden" id="paymentSessionIdHidden" name="paymentSessionIdHidden">
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><%= __('Close')
+                                %></button>
+                            <button type="button" class="btn btn-primary" id="paymentButton"
+                                    name="paymentButton"><%= __('Pay') %>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form role="form">
+            <div class="modal fade" id="inviteModal" tabindex="-1" role="dialog"
+                 aria-labelledby="inviteModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="inviteModalLabel"><%= __('Participant User Name') %></h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="participant-name"
+                                           class="form-control-label"><%= __('User Name:') %></label>
+                                    <input type="text" class="form-control" id="participant-name"
+                                           name="participant-name">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><%= __('Close')
+                                %></button>
+                            <button type="button" class="btn btn-primary" id="invite-btn" data-sessionid="0">
+                                <%= __('Send Invitation') %>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <% } %>
+    </div>
+</div>
+</form>
+<script type="text/javascript">
+    var intervalval, lang1, lang2, catval;
+    $('#interval li').on('click', function () {
+        intervalval = $(this).text();
+    });
+    $('#lang1 li').on('click', function () {
+        lang1 = $('a', this).attr('langval');
+    });
+    $('#lang2 li').on('click', function () {
+        lang2 = $('a', this).attr('langval');
+    });
+    $('#cat li').on('click', function () {
+        catval = $('a', this).attr('catval');
+    });
+    $(document).ready(function () {
+        $('#plandate').datetimepicker();
+    });
+    $(".dropdown-menu li a").click(function () {
+        var selText = $(this).text();
+        $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
+    });
+
+    function changePassword() {
+        $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
+            alert(data);
+        });
+    }
+
+    function assignSession(translator_id, session_id) {
+        $.post("assign/translator/" + translator_id + "/session/" + session_id, function (data) {
+            location.reload();
+        });
+    }
+
+    $('#inviteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var sessionid = button.data('sessionid')
+        $("#invite-btn").attr("data-sessionid" , sessionid);
+    });
+
+    $("#invite-btn").click(function () {
+        var participantName = $("#participant-name").val()
+        var sessionid = $(this).data('sessionid')
+        var data = {
+            participantName: participantName,
+            sessionId: sessionid
+        }
+        $.post("/add-participant", data, function (data) {
+            $("#participant-name").val('')
+            $('#inviteModal').modal('toggle')
+        });
+    });
+
+    $('#paymentModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+
+        var amount = button.data('amount')
+        var sessionId = button.data('sessionnumber')
+        var currency = button.data('currency')
+        var modal = $(this)
+
+        var val = '<%= __('Payment amount ') %>' + "" + amount + "" + currency
+        modal.find('.modal-title').text(val)
+
+        $('#paymentAmountHidden').val(amount)
+        $('#paymentCurrencyHidden').val(currency)
+        $('#paymentSessionIdHidden').val(sessionId)
+    })
+
+    $("#paymentButton").click(function () {
+        var modal = $("#paymentModal");
+
+        var data = {
+            amount: $('#paymentAmountHidden').val(),
+            currency: $('#paymentCurrencyHidden').val(),
+            sessionId: $('#paymentSessionIdHidden').val(),
+            billingAddress: {
+                firstName: $('#billingFirstName').val(),
+                lastName: $('#billingLastName').val(),
+                email: $('#billingEmail').val(),
+                mobile: $('#billingMobile').val(),
+                country: $('#billingCountry').val(),
+                city: $('#billingCity').val(),
+                pinCode: $('#billingPinCode').val(),
+                address: $('#billingAddress').val()
+            },
+            shippingAddress: {
+                firstName: $('#shippingFirstName').val(),
+                lastName: $('#shippingLastName').val(),
+                email: $('#shippingEmail').val(),
+                mobile: $('#shippingMobile').val(),
+                country: $('#shippingCountry').val(),
+                city: $('#shippingCity').val(),
+                pinCode: $('#shippingPinCode').val(),
+                address: $('#shippingAddress').val()
+            }
+        }
+        $.post("/payment", data, function (data) {
+            window.location.href = data
+        });
+
+    })
+
+    $("#createSession").click(function () {
+        if ($("#desc").val() === undefined) {
+            alert('<%= __('Fill in the description field, please') %>');
+            return false;
+        }
+        if (lang1 === undefined) {
+            alert('<%= __('Select a language, please!') %>');
+            return false;
+        }
+        if (lang2 === undefined) {
+            alert('<%= __('Select a language, please!') %>');
+            return false;
+        }
+        if (lang1 === lang2) {
+            alert('<%= __('Languages has to be different!') %>');
+            return false;
+        }
+        if (intervalval === undefined) {
+            alert('<%= __('Select a duration, please!') %>');
+            return false;
+        }
+        var formdata = {
+            plandate: $("#plandate").data("DateTimePicker").date().toISOString(),
+            interval: intervalval,
+            lang1: lang1,
+            lang2: lang2,
+            desc: $("#desc").val(),
+            catval: catval
+        } // this will replace with form values
+        $.post("/plan", formdata, function (data) {
+            $("#plannerDiv").toggle();
+            location.reload();
+        });
+    });
+</script>
+</body>
+</html>

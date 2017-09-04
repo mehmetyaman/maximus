@@ -68,19 +68,22 @@
             return hour+":"+minutes+":"+seconds;
         }
 
-        var chatContainer = document.getElementById('chat-output');
-
         function appendDIV(event) {
+            var chatContainer = document.getElementById('chat-output');
             if($('#chat_wrapper').hasClass('notvisible')){
                 $('#chat_wrapper').removeClass('notvisible');
                 $('#chat_wrapper_content').addClass('is-visible');
             }
             var div = document.createElement('div');
             div.innerHTML = event.data  || event;
-            chatContainer.insertAfter(div, chatContainer.firstChild);
+            insertAfter(chatContainer.lastElementChild, div);
             div.tabIndex = 0;
             div.focus();
             document.getElementById('input-text-chat').focus();
+        }
+
+        function insertAfter(referenceNode, newNode) {
+            referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
         }
 
         var connection = new RTCMultiConnection();
@@ -354,7 +357,7 @@
         </div>
     </header>
 
-    <room-activity class="visible" id="room_activity">
+    <room-activity class="open visible" id="room_activity">
         <aside class="room-list-content flex-column">
             <header class="room-list-header flex-row">
                 <div class="refresh-button-wrapper">

@@ -1,14 +1,55 @@
-
 var Iyzipay = require('iyzipay');
 var config = require('config');
+var paypal = require('paypal-rest-sdk');
+
 
 module.exports = function (app) {
 
     var conversationId;
     var token;
 
-    app.post('/paymentResult', isLoggedIn, function (req, res) {
-        var rows = req.params;
+    app.post('/payment/paypal/pay', function (req, res) {
+
+        var create_payment_json = {
+            "intent": "sale",
+            "payer": {
+                "payment_method": "paypal"
+            },
+            "redirect_urls": {
+                "return_url": "http://return.url",
+                "cancel_url": "http://cancel.url"
+            },
+            "transactions": [{
+                "item_list": {
+                    "items": [{
+                        "name": "item",
+                        "sku": "item",
+                        "price": "1.00",
+                        "currency": "USD",
+                        "quantity": 1
+                    }]
+                },
+                "amount": {
+                    "currency": "USD",
+                    "total": "1.00"
+                },
+                "description": "This is the payment description."
+            }]
+        };
+
+
+        paypal.payment.create(create_payment_json, function (error, payment) {
+            if (error) {
+                throw error;
+            } else {
+                console.log("Create Payment Response");
+                console.log(payment);
+            }
+        });
+
+    })
+
+    app.post('/paymentResult', function (req, res) {
         var iyzipay = new Iyzipay(
             config.get("iyzico_client.api")
         );
@@ -19,13 +60,13 @@ module.exports = function (app) {
             token: token
         }, function (err, result) {
             console.log(err, result);
-            var status=result.status;
-            var errorCode=result.errorCode;
-            var errorMessage=result.errorMessage;
+            var status = result.status;
+            var errorCode = result.errorCode;
+            var errorMessage = result.errorMessage;
 
             var message;
-            if(result.status=='success') {
-                message = "Ödemeniz Başarıyla Gerçekleştirildi!";
+            if (result.status == 'success') {
+                message = res.__("Payment process is succeed!");
                 req.getConnection(function (err, connection) {
                     connection.query("UPDATE translation_session set is_paid = 1 WHERE id = ? ", [conversationId], function (err, rows) {
                         if (err)
@@ -33,38 +74,33 @@ module.exports = function (app) {
                     });
 
                 });
-            }else {
+            } else {
                 message = errorMessage;
             }
 
-            res.render('paymentResult',{
-                page_title: "Payment result",
-                data: rows, result:result.status, message:message});
+            res.redirect('/dashboard');
 
         });
 
 
     });
 
-    app.get('/payment/:price/:currency/:sessionId', isLoggedIn, function (req, res) {
+    app.post('/payment', function (req, res) {
 
         var iyzipay = new Iyzipay(
             config.get("iyzico_client.api")
         );
 
-          function paymentForm(done) {
-            var price=req.params.price;
-            var currency=req.params.currency;
-            var sessionId=req.params.sessionId;
+        function paymentForm(done) {
 
             var request = {
                 locale: Iyzipay.LOCALE.EN,
-                conversationId: sessionId,
-                price: price,
-                paidPrice: price,
-              //  currency: Iyzipay.CURRENCY.TRY,
-                currency: currency,
-                basketId: 'B67832',
+                conversationId: req.body.sessionId,
+                price: req.body.amount,
+                paidPrice: req.body.amount,
+                //  currency: Iyzipay.CURRENCY.TRY,
+                currency: req.body.currency,
+                basketId: '',
                 paymentGroup: Iyzipay.PAYMENT_GROUP.PRODUCT,
                 callbackUrl: config.get("iyzico_client.callbackUrl"),
                 enabledInstallments: [2, 3, 6, 9],
@@ -83,19 +119,20 @@ module.exports = function (app) {
                     country: 'Turkey',
                     zipCode: '34732'
                 },
+                // shipping address is same with billing addrress
                 shippingAddress: {
-                    contactName: 'Jane Doe',
-                    city: 'Istanbul',
-                    country: 'Turkey',
-                    address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-                    zipCode: '34742'
+                    contactName: req.body.billingAddress.firstName + " " + req.body.billingAddress.lastName,
+                    city: req.body.billingAddress.city,
+                    country: req.body.billingAddress.country,
+                    address: req.body.billingAddress.address,
+                    zipCode: req.body.billingAddress.pinCode
                 },
                 billingAddress: {
-                    contactName: 'Jane Doe',
-                    city: 'Istanbul',
-                    country: 'Turkey',
-                    address: 'Nidakule Göztepe, Merdivenköy Mah. Bora Sok. No:1',
-                    zipCode: '34742'
+                    contactName: req.body.billingAddress.firstName + " " + req.body.billingAddress.lastName,
+                    city: req.body.billingAddress.city,
+                    country: req.body.billingAddress.country,
+                    address: req.body.billingAddress.address,
+                    zipCode: req.body.billingAddress.pinCode
                 },
                 basketItems: [
                     {
@@ -134,19 +171,9 @@ module.exports = function (app) {
         }
 
         paymentForm(function (result) {
-            console.log('awqwaw');
-            res.redirect(result.paymentPageUrl);
+            res.send(result.paymentPageUrl);
         })
 
     });
-
-
-    // route middleware to ensure user is logged in
-    function isLoggedIn(req, res, next) {
-        if (req.isAuthenticated())
-            return next();
-
-        res.redirect('/');
-    }
 
 }

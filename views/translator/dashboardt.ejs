@@ -1,0 +1,260 @@
+<html>
+<head>
+    <title><%= __('Dashboard Linpret Language Services') %></title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        #navigation {
+            position: absolute;
+            top:0;
+            right:0;
+        }
+
+        #navMain {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding: 9px;
+        }
+        #navMain > li {
+            float: right;
+            position: relative;
+            background-color: #00B7FF;
+            padding: 6px 6px;
+        }
+        #navMain > li > a {
+            padding: 0px 0px;
+        }
+
+        #navMain ul {
+            display: none;
+            position: absolute;
+            list-style: none;
+            left: 0;
+            padding: 0;
+            margin: 0;
+        }
+        #navMain ul li a {
+            display: block;
+            color: white;
+        }
+        #navMain li:hover ul {
+            display: block;
+        }
+        #navMain li ul:hover {
+            display: block;
+        }
+
+        #navMain li ul {
+            position: relative;
+            background-color: #337ab7;
+        }
+
+    </style>
+    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
+</head>
+<body>
+
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" rel="home" href="/" title="Linpret">
+        <img style="max-width:150px; margin-top: -7px;"
+             src="/../images/linpret_logo_3.png">
+    </a>
+</div>
+<nav id="navigation">
+    <ul id="navMain">
+        <li><a href="#"><strong><%= user.email %>, id=<%= user.id %></strong></a>
+            <ul>
+                <div>
+                    <li><a href="/connect/local" ><%= __('Connect Local') %></a></li>
+                    <li><a href="/logout" ><%= __('Logout') %></a></li>
+                    <li><a href="/profile/<%= user.id %>" ><%= __('My Profile') %></a></li>
+                    <li><a href="#" onclick="changePassword();"><%= __('Change Password') %></a></li>
+                </div>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<form id="plan-form">
+    <div class="container" id="rowContainer">
+        <br><br><br><br><br><br><br><br>
+
+        <% if (lists) { %>
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Subject') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;" ><%= __('Languages') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Start Date') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Connect') %></span>
+            </div>
+        </div>
+        <% lists.forEach(function (items) { %>
+        <div class="row" id="<%= items.id %>">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
+                <span><%= items.description %></span>
+            </div>
+            <div class="col-md-2">
+                <span ><%= items.duration %></span>
+            </div>
+            <div class="col-md-2">
+                <span><%= items.lang1 %> > <%= items.lang2 %></span>
+            </div>
+            <div class="col-md-2">
+                <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+            </div>
+            <% if(items.translator_id == 0){ %>
+            <div class="col-md-2">
+                <% if(items.is_demanded){ %>
+                <a href="#"><%= __('Demanded') %></a>
+                <% } else { %>
+                <a href="#" onclick="demand(<%= items.id %>);"><%= __('Demand Now') %></a>
+                <% } %>
+            </div>
+            <% }else{ %>
+            <div class="col-md-2">
+                <span><%= items.translator_id %></span>
+                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
+            </div>
+            <% } %>
+
+        </div>
+        <% }) %>
+    </div>
+    <% } %>
+    <ul id="messages"></ul>
+    </div>
+</form>
+<script type="text/javascript">
+    var socket;
+    $(document).ready(function () {
+        socket = io.connect("http://localhost:4300");
+
+        socket.on('connect', function (socket) {
+            console.log(': Connected');
+        });
+
+        socket.on('connect_error', function (e) {
+            console.log(': Connection Error: ' + e);
+        });
+
+        socket.on('message', function () {
+            console.log(': Server message');
+        });
+
+        socket.on('disconnect', function () {
+            console.log(': disconnect');
+        });
+
+        socket.on('announcements', function (msg) {
+            console.log(new Date().getTime());
+        });
+
+        socket.on('newsessionrequest', function (data) {
+            console.log("get new request and loaded");
+            addRow(data);
+        });
+    });
+    function addRow(newItem) {
+        $('#' + newItem.id).remove();
+        var newhtml = '<div class="row" id=' + newItem.id + '>'
+                + '<div class="col-md-2">'
+                + '<span>' + newItem.description + '</span>'
+                + '       </div>'
+                + '      <div class="col-md-2">'
+                + '      <span>' + newItem.duration + '</span>'
+                + '      </div>'
+                + '      <div class="col-md-2">'
+                + '      <span>' + newItem.lang1 + ' > ' + newItem.lang2 + '</span>'
+                + '      </div>'
+                + '      <div class="col-md-2">'
+                + '      <span> ' + moment(newItem.start_date).format('DD-MM-YYYY') + ' </span>'
+                + '      </div>';
+
+        if (newItem.translator_id == 0) {
+            newhtml += '      <div class="col-md-2">';
+            if (newItem.demand_id) {
+                newhtml += '      <a href="#"><%= __('Demanded') %></a>';
+            } else {
+                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ');"><%= __('Demand Now') %></a>';
+            }
+            newhtml += '</div>';
+        } else {
+            newhtml += '<div class="col-md-2">'
+                    + '       <span>' + newItem.translator_id + '</span>'
+                    + '      <span><a href="/videoConference/' + newItem.id + '>Connect</a></span>'
+                    + '      </div>';
+        }
+        newhtml += '       </div>';
+        $('#rowContainer').append(newhtml);
+    }
+    function demand(id) {
+        $.post("demand/" + id, function (data) {
+            location.reload();
+        });
+    }
+
+    <%
+    if(lists){
+    lists.forEach(function (items) {
+    %>
+
+    $.get( "/peers/<%= items.id %>", function( participants ) {
+        index=0;
+        text="";
+        if(participants && participants.length>0){
+            participants.forEach(function(part) {
+                $.get( "/userData/"+part.userId, function( user ) {
+                    text += user.name+ " " +user.surname;
+                    if(++index!=participants.length) {  // dont add "," after last one
+                        text += ", ";
+                    }else{
+                        text = "("+text+")";
+                        $("#participants-span-<%= items.id %>").html(text);
+                    }
+                });
+
+            });
+
+        }
+    });
+    <%
+    });
+    }
+    %>
+
+
+    function changePassword() {
+        $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
+            alert(data);
+        });
+    }
+</script>
+</body>
+</html>

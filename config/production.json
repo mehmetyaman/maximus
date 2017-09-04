@@ -1,20 +1,21 @@
 
 {
   "app": {
-    "port": 443,
-    "url":"maxsimus.herokuapp.com",
-    "protocol":"https"
+    "port": 90,
+    "url":"198.199.64.171",
+    "protocol":"http",
+    "timeout":"10000"  //10 sec
   },
   "mysql": {
-    "host": "lg7j30weuqckmw07.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-    "user": "h5zy4u2vtu9bw0p9",
-    "password": "m1nfci58paw8q3ib",
+    "host": "maximus.crndlsr14dxi.us-west-2.rds.amazonaws.com",
+    "user": "root",
+    "password": "admin123",
     "port": 3306,
-    "database": "h0y7e5c72s6xg7xw",
+    "database": "maximus",
     "multipleStatements": "true"
   },
   "mongo": {
-    "url" : "mongodb://heroku_nc0gzlh0:s7i9lq2ec1umu290loc3i3h36a@ds133932.mlab.com:33932/heroku_nc0gzlh0"
+    "url" : "mongodb://localhost"
      // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   },
   "database": "maximus",
@@ -36,11 +37,31 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://maxsimus.herokuapp.com/paymentResult",
+    "callbackUrl" : "http://198.199.64.171:443/paymentResult",
     "api" : {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
+    }
+  },
+  "paypal" : {
+    "mode": "sandbox", //sandbox or live
+    "client_id": "EBWKjlELKMYqRNQ6sYvFo64FtaRLRR5BdHEESmha49TM",
+    "client_secret": "EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM"
+  },
+  "email_server" : {
+    "user": "linpretinfo",
+    "password": "Hede9902",
+    "host": "smtp.gmail.com",
+    "ssl": true
+  },
+  "session_config" : {
+    "secret": "appsecret",
+    "resave": true,
+    "saveUninitialized": true,
+    "cookie": {
+      "secure": false,
+      "maxAge": 3600000  //one hour
     }
   },
   "socketURL": "https://cryptic-headland-18558.herokuapp.com:443/",

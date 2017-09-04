@@ -1,12 +1,12 @@
 <!doctype html>
 <html>
 <head>
-    <title>Node Authentication</title>
+    <title><%= __('Signup success') %></title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
     <style>
         body {
-            padding-top: 80px;
+            padding-top: 20px;
         }
     </style>
 </head>
@@ -14,14 +14,14 @@
 <div class="container">
     <div class="col-sm-6 col-sm-offset-3">
 
-        <h1><span class="fa fa-sign-in"></span>Email Verification</h1>
-        <div class="alert alert-danger">"Email verification send your email address. Please check your email."</div>
+        <h1><span class="fa fa-sign-in"></span><%= __('Email Verification') %></h1>
+        <div class="alert alert-danger"><%= __('Email_verification_link_sent_msg') %></div>
         <hr>
 
-        <p align="right">need an account? <a href="/signup?customer=true">Signup</a></p>
-        <p align="right">for translators <a href="/signup">Signup</a></p>
-        <p align="right">go to login <a href="/login">login</a></p>
-        <p align="right"><a href="/">home</a>.</p>
+        <p align="right"><%= __('Need an account?') %><a href="/signup"><%= __('Sign Up') %></a></p>
+        <p align="right"><%= __('For translators') %><a href="/signupt"><%= __('Sign Up') %></a></p>
+        <p align="right"><a href="/"><%= __('Home') %></a>.</p>
+        <p align="right"><%= __('Go to Login') %><a href="/login"><%= __('Login') %></a></p>
 
     </div>
 </div>

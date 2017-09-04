@@ -97,7 +97,7 @@ and (min-device-width: 480px) and (max-device-width: 1880px) {
 
 }
 @media screen
-and (min-device-width: 120px) and (max-device-width: 480px)
+and (min-device-width: 220px) and (max-device-width: 480px)
 {
     .visible {display:block;}
     .notvisible {display:none;}

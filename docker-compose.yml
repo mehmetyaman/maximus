@@ -1,0 +1,40 @@
+version: '2'
+services:
+    linpret:
+        build: .
+        container_name: "linpret"
+        image: debian/latest
+        environment:
+            - NODE_ENV=production
+        volumes:
+            - ./linpret:/usr/src/app
+        ports:
+            - 4300:4300
+        links:
+            - mongodb
+        depends_on:
+            - mongodb
+            - mysqldb
+    mongodb:
+        image: mongo:latest
+        container_name: "mongodb"
+        environment:
+          - MONGO_DATA_DIR=/data/db
+          - MONGO_LOG_DIR=/dev/null
+        volumes:
+          - ./data/db:/data/db
+        ports:
+            - 27017:27017
+        command: mongod --smallfiles --logpath=/dev/null # --quiet
+    mysqldb:
+      container_name: flask_mysql
+      restart: always
+      image: mysql:latest
+      environment:
+        MYSQL_ROOT_PASSWORD: ''
+        MYSQL_USER: 'root'
+        MYSQL_PASS: ''
+      volumes:
+       - /opt/mysql_data:/var/lib/mysql
+      ports:
+        - "3306:3306"

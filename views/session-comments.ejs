@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <title><%= __('Dashboard Linpret Language Services') %></title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
+    <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
+    <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body {
+            padding-top: 20px;
+            word-wrap: break-word;
+        }
+        .star-rating {
+            line-height:32px;
+            font-size:1.25em;
+            cursor: pointer;
+        }
+
+        .fa-star{color: yellow;}
+    </style>
+    <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
+</head>
+<body>
+
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse"
+            data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" rel="home" href="/" title="Linpret">
+        <img style="max-width:150px; margin-top: -7px;"
+             src="/../images/linpret_logo_3.png">
+    </a>
+</div>
+
+<div class="container" id="rowContainer">
+     <div class="row">
+         <div class="col-md-12">
+             <div class="page-header text-center">
+                 <% if (user.email) { %>
+                 <p>
+                     <strong>id</strong>: <%= user.id %><br>
+                     <strong>email</strong>: <%= user.email %><br>
+                 </p>
+                 <% if (session) { %>
+                 <p>
+                     <strong><%= __('Session Name')%></strong>: <%= session.description %><br>
+                     <strong><%= __('Session Language')%></strong>: <%= session.lang1 + ' to '+ session.lang2 %><br>
+                 </p>
+                 <% }%>
+                 <% if (translator) { %>
+                 <p>
+                     <strong><%= __('Translator Name')%></strong>: <%= translator.name +' '+ translator.surname%><br>
+                     <strong><%= __('Translator Email')%></strong>: <%= translator.email %><br>
+                 </p>
+                 <% }%>
+                 <% } else { %>
+                 <a href="/connect/local" class="btn btn-default"><%= __('Connect Local')%></a>
+                 <% } %>
+                 <a href="/logout" class="btn btn-default btn-sm"><%= __('Logout')%></a>
+                 <button class="btn btn-primary" type="button" onclick="changePassword();"><%= __('Change Password')
+                     %></button>
+                 <h1><span class="fa fa-anchor"></span></h1>
+
+             </div>
+         </div>
+     </div>
+
+
+    <form action="/send-session-comments<% if (sessionId) { %>?sessionId=<%= session.id%><%} %><% if (user.id) { %>&userId=<%= user.id%><%} %>" method="post">
+        <div class="form-group">
+            <label><%= __('Star')%><</label>
+            <div class="star-rating">
+                <span class="fa fa-star-o" data-rating="1"></span>
+                <span class="fa fa-star-o" data-rating="2"></span>
+                <span class="fa fa-star-o" data-rating="3"></span>
+                <span class="fa fa-star-o" data-rating="4"></span>
+                <span class="fa fa-star-o" data-rating="5"></span>
+                <input type="hidden" name="star" class="rating-value" value="3">
+            </div>
+        </div>
+        <div class="form-group">
+            <label><%= __('Comment')%><</label>
+            <input type="text" class="form-control" name="comment">
+        </div>
+        <button type="submit" class="btn btn-warning btn-lg"><%= __('Send Comment')%><</button>
+    </form>
+
+    <ul id="messages"></ul>
+</div>
+<script type="text/javascript">
+
+
+    var $star_rating = $('.star-rating .fa');
+
+    var SetRatingStar = function() {
+        return $star_rating.each(function() {
+            if (parseInt($star_rating.siblings('input.rating-value').val()) >= parseInt($(this).data('rating'))) {
+                return $(this).removeClass('fa-star-o').addClass('fa-star');
+            } else {
+                return $(this).removeClass('fa-star').addClass('fa-star-o');
+            }
+        });
+    };
+
+    $star_rating.on('click', function() {
+        $star_rating.siblings('input.rating-value').val($(this).data('rating'));
+        return SetRatingStar();
+    });
+
+    SetRatingStar();
+
+
+    function changePassword() {
+        $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
+            alert(data);
+        });
+    }
+</script>
+</body>
+</html>

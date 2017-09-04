@@ -83,8 +83,8 @@ module.exports = function (passport) {
                         var newUserMysql = {
                             email: username,
                             password: bcrypt.hashSync(password, null, null),
-                            is_customer: req.query.customer ? 1 : 0,
-                            is_translator: !req.query.customer ? 1 : 0,
+                            is_customer: req.body.isCustomer=="1" ? 1 : 0,
+                            is_translator: req.body.isCustomer=="0" ? 1 : 0,
                             name: req.body.name,
                             surname: req.body.surname,
                             email_verification_code: randomstring.generate({
@@ -137,17 +137,19 @@ module.exports = function (passport) {
                         return done(err);
                     }
 
-                    if(rows[0].is_email_verification == 0){
-                        return done(null, false, req.flash('loginMessage', 'You must verify your email with sended mail before.'));
+                    if (!rows.length) {
+                        return done(null, false, req.flash('loginMessage', 'Wrong username or password!'));
+                        // req.flash is the way to set flashdata using connect-flash
                     }
 
-                    if (!rows.length) {
-                        return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way to set flashdata using connect-flash
+                    if(rows[0].is_email_verification == 0){
+                        return done(null, false, req.flash('loginMessage', 'You must verify your account via email which you received when you signed up.'));
                     }
 
                     // if the user is found but the password is wrong
                     if (!bcrypt.compareSync(password, rows[0].password))
-                        return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
+                        return done(null, false, req.flash('loginMessage', 'Wrong username or password!'));
+                    // create the loginMessage and save it to session as flashdata
 
                     // all is well, return successful user
                     return done(null, rows[0]);
@@ -184,7 +186,7 @@ module.exports = function (passport) {
                     connection.query(updatequery, [token, username], function (err, rows) {
                         if (err) {
 
-                            return done(null, false, req.flash('loginMessage', 'Oops something wrong. Please try again'));
+                            return done(null, false, req.flash('loginMessage', 'Oops! something wrong. Please try again'));
 
                         }else {
 

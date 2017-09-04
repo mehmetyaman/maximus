@@ -2,7 +2,9 @@
 *for newbies : Clone or download zip to your machine then hit this :
 
 	npm install
-npm install
+	
+	If npm was invoked with root privileges, then it will change the uid to the user account or uid specified by the user config, which defaults to nobody. Set the unsafe-perm flag to run scripts with root privileges.
+
 for further developments you have to use
 
 	npm update
@@ -11,6 +13,11 @@ for further developments you have to use
 also use start command to see a running application
 
 	npm start
+	
+	
+	for production
+	------------------------
+    npm start --production
 
 
 ## Configuration (database)
@@ -25,18 +32,10 @@ app.js
 
 	
 You're gonna need to create a DB named 'maxsimus'
-and import user.sql && translator.sql
+and import needed-sql-commands.sql
 
 ## Installations
-install passport
 
-	npm install passport --save
-
-install schedule job support
-
-	npm install node-schedule --save
-
-npm install --save dotenv
 
 
 ## iyzico
@@ -128,3 +127,16 @@ heroku addons:open mongolab
 ## Validation for input fields please check
 
 https://www.npmjs.com/package/express-validator
+
+
+## Testing application
+
+for testing purpose you need to use mocha with chai,
+
+for all testing files use
+
+	mocha test
+
+for spesicified tests use
+
+	mocha test/addition.js
