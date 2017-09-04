@@ -12,7 +12,8 @@
     "password" : "admin123",
     "port": 3306,
     "database":"maximus",
-    "multipleStatements": "true"
+    "multipleStatements": "true",
+    "acquireTimeout": 10000
   },
   "mongo": {
     "url" : "mongodb://localhost/passport" // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
@@ -36,11 +37,31 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://localhost:4300/paymentResult",
-    "api" : {
+    "callbackUrl": "http://localhost:4300/paymentResult",
+    "api": {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
       "uri": "https://sandbox-api.iyzipay.com"
+    }
+  },
+  "paypal" : {
+    "mode": "sandbox", //sandbox or live
+    "client_id": "EBWKjlELKMYqRNQ6sYvFo64FtaRLRR5BdHEESmha49TM",
+    "client_secret": "EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM"
+  },
+  "email_server" : {
+    "user": "linpretinfo",
+    "password": "Hede9902",
+    "host": "smtp.gmail.com",
+    "ssl": true
+  },
+  "session_config" : {
+    "secret": "appsecret",
+    "resave": true,
+    "saveUninitialized": true,
+    "cookie": {
+      "secure": false,
+      "maxAge": 3600000  //one hour
     }
   },
   "socketURL": "https://cryptic-headland-18558.herokuapp.com/",

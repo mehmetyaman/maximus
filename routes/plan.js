@@ -1,10 +1,9 @@
 
 var randomstring = require("randomstring");
-var util = require('../app/util');
 
 module.exports = function (app, winston, emailServer) {
 
-    app.get('/plan/:userId', util.isLoggedIn, function (req, res, next) {
+    app.get('/plan/:userId', function (req, res, next) {
         var userId = req.params.userId;
         req.getConnection(function (err, connection) {
             connection.query('select ts.* from translation_session_users tu, translation_session ts' +
@@ -18,7 +17,7 @@ module.exports = function (app, winston, emailServer) {
         });
     });
 
-    app.get('/plan-assign', util.isLoggedIn, function (req, res, next) {
+    app.get('/plan-assign', function (req, res, next) {
         var qstr = "select * from translation_session_invitations where email =? and invitation_token=? and" +
             " translation_session_id =?";
         req.getConnection(function (err, connection) {
@@ -58,7 +57,7 @@ module.exports = function (app, winston, emailServer) {
     })
 
     // add-participant
-    app.post('/add-participant', util.isLoggedIn, function (req, res, next) {
+    app.post('/add-participant', function (req, res, next) {
         var participant = req.body.participantName;
         var sessionId = req.body.sessionId;
         // generate a link for participant and send email
@@ -111,7 +110,7 @@ module.exports = function (app, winston, emailServer) {
         })
     });
 
-    app.post('/plan', util.isLoggedIn, function (req, res, next) {
+    app.post('/plan', function (req, res, next) {
         var input = JSON.parse(JSON.stringify(req.body));
         req.getConnection(function (err, connection) {
             var data = {

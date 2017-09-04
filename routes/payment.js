@@ -1,7 +1,6 @@
 var Iyzipay = require('iyzipay');
 var config = require('config');
 var paypal = require('paypal-rest-sdk');
-var util = require("../app/util");
 
 
 module.exports = function (app) {
@@ -9,7 +8,7 @@ module.exports = function (app) {
     var conversationId;
     var token;
 
-    app.post('/payment/paypal/pay', util.isLoggedIn, function (req, res) {
+    app.post('/payment/paypal/pay', function (req, res) {
 
         var create_payment_json = {
             "intent": "sale",
@@ -50,7 +49,7 @@ module.exports = function (app) {
 
     })
 
-    app.post('/paymentResult', util.isLoggedIn, function (req, res) {
+    app.post('/paymentResult', function (req, res) {
         var iyzipay = new Iyzipay(
             config.get("iyzico_client.api")
         );
@@ -86,7 +85,7 @@ module.exports = function (app) {
 
     });
 
-    app.post('/payment', util.isLoggedIn, function (req, res) {
+    app.post('/payment', function (req, res) {
 
         var iyzipay = new Iyzipay(
             config.get("iyzico_client.api")
@@ -176,6 +175,5 @@ module.exports = function (app) {
         })
 
     });
-
 
 }

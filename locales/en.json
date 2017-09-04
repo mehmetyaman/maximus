@@ -201,5 +201,6 @@
 	"Select Interpreter": "Select Interpreter",
 	"Waiting for payment": "Waiting for payment",
 	"Date": "Date",
-	"Time": "Time"
+	"Time": "Time",
+	"system_error": "Oops! Something Went Wrong. Please try again later."
 }

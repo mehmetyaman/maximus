@@ -1,12 +1,11 @@
-var util = require("../app/util");
 
 module.exports = function (app) {
 
-    app.get('/dashboard/select', util.isLoggedIn, function (req, res, next) {
+    app.get('/dashboard/select', function (req, res, next) {
         res.render('profile-selection.ejs');
     });
 
-    app.post('/dashboard/select', util.isLoggedIn, function (req, res, next) {
+    app.post('/dashboard/select', function (req, res, next) {
         var selectedProfile = req.body['profile-selection'];
         var linkedinprofile = req.session.linkedinprofile;
         var is_customer = selectedProfile === "acustomer" ? 1 : 0;

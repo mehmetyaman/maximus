@@ -1,11 +1,11 @@
-var http = require('http');
+
 var moment = require('moment');
 var config = require('config');
 var randomstring = require("randomstring");
 var bcrypt = require('bcrypt-nodejs');
+var util = require('../app/utils/util');
 
 module.exports = function (app, passport, winston, emailserver) {
-
 
 // normal routes ===============================================================
 
@@ -26,13 +26,18 @@ module.exports = function (app, passport, winston, emailserver) {
 
 
     // dashboard SECTION =========================
-    app.get('/dashboard', isLoggedIn, function (req, res, next) {
-        req.getConnection(function (err, connection) {
-            connection.query('select * from languages', function (err, languages) {
+    app.get('/dashboard', function (req, res, next) {
 
-                if (err) {
-                    console.log("Error Selecting : %s ", err);
-                    return next(err);
+        req.getConnection(function (err, connection) {
+            if (err) {
+                err.type="system_error";
+                return next(err);
+            }
+
+            connection.query('select * from languages', function (err1, languages) {
+
+                if (err1) {
+                    return next(err1, "system_error");
                 }
                     connection.query('select ts.*, tsu.is_admin, ' +
                         ' (select user_id from translation_session_users ' +
@@ -40,28 +45,30 @@ module.exports = function (app, passport, winston, emailserver) {
                         ' and user_id!=tsu.user_id) as other_participant_id ' +
                         ' from  translation_session_users tsu, translation_session ts' +
                         ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
-                        req.user.id, function (err1, sessions) {
+                        req.user.id, function (err2, sessions) {
 
-                        if (err1) {
-                            console.log("Error Selecting : %s ", err1);
-                            return next(err1);
+                        if (err2) {
+                            console.log("Error Selecting : %s ", err2);
+                            return next(err2);
                         }
 
-                            connection.query('select * from categories', function (err2, categories) {
-
+                            connection.query('select * from categories', function (err3, categories) {
+                                if (err3) {
+                                    console.log("Error Selecting : %s ", err3);
+                                    return next(err3);
+                                }
                                 connection.query('select u.*, ts.id as session_id from' +
                                     ' translation_session ts, translation_session_users tsu, ' +
                                     ' translation_session_demands tsd , users u where ' +
                                     ' ts.id = tsu.translation_session_id and ' +
                                     ' tsu.user_id = ? and ' +
                                     ' tsd.translation_session_id=ts.id and ' +
-                                    ' tsd.user_id = u.id', req.user.id, function (err3, demandedTranslators) {
+                                    ' tsd.user_id = u.id', req.user.id, function (err4, demandedTranslators) {
 
-                                    if (err3) {
-                                        console.log("Error Selecting : %s ", err3);
-                                        return next(err3);
+                                    if (err4) {
+                                        console.log("Error Selecting : %s ", err4);
+                                        return next(err4);
                                     }
-
                                     res.render('user/dashboard.ejs', {
                                         user: req.user,
                                         langs: languages,
@@ -73,7 +80,7 @@ module.exports = function (app, passport, winston, emailserver) {
                                     });
 
                                 });
-                            })
+                            });
                     });
         }); });
 
@@ -110,7 +117,6 @@ module.exports = function (app, passport, winston, emailserver) {
                     winston.log('error', 'login error' + err);
                     return next(err);
                 }
-                var email = user.email;
                 winston.log('info', 'logged in email:' + user.email);
                 if (user.is_translator) {
                     return res.redirect('/dashboardt');
@@ -121,9 +127,7 @@ module.exports = function (app, passport, winston, emailserver) {
         })(req, res, next);
     });
 
-    //emial verify ============
-
-
+    //email verify ============
     app.post('/send-verify-email-again', function (req, res, next) {
 
         req.getConnection(function (err, connection) {
@@ -132,30 +136,22 @@ module.exports = function (app, passport, winston, emailserver) {
                     res.render('login.ejs', {message: res.__('Oops something wrong. Please try again'), customer: req.query.customer, openTokenRequest:true});
                     return;
                 }
-
                 if (!rows.length) {
                     res.render('login.ejs', {message:  res.__('No user found.'), customer: req.query.customer, openTokenRequest:true});
                     // req.flash is the way to set flashdata using connect-flash
                     return;
                 }
-
                 var token = randomstring.generate({
                     length: 64
                 });
                 var updatequery = "update users set email_verification_code =?  where email=?";
-
                 connection.query(updatequery, [token, req.body.email], function (err, rowsUpdate) {
                     if (err) {
-
-                        res.render('login.ejs', {message: res.__('Oops something wrong. Please try again'), customer: req.query.customer, openTokenRequest:true});
-                        return;
-
+                        return next(err, "system_error");
                     }else {
-
                         rows[0].email_verification_code = token;
-                        sendVerificationEmail(req, rows[0], res, emailserver);
-                        res.render('login.ejs', {message:  res.__('New verification email sended. Please look your' +
-                            ' email'), customer: req.query.customer, openTokenRequest:false});
+                        util.sendVerificationEmail(req, rows[0], res, emailserver);
+                        res.render('login.ejs', {message:  res.__('New verification email have been sent. Please check your email'), customer: req.query.customer, openTokenRequest:false});
                         return;
                     }
                 });
@@ -171,12 +167,12 @@ module.exports = function (app, passport, winston, emailserver) {
 
         if (req.query.token != null) {
             req.getConnection(function (err, connection) {
-                var query = connection.query('select * from users where email_verification_code= ?', [req.query.token], function (err, rows) {
+                connection.query('select * from users where email_verification_code= ?', [req.query.token], function (err, rows) {
 
                     if (err) {
                         res.render('login.ejs', {
-                            message: res.__('Your verification token expired. You can get new verification token.' +
-                                ' Please type your email adress'),
+                            message: res.__('Your token has been expired. You can get new verification token.' +
+                                ' Please type your email address'),
                             customer: req.query.customer,
                             openTokenRequest: true
 
@@ -189,8 +185,8 @@ module.exports = function (app, passport, winston, emailserver) {
                             connection.query(updatequery, [null, 1, req.query.token], function (err, rows) {
                                 if (err) {
                                     res.render('login.ejs', {
-                                        message: res.__('Your token expired. You can get new token email under the' +
-                                            ' below. Please type your email adress'),
+                                        message: res.__('Your token has been expired. You can get new token email under the' +
+                                            ' below. Please type your email address'),
                                         customer: req.query.customer,
                                         openTokenRequest: true
 
@@ -198,7 +194,7 @@ module.exports = function (app, passport, winston, emailserver) {
                                 } else {
 
                                     res.render('login.ejs', {
-                                        message: res.__('Your email is verifed. You can login now.'),
+                                        message: res.__('Your email is verified. You can login now.'),
                                         customer: req.query.customer,
                                         openTokenRequest: false
                                     });
@@ -206,8 +202,8 @@ module.exports = function (app, passport, winston, emailserver) {
                             });
                         }else{
                             res.render('login.ejs', {
-                                message: res.__('Your verification token expired. You can get new verification' +
-                                    ' token. Please type your email adress'),
+                                message: res.__('Your verification token has been expired. You can get new verification' +
+                                    ' token. Please type your email address'),
                                 customer: req.query.customer,
                                 openTokenRequest: true
 
@@ -224,109 +220,6 @@ module.exports = function (app, passport, winston, emailserver) {
 
     });
 
-    // SIGNUP =================================
-    // show the signup form
-    app.get('/signup', function (req, res) {
-        var sql = "SELECT id FROM translators WHERE  translators.email = ?";
-
-        if (!req.query.customer) {
-            req.getConnection(function (err, connection) {
-                var query = connection.query('select * from languages', function (err, rows) {
-
-                    if (err)
-                        console.log("Error Selecting : %s ", err);
-
-                    res.render('signup.ejs', {
-                        message: req.flash('signupMessage'),
-                        customer: req.query.customer,
-                        dataLang: rows
-                    });
-
-                });
-            });
-        } else {
-            res.render('signup.ejs', {message: req.flash('signupMessage'), customer: req.query.customer});
-        }
-
-    });
-
-    // process the signup form
-    app.post('/signup', function (req, res, next) {
-        req.assert('email', res.__('A valid email is required')).isEmail();  //Validate email
-        req.assert('name', res.__('Name field can not be empty and has to be minimum 2 character maximum 25')).len(2, 25);
-        req.assert('surname', res.__('Surname field can not be empty and has to be minimum 2 character maximum 25')).len(2, 25);
-        req.assert('password', res.__('Surname field can not be empty and has to be minimum 2 character maximum 20')).len(6, 20);
-
-        req.getValidationResult().then(function (result) {
-            if (!result.isEmpty() || (req.body.password !== req.body.repassword)) {
-                if (req.body.linkedincycle) {
-                    return res.redirect("/logout");
-                } else {
-                    return res.redirect('/signup');
-                }
-            } else {
-                passport.authenticate('local-signup', function (err, user, info) {
-
-                    if (err) {
-                        return next(err);
-                    }
-                    if (!user) {
-                        return res.redirect('/signup');
-                    }
-                    req.logIn(user, function (err) {
-                        if (user.is_translator) {
-                            var input = JSON.parse(JSON.stringify(req.body));
-
-                            req.getConnection(function (err, connection) {
-
-                                    var data = {
-                                        name: input.name,
-                                        surname: input.surname,
-                                        email: input.email
-                                    };
-
-                                    langListCarrier = input.langListCarrier;
-                                    var values = [];
-                                    langListCarrier.split(";").filter(function (e) {
-                                        return e
-                                    }).forEach(function (item) {
-                                        values.push([user.id, item.split(",")[0], item.split(",")[1]]);
-                                    });
-                                    var query2 = connection.query("INSERT INTO translator_lang (translator_id, lang_from, lang_to) values ? ", [values], function (err2, rows2) {
-                                        if (err2) {
-                                            console.log("Error inserting : %s ", err2);
-                                        }
-
-                                        sendVerificationEmail(req, user, res, emailserver);
-                                    });
-
-                                }
-                            );
-                        }
-                        else if (user.is_customer) {
-                            {
-                                sendVerificationEmail(req, user, res, emailserver);
-                            }
-                        }
-                    });
-                })(req, res, next);
-            }
-        });
-    });
-
-
-    function sendVerificationEmail(req, user, res, emailserver) {
-        emailserver.send({
-            text:    res.__("Linpret Email Verification link:") + req.protocol + '://' + req.get('host') + '/verify-email?token='+ user.email_verification_code,
-            from:    "linpretinfo@gmail.com",
-            to:     user.email,
-            cc:      "semih.kahya08@gmail.com",
-            subject: res.__("Linpret Email Verification")
-        }, function(err, message) { console.log(err || message); });
-
-        res.redirect('/signup-success');
-    }
-
 
     ////Password Change request======================
 
@@ -337,32 +230,27 @@ module.exports = function (app, passport, winston, emailserver) {
 
 
     app.get('/verify-password', function (req, res) {
-
         if(req.query.token){
                 req.getConnection(function (err, connection) {
-                    var query = connection.query('select * from users where password_verification_code= ?', [req.query.token], function (err, rows) {
+                    connection.query('select * from users where password_verification_code= ?', [req.query.token], function (err, rows) {
 
                         if (err) {
                             res.render('password-change.ejs', {
                                 message: res.__('Your password verification token expired. You can get new' +
                                     ' verification token. Please type your email adress'),
                                 openTokenRequest: true
-
                             });
                         }else {
                             if (rows.length) {
-
                                 res.render('password-change.ejs', {
                                     message: res.__('Please type your new password'),
                                     openTokenRequest: false
-
                                 });
                             }else{
                                 res.render('password-change.ejs', {
                                     message: res.__('Your verification token expired. You can get new verification' +
                                         ' token. Please type your email adress'),
                                     openTokenRequest: true
-
                                 });
                             }
                         }
@@ -501,28 +389,6 @@ module.exports = function (app, passport, winston, emailserver) {
         }
 
     });
-// SIGNUP =================================
-// show the signup form
-    app.get('/signup', function (req, res) {
-        res.render('signup.ejs', {message: req.flash('signupMessage')});
-    });
-
-
-
-    // show the signup success page
-    app.get('/signup-success', function (req, res) {
-        res.render('signup-success.ejs', {message: res.__("Verification email send your email address")});
-    });
-
-// process the signup form
-    app.post('/signup',
-        passport.authenticate('local-signup', {
-                successRedirect: '/signup-success', // redirect to the secure profile section
-                failureRedirect: '/signup', // redirect back to the signup page if there is an error
-                failureFlash: true // allow flash messages
-            }
-        )
-    );
 
 // linkedin -------------------------------
     app.get('/auth/linkedin',
@@ -538,7 +404,7 @@ module.exports = function (app, passport, winston, emailserver) {
             failureRedirect: '/login'
         }));
 
-    app.get('/selector', isLoggedIn , function (req, res) {
+    app.get('/selector', function (req, res) {
         if (req.user.isNew) {
             return res.redirect('/dashboard/select');
         }
@@ -646,7 +512,7 @@ module.exports = function (app, passport, winston, emailserver) {
 // user account will stay active in case they want to reconnect in the future
 
 // local -----------------------------------
-    app.get('/unlink/local', isLoggedIn, function (req, res) {
+    app.get('/unlink/local', function (req, res) {
         var user = req.user;
         user.local.email = undefined;
         user.local.password = undefined;
@@ -656,7 +522,7 @@ module.exports = function (app, passport, winston, emailserver) {
     });
 
 // facebook -------------------------------
-    app.get('/unlink/facebook', isLoggedIn, function (req, res) {
+    app.get('/unlink/facebook', function (req, res) {
         var user = req.user;
         user.facebook.token = undefined;
         user.save(function (err) {
@@ -665,7 +531,7 @@ module.exports = function (app, passport, winston, emailserver) {
     });
 
 // twitter --------------------------------
-    app.get('/unlink/twitter', isLoggedIn, function (req, res) {
+    app.get('/unlink/twitter', function (req, res) {
         var user = req.user;
         user.twitter.token = undefined;
         user.save(function (err) {
@@ -674,22 +540,11 @@ module.exports = function (app, passport, winston, emailserver) {
     });
 
 // google ---------------------------------
-    app.get('/unlink/google', isLoggedIn, function (req, res) {
+    app.get('/unlink/google', function (req, res) {
         var user = req.user;
         user.google.token = undefined;
         user.save(function (err) {
             res.redirect('/dashboard');
         });
     });
-
-    isLoggedIn:isLoggedIn
-}
-;
-
-// route middleware to ensure user is logged in
-var isLoggedIn=function (req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-
-    res.redirect('/');
 }

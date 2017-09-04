@@ -1,0 +1,12 @@
+<% include error_header %>
+<h2>Error:
+    <%if( typeof error.type !== "undefined"){%>
+        <%= __( error.type) %>
+    <%}else{%>
+        <%= error.message%>
+    <%}%>
+</h2>
+<% if (settings['verbose errors']) { %>
+    <pre><%= error.stack %></pre>
+<% } %>
+<% include footer %>

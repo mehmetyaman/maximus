@@ -1,4 +1,5 @@
 
+var util = require('../app/utils/util');
 
 module.exports = function (app, passport, emailserver) {
 
@@ -68,7 +69,6 @@ module.exports = function (app, passport, emailserver) {
                 }
             } else {
                 passport.authenticate('local-signup', function (err, user, info) {
-
                     if (err) {
                         return next(err);
                     }
@@ -79,7 +79,7 @@ module.exports = function (app, passport, emailserver) {
                         });
                     }
                     req.logIn(user, function (err) {
-                        sendVerificationEmail(req, user, res, emailserver);
+                        util.sendVerificationEmail(req, user, res, emailserver);
                     });
                 })(req, res, next);
             }
@@ -147,7 +147,7 @@ module.exports = function (app, passport, emailserver) {
                                                 console.log("Error inserting : %s ", err2);
                                             }
 
-                                            sendVerificationEmail(req, user, res, emailserver);
+                                            util.sendVerificationEmail(req, user, res, emailserver);
                                         });
 
                                     }
@@ -160,19 +160,6 @@ module.exports = function (app, passport, emailserver) {
         });
     });
 
-    function sendVerificationEmail(req, user, res, emailserver) {
-        emailserver.send({
-            text: "Linpret Email Verification link:" + req.protocol + '://' + req.get('host') + '/verify-email?token=' + user.email_verification_code,
-            from: "linpretinfo@gmail.com",
-            to: user.email,
-         //   cc: "semih.kahya08@gmail.com",
-            subject: "Linpret Email Verification"
-        }, function (err, message) {
-            console.log(err || message);
-        });
-
-        res.redirect('/signup-success');
-    }
 
 // SIGNUP =================================
 // show the signup form
@@ -186,13 +173,5 @@ module.exports = function (app, passport, emailserver) {
         res.render('signup-success.ejs', {message: "A verification email have been sent to your email address"});
     });
 
-// process the signup form
-    app.post('/signup',
-        passport.authenticate('local-signup', {
-                successRedirect: '/signup-success', // redirect to the secure profile section
-                failureRedirect: '/signup', // redirect back to the signup page if there is an error
-                failureFlash: true // allow flash messages
-            }
-        )
-    );
+
 };

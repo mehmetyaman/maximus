@@ -1,8 +1,7 @@
-var util = require('../app/util');
 
 module.exports = function (app) {
 
-    app.get('/selection/session/:id', util.isLoggedIn, function (req, res, next) {
+    app.get('/selection/session/:id', function (req, res, next) {
         var session_id = req.params.id;
 
         req.getConnection(function (err3, connection) {
@@ -21,7 +20,7 @@ module.exports = function (app) {
         })
     });
 
-    app.get('/selection/session/:id/translator/:translator_id', util.isLoggedIn, function (req, res, next) {
+    app.get('/selection/session/:id/translator/:translator_id', function (req, res, next) {
         var session_id = req.params.id;
         var translator_id = req.params.translator_id;
 
@@ -51,8 +50,7 @@ module.exports = function (app) {
                     });
                 }
             );
-        })
-    })
-
+        });
+    });
 
 }

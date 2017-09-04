@@ -195,7 +195,7 @@
         "one-var-declaration-per-line": "off",
         "operator-assignment": "off",
         "operator-linebreak": "off",
-        "padded-blocks": "off",
+        "padded-blocks": "on",
         "padding-line-between-statements": "error",
         "prefer-arrow-callback": "off",
         "prefer-const": "error",

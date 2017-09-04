@@ -2,34 +2,39 @@
   "name": "maximus",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "8.1.2"
+  },
   "scripts": {
-    "start": "node app.js",
-    "preinstall": "npm install mysql config bower iyzipay && bower install bootstrap jquery eonasdan-bootstrap-datetimepicker#latest"
+    "postinstall": "bower install",
+    "start": "node app.js"
   },
   "dependencies": {
-    "bcrypt-nodejs": "latest",
-    "body-parser": "~1.0.0",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.5.2",
+    "bower": "^1.8.0",
     "chai": "^4.1.1",
     "config": "^1.26.1",
     "connect-flash": "~0.1.1",
     "cookie-parser": "~1.0.0",
-    "dotenv": "^4.0.0",
     "ejs": "^1.0.0",
     "ejs-html": "^4.0.3",
     "emailjs": "^1.0.10",
-    "express": "^3.21.2",
-    "express-myconnection": "1.0.4",
-    "express-session": "~1.0.0",
+    "errorhandler": "^1.5.0",
+    "express": "^4.15.4",
+    "express-flash-2": "^1.0.1",
+    "express-myconnection": "^1.0.4",
+    "express-session": "^1.7.2",
     "express-validator": "^3.2.1",
+    "helmet": "3.8.1",
     "i18n": "^0.8.3",
     "iyzipay": "^2.0.25",
-    "method-override": "~1.0.0",
+    "method-override": "^2.1.2",
     "mocha": "^3.5.0",
     "mongoose": "~4.4",
-    "morgan": "^1.6.0",
+    "morgan": "^1.8.2",
     "mysql": "^2.2.0",
     "node-schedule": "^1.2.3",
-    "nodemon": "^1.11.0",
     "passport": "~0.1.17",
     "passport-facebook": "~1.0.2",
     "passport-google-oauth": "~0.1.5",
@@ -44,6 +49,8 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
-    "eslint": "^4.5.0"
+    "eslint": "4.5.0",
+    "nodemon": "1.11.0",
+    "standard": "10.0.3"
   }
 }

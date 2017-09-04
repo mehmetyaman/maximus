@@ -6,11 +6,10 @@ var moment = require('moment');
 var config = require('config');
 var randomstring = require("randomstring");
 var bcrypt = require('bcrypt-nodejs');
-var util = require("../app/util");
 
 module.exports = function (app) {
 
-    app.get('/session-comments', util.isLoggedIn, function (req, res, next) {
+    app.get('/session-comments', function (req, res, next) {
         var qstr = "select * from users where email =? ";
 
         req.getConnection(function (err, connection) {
