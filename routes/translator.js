@@ -1,28 +1,23 @@
-var Peer = require('../app/models/videochatpeer')
+// var Peer = require('../app/models/videochatpeer')
 var moment = require('moment')
 
 module.exports = function (app) {
   // DASHBOARD SECTION =========================
-  app.get('/dashboardt', function (req, res) {
+  app.get('/dashboardt', function (req, res, next) {
     req.getConnection(function (err, connection) {
-      if (err) {
-        console.log('Error : %s ', err)
-      }
+      if (err) return next(err)
       connection.query('select * from languages', function (err, langs) {
-        if (err) {
-          console.log('Error Selecting : %s ', err)
-        }
+        if (err) return next(err)
         var sql = 'select * from translation_session ts  ' +
           'where (ts.translator_id = ? or ts.translator_id = 0 ) and ' +
           'exists ( select * from translator_lang tl where (tl.translator_id=?) ' +
           'and ((lang1=lang_from and lang2=lang_to) or (lang1=lang_to and lang2=lang_from)))'
         connection.query(sql, [req.user.id, req.user.id],
           function (err1, translationRequests) {
-            if (err1) {
-              console.log('Error Selecting : %s ', err1)
-            }
+            if (err1) return next(err1)
             connection.query('select * from categories',
               function (err3, categories) {
+                if (err3) return next(err3)
                 var appropriateRequests = translationRequests
                 if (appropriateRequests.length > 0) {
                   var sqlForDemands = 'select * from translation_session_demands where user_id=?'
@@ -61,19 +56,15 @@ module.exports = function (app) {
     })
   })
 
-  app.post('/assignSession/:id', function (req, res) {
+  app.post('/assignSession/:id', function (req, res, next) {
     var id = req.params.id
 
     req.getConnection(function (err, connection) {
-      if (err) {
-        console.log('Error : %s ', err)
-      }
+      if (err) return next(err)
       connection.query(
         'UPDATE translation_session set translator_id = ? WHERE id = ? ',
         [req.user.id, id], function (err, rows) {
-          if (err) {
-            console.log('Error Updating : %s ', err)
-          }
+          if (err) return next(err)
           res.redirect('dashboardt')
         })
     })
@@ -91,19 +82,15 @@ module.exports = function (app) {
   })
 
   app.post('/assign/translator/:translator_id/session/:session_id',
-    function (req, res) {
+    function (req, res, next) {
       var translatorId = req.params.translator_id
       var sessionId = req.params.session_id
       req.getConnection(function (err, connection) {
-        if (err) {
-          console.log('Error : %s ', err)
-        }
+        if (err) return next(err)
         connection.query(
           'UPDATE translation_session set translator_id = ? WHERE id = ? ',
           [translatorId, sessionId], function (err, rows) {
-            if (err) {
-              console.log('Error Updating : %s ', err)
-            }
+            if (err) return next(err)
             res.redirect('dashboardt')
           })
       })
@@ -111,15 +98,11 @@ module.exports = function (app) {
 
   app.post('/demand/:id', function (req, res) {
     req.getConnection(function (err, connection) {
-      if (err) {
-        console.log('Error : %s ', err)
-      }
+      if (err) return next(err)
       connection.query(
         'insert into translation_session_demands (user_id, translation_session_id) values (?,' +
         ' ?) ', [req.user.id, req.params.id], function (err, rows) {
-          if (err) {
-            console.log('Error inserting : %s ', err)
-          }
+          if (err) return next(err)
           res.redirect('dashboardt')
         })
     })
@@ -128,23 +111,17 @@ module.exports = function (app) {
   function loadTranslator (req, res, callback) {
     var id = req.params.id
     req.getConnection(function (err, connection) {
-      if (err) {
-        console.log(err)
-      }
+      if (err) return next(err)
       var sql1 = 'SELECT * FROM users WHERE id = ?'
       connection.query(sql1, [id], function (err, rows) {
-        if (err) {
-          console.log(err)
-        }
+        if (err) return next(err)
         var sql2 = 'SELECT (select lang_desc from languages where lang_short=lang_from) lang_from,' +
           ' (select lang_desc from languages where lang_short=lang_to) lang_to,' +
           ' price_per_hour' +
           ' FROM translator_lang ' +
           ' WHERE translator_id = ?'
         connection.query(sql2, [id], function (err2, rows2) {
-          if (err) {
-            console.log(err)
-          }
+          if (err) return next(err)
           rows[0].languages = rows2
           callback(rows)
         })
@@ -160,6 +137,7 @@ module.exports = function (app) {
   })
 }
 
+/**
 function do_queries (connection, id, callback) {
   var sql1 = 'SELECT * FROM users,' +
     ' (SELECT t.id,' +
@@ -209,3 +187,4 @@ function do_queries (connection, id, callback) {
     })
   })
 }
+**/

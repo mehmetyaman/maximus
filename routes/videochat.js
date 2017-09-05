@@ -3,24 +3,20 @@ var Peer = require('../app/models/videochatpeer')
 var config = require('config')
 
 module.exports = function (app) {
-  app.get('/videoConference/:id', function (req, res) {
+  app.get('/videoConference/:id', function (req, res, next) {
     var videoChatId = req.params.id
     var peerId = req.user.id
     var username = req.user.email
     // var videoChat
     // var isRoomCreated = false
     VideoChat.find({'_id': videoChatId}, function (err, videoChat) {
-      if (err) {
-        console.log('Error /videoChat/:id : %s ', err)
-        res.status(500).send(err)
-      }
+      if (err) return next(err)
 
       /*
        if (videoChat.length==0) {
        createVideoChat(videoChatId, function (err) {
        if (err) {
-       console.log("Error /videoChat/:id : %s ", err)
-       res.status(500).send(err)
+       return next(err)
        }else{
        isRoomCreated=true
        }
@@ -30,8 +26,7 @@ module.exports = function (app) {
        if (peer.length==0) {
        createPeer(videoChatId, peerId, username, function () {
        if (err) {
-       console.log("Error /videoChat/:id : %s ", err)
-       res.status(500).send(err)
+       return next(err)
        }
        })
        }else{
@@ -42,10 +37,7 @@ module.exports = function (app) {
        */
       Peer.find({'videoChatId': videoChatId, 'id': {$nin: [peerId]}},
         function (err, peers) {
-          if (err) {
-            console.log('Error /videoChat/:id : %s ', err)
-            res.status(500).send(err)
-          }
+          if (err) return next(err)
           res.render('trans_session/videoConference', {
             title: res.__('Video Conference'),
             roomId: videoChatId,

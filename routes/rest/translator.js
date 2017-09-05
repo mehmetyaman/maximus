@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  app.get('/searchTranslator/:key', function (req, res) {
+  app.get('/searchTranslator/:key', function (req, res, next) {
     var key = req.params.key
     var trimmedKey = key.replace(/\s/g, '')
     // var trimmedKey = req.query.key.replace(/\s/g,'');
@@ -13,11 +13,11 @@ module.exports = function (app) {
       ' and IS_TRANSLATOR=\'1\' ' +
       ' and  concat(name,surname,email) like \'%' + trimmedKey + '%\' '
     req.getConnection(function (err, connection) {
-      if (err) throw err
+      if (err) return next(err)
 
       connection.query(sql,
         function (err, rows, fields) {
-          if (err) throw err
+          if (err) return next(err)
           // var data = [];
           // for (i = 0; i < rows.length; i++) {
           //    data.push("name:"+rows[i].name + " " + rows[i].surname + " " + rows[i].email + " ");
@@ -28,7 +28,7 @@ module.exports = function (app) {
     })
   })
 
-  app.get('/searchTranslator/:lang1/:lang2', function (req, res) {
+  app.get('/searchTranslator/:lang1/:lang2', function (req, res, next) {
     var lang1 = req.params.lang1
     var lang2 = req.params.lang2
     var sql = ' SELECT t.id,name, surname, email' +
@@ -38,11 +38,11 @@ module.exports = function (app) {
       ' and ((lang_from=\'' + lang1 + '\' and lang_to=\'' + lang2 + '\') or (lang_from=\'' + lang2 + '\'' +
       ' and lang_to=\'' + lang1 + '\'))'
     req.getConnection(function (err, connection) {
-      if (err) throw err
+      if (err) return next(err)
 
       connection.query(sql,
         function (err, rows, fields) {
-          if (err) throw err
+          if (err) return next(err)
           res.contentType('application/json')
           res.end(JSON.stringify(rows, null, 2))
         })

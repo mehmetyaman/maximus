@@ -1,19 +1,18 @@
 // load the things we need
-var mongoose = require('mongoose');
+var mongoose = require('mongoose')
 
 var peerSchema = mongoose.Schema({
-    _id           :  String,
-    username      :  String,
-    userId        :  String,
-    name          :  String,
-    videoChatId   :  String,
-    isActive      :  { type: String, default: 'A' },
-    updatedAt     :  Date,
-    $setOnInsert  :  {
-        attendDate:  Date
-    },
-    leftDate   : Date
-});
+  _id: String,
+  username: String,
+  userId: String,
+  name: String,
+  videoChatId: String,
+  isActive: {type: String, default: 'A'},
+  updatedAt: Date,
+  $setOnInsert: {
+    attendDate: Date
+  },
+  leftDate: Date
+})
 
-module.exports = mongoose.model('Peer', peerSchema);
-
+module.exports = mongoose.model('Peer', peerSchema)
