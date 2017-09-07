@@ -69,8 +69,9 @@ if (app.get('env') === 'development') {
 /* connection peer, register as middleware
  type koneksi : single,pool and request
  */
+var myconnection = require('express-myconnection')
 app.use(
-  require('express-myconnection')(mysql, config.get('mysql'), 'pool') // or single
+  myconnection(mysql, config.get('mysql'), 'pool') // or single
 )
 // require('mongoose').connect(config.get('mongo.url')) // connect to our database
 
@@ -126,6 +127,9 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   logger.error(err.stack)
   res.status(err.status || 500)
+  if (!err.type) { // if did not set any operational error type
+    err.type = 'system_error'
+  }
   res.render('error/500', {error: err})
 })
 

@@ -14,7 +14,9 @@ module.exports = function (app) {
           'and ((lang1=lang_from and lang2=lang_to) or (lang1=lang_to and lang2=lang_from)))'
         connection.query(sql, [req.user.id, req.user.id],
           function (err1, translationRequests) {
-            if (err1) return next(err1)
+            if (err1) {
+              return next(err1)
+            }
             connection.query('select * from categories',
               function (err3, categories) {
                 if (err3) return next(err3)
@@ -23,6 +25,7 @@ module.exports = function (app) {
                   var sqlForDemands = 'select * from translation_session_demands where user_id=?'
                   connection.query(sqlForDemands, req.user.id,
                     function (errDemands, demands) {
+                      if (errDemands) return next(errDemands)
                       if (demands.length > 0) {
                         appropriateRequests.forEach(function (request) {
                           demands.forEach(function (demand) {
@@ -58,7 +61,6 @@ module.exports = function (app) {
 
   app.post('/assignSession/:id', function (req, res, next) {
     var id = req.params.id
-
     req.getConnection(function (err, connection) {
       if (err) return next(err)
       connection.query(
@@ -75,7 +77,7 @@ module.exports = function (app) {
   })
 
   app.get('/profile/:id', function (req, res) {
-    loadTranslator(req, res, function (translator) {
+    loadTranslator(req, res, function (translator, err) {
       res.render('translator/profile.ejs',
         {user: req.user, translator: translator[0]})
     })
@@ -96,7 +98,7 @@ module.exports = function (app) {
       })
     })
 
-  app.post('/demand/:id', function (req, res) {
+  app.post('/demand/:id', function (req, res, next) {
     req.getConnection(function (err, connection) {
       if (err) return next(err)
       connection.query(
@@ -111,17 +113,23 @@ module.exports = function (app) {
   function loadTranslator (req, res, callback) {
     var id = req.params.id
     req.getConnection(function (err, connection) {
-      if (err) return next(err)
+      if (err) {
+        return callback(null, err)
+      }
       var sql1 = 'SELECT * FROM users WHERE id = ?'
       connection.query(sql1, [id], function (err, rows) {
-        if (err) return next(err)
+        if (err) {
+          return callback(null, err)
+        }
         var sql2 = 'SELECT (select lang_desc from languages where lang_short=lang_from) lang_from,' +
           ' (select lang_desc from languages where lang_short=lang_to) lang_to,' +
           ' price_per_hour' +
           ' FROM translator_lang ' +
           ' WHERE translator_id = ?'
         connection.query(sql2, [id], function (err2, rows2) {
-          if (err) return next(err)
+          if (err2) {
+            return callback(null, err2)
+          }
           rows[0].languages = rows2
           callback(rows)
         })
@@ -129,10 +137,14 @@ module.exports = function (app) {
     })
   }
 
-  app.get('/translator/:id', function (req, res) {
-    loadTranslator(req, res, function (translator) {
-      res.contentType('application/json')
-      res.end(JSON.stringify(translator, null, 2))
+  app.get('/translator/:id', function (req, res, next) {
+    loadTranslator(req, res, function (translator, err) {
+      if (err) {
+        return next(err)
+      } else {
+        res.contentType('application/json')
+        res.end(JSON.stringify(translator, null, 2))
+      }
     })
   })
 }

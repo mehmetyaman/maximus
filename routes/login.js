@@ -286,8 +286,7 @@ module.exports = function (app, passport, winston, emailserver) {
               }, function (err, message) { console.log(err || message) })
             }
 
-            res.end(res.__(
-              'Password change request send your email adress. Please check your email'))
+            res.end(res.__('Password_change_request_sent_msg'))
           })
       })
     } else {
@@ -322,8 +321,7 @@ module.exports = function (app, passport, winston, emailserver) {
             }, function (err, message) { console.log(err || message) })
 
             res.render('login.ejs', {
-              message: res.__(
-                'Your password change request is sended. Please check your email.'),
+              message: res.__('Password_change_request_sent_msg'),
               customer: req.query.customer,
               openTokenRequest: false
             })
@@ -388,11 +386,9 @@ module.exports = function (app, passport, winston, emailserver) {
       console.log('here another')
     }))
 
-  app.get('/auth/linkedin/callback', passport.authenticate('linkedin',
-    {
-      successRedirect: '/selector',
-      failureRedirect: '/login'
-    }))
+  app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
+    successRedirect: '/selector', failureRedirect: '/login'
+  }))
 
   app.get('/selector', function (req, res) {
     if (req.user.isNew) {
@@ -409,15 +405,12 @@ module.exports = function (app, passport, winston, emailserver) {
 // facebook -------------------------------
 
 // send to facebook to do the authentication
-  app.get('/auth/facebook',
-    passport.authenticate('facebook', {scope: 'email'}))
+  app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}))
 
 // handle the callback after facebook has authenticated the user
-  app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // twitter --------------------------------
 
@@ -425,11 +418,9 @@ module.exports = function (app, passport, winston, emailserver) {
   app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}))
 
 // handle the callback after twitter has authenticated the user
-  app.get('/auth/twitter/callback',
-    passport.authenticate('twitter', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/auth/twitter/callback', passport.authenticate('twitter', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // google ---------------------------------
 
@@ -438,11 +429,9 @@ module.exports = function (app, passport, winston, emailserver) {
     passport.authenticate('google', {scope: ['profile', 'email']}))
 
 // the callback after google has authenticated the user
-  app.get('/auth/google/callback',
-    passport.authenticate('google', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/auth/google/callback', passport.authenticate('google', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // =============================================================================
 // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
@@ -461,15 +450,12 @@ module.exports = function (app, passport, winston, emailserver) {
 // facebook -------------------------------
 
 // send to facebook to do the authentication
-  app.get('/connect/facebook',
-    passport.authorize('facebook', {scope: 'email'}))
+  app.get('/connect/facebook', passport.authorize('facebook', {scope: 'email'}))
 
 // handle the callback after facebook has authorized the user
-  app.get('/connect/facebook/callback',
-    passport.authorize('facebook', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/connect/facebook/callback', passport.authorize('facebook', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // twitter --------------------------------
 
@@ -477,11 +463,9 @@ module.exports = function (app, passport, winston, emailserver) {
   app.get('/connect/twitter', passport.authorize('twitter', {scope: 'email'}))
 
 // handle the callback after twitter has authorized the user
-  app.get('/connect/twitter/callback',
-    passport.authorize('twitter', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/connect/twitter/callback', passport.authorize('twitter', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // google ---------------------------------
 
@@ -490,11 +474,9 @@ module.exports = function (app, passport, winston, emailserver) {
     passport.authorize('google', {scope: ['profile', 'email']}))
 
 // the callback after google has authorized the user
-  app.get('/connect/google/callback',
-    passport.authorize('google', {
-      successRedirect: '/dashboard',
-      failureRedirect: '/'
-    }))
+  app.get('/connect/google/callback', passport.authorize('google', {
+    successRedirect: '/dashboard', failureRedirect: '/'
+  }))
 
 // =============================================================================
 // UNLINK ACCOUNTS =============================================================
