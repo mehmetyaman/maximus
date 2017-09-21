@@ -22,59 +22,116 @@ module.exports = function (app, passport, winston, emailserver) {
     }
   })
 
-  // dashboard SECTION =========================
-  app.get('/dashboard', function (req, res, next) {
-    req.getConnection(function (err, connection) {
-      if (err) {
-        return next(err)
-      }
 
-      connection.query('select * from languages', function (err1, languages) {
-        if (err1) {
-          return next(err1)
-        }
-        connection.query('select ts.*, tsu.is_admin, ' +
-          ' (select user_id from translation_session_users ' +
-          ' where translation_session_id=tsu.translation_session_id ' +
-          ' and user_id!=tsu.user_id) as other_participant_id ' +
-          ' from  translation_session_users tsu, translation_session ts' +
-          ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
-          req.user.id, function (err2, sessions) {
-            if (err2) {
-              return next(err2)
-            }
-
-            connection.query('select * from categories',
-              function (err3, categories) {
-                if (err3) {
-                  return next(err3)
-                }
-                connection.query('select u.*, ts.id as session_id from' +
-                  ' translation_session ts, translation_session_users tsu, ' +
-                  ' translation_session_demands tsd , users u where ' +
-                  ' ts.id = tsu.translation_session_id and ' +
-                  ' tsu.user_id = ? and ' +
-                  ' tsd.translation_session_id=ts.id and ' +
-                  ' tsd.user_id = u.id', req.user.id,
-                  function (err4, demandedTranslators) {
-                    if (err4) {
-                      return next(err4)
+    app.get('/sessions', function (req, res) {
+        var userId = req.user.id
+        req.getConnection(function (err, connection) {
+            connection.query('select ts.*, tsu.is_admin, ' +
+                ' (select user_id from translation_session_users ' +
+                ' where translation_session_id=tsu.translation_session_id ' +
+                ' and user_id!=tsu.user_id) as other_participant_id ' +
+                ' from  translation_session_users tsu, translation_session ts' +
+                ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
+                userId, function (err, sessions) {
+                    if (err) {
+                        console.log("loadSessions : " + err);
+                        res.status(500).json({error: err2});
                     }
-                    res.render('user/dashboard.ejs', {
-                      user: req.user,
-                      langs: languages,
-                      lists: sessions,
-                      cats: categories,
-                      demandedTranslators: demandedTranslators,
-                      moment: moment,
-                      config: config
-                    })
-                  })
-              })
-          })
-      })
+                    //Check that a user was found
+                    if (sessions.length == 0) {
+                        res.status(200).json({});
+                    }
+                    res.status(200).json(sessions);
+                });
+        })
     })
-  })
+
+    app.get('/languages', function (req, res) {
+        var userId = req.user.id
+        req.getConnection(function (err, connection) {
+            connection.query('select * from languages', function (err, languages) {
+                if (err) {
+                    console.log("loadLanguages : " + err);
+                    res.status(500).json({error: err2});
+                }
+                //Check that a user was found
+                if (languages.length == 0) {
+                    res.status(200).json({});
+                }
+                res.status(200).json(languages);
+            });
+        })
+    })
+
+    app.get('/render/lang', function (req, res) {
+        var userId = req.user.id
+        req.getConnection(function (err, connection) {
+            connection.query('select * from languages', function (err, languages) {
+                if (err) {
+                    console.log("loadLanguages : " + err);
+                    res.status(500).json({error: err2});
+                }
+                //Check that a user was found
+                if (languages.length == 0) {
+                    res.status(200).json({});
+                }
+                
+                res.render('partial/lang.ejs', {
+                    langs:languages
+                });
+            });
+        })
+    })
+
+    app.get('/dashboard', function (req, res) {
+        var categories = [];
+        var demandedTranslators = [];
+        var subCategories = [];
+        var userId = req.user.id;
+        console.log("here after");
+        res.render('user/dashboard.ejs', {
+            user: req.user,
+            cats: categories,
+            subCats: subCategories,
+            demandedTranslators: demandedTranslators,
+            moment: moment,
+            config: config
+        })
+    });
+
+
+    function loadCategories(connection, callback) {
+        connection.query('select * from categories', function (err, categories) {
+            if (err) {
+                console.log("load categories: " + err);
+                return callback(err);
+            }
+            if (categories.length == 0) {
+                return callback(new Error('No categories found.'));
+            }
+            callback(null, categories);
+        });
+    }
+
+    function loadDemandedTranslators(connection, userId, callback) {
+        connection.query('select u.*, ts.id as session_id from' +
+            ' translation_session ts, translation_session_users tsu, ' +
+            ' translation_session_demands tsd , users u where ' +
+            ' ts.id = tsu.translation_session_id and ' +
+            ' tsu.user_id = ? and ' +
+            ' tsd.translation_session_id=ts.id and ' +
+            ' tsd.user_id = u.id', userId, function (err, demandedTranslators) {
+            if (err) {
+                console.log("loadDemandedTranslators : " + err);
+                return callback(err);
+            }
+            if (demandedTranslators.length == 0) {
+                return [];
+            }
+            callback(null, demandedTranslators);
+        });
+    }
+
 
   // LOGOUT ==============================
   app.get('/logout', function (req, res) {
@@ -286,7 +343,8 @@ module.exports = function (app, passport, winston, emailserver) {
               }, function (err, message) { console.log(err || message) })
             }
 
-            res.end(res.__('Password_change_request_sent_msg'))
+            res.end(res.__(
+              'Password change request send your email adress. Please check your email'))
           })
       })
     } else {
@@ -321,7 +379,8 @@ module.exports = function (app, passport, winston, emailserver) {
             }, function (err, message) { console.log(err || message) })
 
             res.render('login.ejs', {
-              message: res.__('Password_change_request_sent_msg'),
+              message: res.__(
+                'Your password change request is sended. Please check your email.'),
               customer: req.query.customer,
               openTokenRequest: false
             })
@@ -386,9 +445,11 @@ module.exports = function (app, passport, winston, emailserver) {
       console.log('here another')
     }))
 
-  app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
-    successRedirect: '/selector', failureRedirect: '/login'
-  }))
+  app.get('/auth/linkedin/callback', passport.authenticate('linkedin',
+    {
+      successRedirect: '/selector',
+      failureRedirect: '/login'
+    }))
 
   app.get('/selector', function (req, res) {
     if (req.user.isNew) {
@@ -405,12 +466,15 @@ module.exports = function (app, passport, winston, emailserver) {
 // facebook -------------------------------
 
 // send to facebook to do the authentication
-  app.get('/auth/facebook', passport.authenticate('facebook', {scope: 'email'}))
+  app.get('/auth/facebook',
+    passport.authenticate('facebook', {scope: 'email'}))
 
 // handle the callback after facebook has authenticated the user
-  app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // twitter --------------------------------
 
@@ -418,9 +482,11 @@ module.exports = function (app, passport, winston, emailserver) {
   app.get('/auth/twitter', passport.authenticate('twitter', {scope: 'email'}))
 
 // handle the callback after twitter has authenticated the user
-  app.get('/auth/twitter/callback', passport.authenticate('twitter', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/auth/twitter/callback',
+    passport.authenticate('twitter', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // google ---------------------------------
 
@@ -429,9 +495,11 @@ module.exports = function (app, passport, winston, emailserver) {
     passport.authenticate('google', {scope: ['profile', 'email']}))
 
 // the callback after google has authenticated the user
-  app.get('/auth/google/callback', passport.authenticate('google', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/auth/google/callback',
+    passport.authenticate('google', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // =============================================================================
 // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
@@ -450,12 +518,15 @@ module.exports = function (app, passport, winston, emailserver) {
 // facebook -------------------------------
 
 // send to facebook to do the authentication
-  app.get('/connect/facebook', passport.authorize('facebook', {scope: 'email'}))
+  app.get('/connect/facebook',
+    passport.authorize('facebook', {scope: 'email'}))
 
 // handle the callback after facebook has authorized the user
-  app.get('/connect/facebook/callback', passport.authorize('facebook', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/connect/facebook/callback',
+    passport.authorize('facebook', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // twitter --------------------------------
 
@@ -463,9 +534,11 @@ module.exports = function (app, passport, winston, emailserver) {
   app.get('/connect/twitter', passport.authorize('twitter', {scope: 'email'}))
 
 // handle the callback after twitter has authorized the user
-  app.get('/connect/twitter/callback', passport.authorize('twitter', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/connect/twitter/callback',
+    passport.authorize('twitter', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // google ---------------------------------
 
@@ -474,9 +547,11 @@ module.exports = function (app, passport, winston, emailserver) {
     passport.authorize('google', {scope: ['profile', 'email']}))
 
 // the callback after google has authorized the user
-  app.get('/connect/google/callback', passport.authorize('google', {
-    successRedirect: '/dashboard', failureRedirect: '/'
-  }))
+  app.get('/connect/google/callback',
+    passport.authorize('google', {
+      successRedirect: '/dashboard',
+      failureRedirect: '/'
+    }))
 
 // =============================================================================
 // UNLINK ACCOUNTS =============================================================

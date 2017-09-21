@@ -74,7 +74,7 @@ app.use(
   myconnection(mysql, config.get('mysql'), 'pool') // or single
 )
 // require('mongoose').connect(config.get('mongo.url')) // connect to our database
-
+//
 // authentication check. all requests are
 var noAuthenticationNeededPaths = [
   '/',

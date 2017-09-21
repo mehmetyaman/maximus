@@ -51,6 +51,19 @@ CREATE TABLE `categories` (
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 );
 
+CREATE TABLE `sub_categories` (
+  `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `category_id`         INT(11) UNSIGNED NOT NULL,
+  `sub_category_short_desc` CHAR(100)         NOT NULL,
+  PRIMARY KEY (`id`),
+  `sub_category_long_desc`  VARCHAR(100),
+  KEY `fk_category_idx` (`category_id`),
+  CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
+    ON DELETE NO ACTION
+    ON
+    UPDATE NO ACTION,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)
+);
 
 CREATE TABLE `translator_lang` (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
