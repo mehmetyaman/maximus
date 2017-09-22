@@ -63,6 +63,43 @@ module.exports = function (app, passport, winston, emailserver) {
         })
     })
 
+    app.get('/categories', function (req, res) {
+        var country_code =  req.user.country_code
+        console.log(country_code)
+        req.getConnection(function (err, connection) {
+            connection.query('select * from categories where category_language=?', [country_code], function (err, categories) {
+                if (err) {
+                    console.log("loadcategories : " + err);
+                    return res.status(500).json({error: err2});
+                }
+                //Check that a user was found
+                if (categories.length == 0) {
+                    return res.status(200).json({});
+                }
+                return res.status(200).json(categories);
+            });
+        })
+    })
+
+    // categoryId
+    app.get('/subCategories', function (req, res) {
+        var categoryId =  req.query.categoryId;
+        req.getConnection(function (err, connection) {
+            connection.query('select * from sub_categories where category_id=?', [categoryId], function (err, subCategories) {
+                if (err) {
+                    console.log("loadsubCategories : " + err);
+                    return res.status(500).json({error: err});
+                }
+                //Check that a user was found
+                if (subCategories.length == 0) {
+                    return res.status(200).json([]);
+                }
+
+                return res.status(200).json(subCategories);
+            });
+        })
+    })
+
     app.get('/render/lang', function (req, res) {
         var userId = req.user.id
         req.getConnection(function (err, connection) {
@@ -75,7 +112,7 @@ module.exports = function (app, passport, winston, emailserver) {
                 if (languages.length == 0) {
                     res.status(200).json({});
                 }
-                
+
                 res.render('partial/lang.ejs', {
                     langs:languages
                 });
@@ -84,15 +121,15 @@ module.exports = function (app, passport, winston, emailserver) {
     })
 
     app.get('/dashboard', function (req, res) {
-        var categories = [];
         var demandedTranslators = [];
         var subCategories = [];
+        var lists = [];
         var userId = req.user.id;
         console.log("here after");
         res.render('user/dashboard.ejs', {
             user: req.user,
-            cats: categories,
             subCats: subCategories,
+            lists: lists,
             demandedTranslators: demandedTranslators,
             moment: moment,
             config: config

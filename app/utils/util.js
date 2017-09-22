@@ -9,7 +9,7 @@ module.exports = {
       req.get('host') + '/verify-email?token=' + user.email_verification_code,
       from: 'linpretinfo@gmail.com',
       to: user.email,
-      //   cc: "semih.kahya08@gmail.com",
+      cc: "mehmetyaman@gmail.com",
       subject: 'Linpret Email Verification'
     }, function (err, message) {
       return next(err)

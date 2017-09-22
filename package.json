@@ -36,7 +36,6 @@
     "method-override": "^2.1.2",
     "mongoose": "~4.4",
     "morgan": "^1.8.2",
-    "mustache": "^2.3.0",
     "mysql": "^2.2.0",
     "node-schedule": "^1.2.3",
     "passport": "~0.1.17",

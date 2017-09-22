@@ -79,11 +79,11 @@
     <script>
         <%
         if(lists){
-            var hasAnyAdminSession=false
-            lists.forEach(function (items) {
-                if(items.is_admin==1){
-                    hasAnyAdminSession = true;
-                }
+            var hasAnyAdminSession = false
+        lists.forEach(function (items) {
+            if (items.is_admin == 1) {
+                hasAnyAdminSession = true;
+            }
         %>
 
         $.get("/peers/<%= items.id %>", function (participants) {
@@ -189,12 +189,8 @@
                                                 data-toggle="dropdown">
                                             <%= __('Select Language') %>
                                             <span class="caret"></span></button>
-                                        <ul class="dropdown-menu" id="lang1">
-                                            <% langs.forEach(function (language) { %>
-                                            <li><a href="#"
-                                                   langval="<%= language.lang_short %>"><%= language.lang_desc %></a>
-                                            </li>
-                                            <% }) %>
+                                        <ul class="dropdown-menu" id="lang1" name="lang1">
+
                                         </ul>
                                     </div>
                                 </div>
@@ -207,19 +203,14 @@
                                                 data-toggle="dropdown">
                                             <%= __('Select Language') %>
                                             <span class="caret"></span></button>
-                                        <ul class="dropdown-menu" id="lang2">
-                                            <% langs.forEach(function (language) { %>
-                                            <li><a href="#"
-                                                   langval="<%= language.lang_short %>"><%= language.lang_desc %></a>
-                                            </li>
-                                            <% }) %>
+                                        <ul class="dropdown-menu" id="lang2" name="lang2">
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <h4>Category</h4>
                                 <div class="form-group">
                                     <div class="dropdown">
@@ -227,11 +218,20 @@
                                                 data-toggle="dropdown">
                                             <%= __('Select Category') %>
                                             <span class="caret"></span></button>
-                                        <ul class="dropdown-menu" id="cat">
-                                            <% cats.forEach(function (category) { %>
-                                            <li><a href="#" catval="<%= category.id %>"><%= category
-                                                            .category_long_desc %></a></li>
-                                            <% }) %>
+                                        <ul class="dropdown-menu" id="cats" name="cats">
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4>Sub Category</h4>
+                                <div class="form-group">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                            <%= __('Select Sub Category') %>
+                                            <span class="caret"></span></button>
+                                        <ul class="dropdown-menu" id="subCats" name="subCats">
                                         </ul>
                                     </div>
                                 </div>
@@ -281,100 +281,100 @@
             </div>
         </div>
 
-            <% if (lists) { %>
-                <div class="row">
-                    <div class="col-md-2">
-                        <span style="font-weight: bold;"><%= __('Subject') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Languages') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Date') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Time') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Connect') %></span>
-                    </div>
-                    <div class="col-md-1">
-                        <span style="font-weight: bold;"><%= __('Payment') %></span>
-                    </div>
-                    <div class="col-md-2">
-                        <span style="font-weight: bold;"><%= __('Interpreter') %></span>
-                    </div>
-                    <div class="col-md-2">
-                        <span style="font-weight: bold;"><%= __('Invite') %></span>
-                    </div>
-                </div>
-            <% lists.forEach(function (items) { %>
-            <div class="row x">
-                <div class="col-md-2">
-                    <span><%= items.description %></span>
-                </div>
-                <div class="col-md-1">
-                    <span><%= items.duration %></span>
-                </div>
-                <div class="col-md-1">
-                    <span><%= items.lang1 %> > <%= items.lang2 %></span>
-                </div>
-                <div class="col-md-1">
-                    <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
-                </div>
-                <div class="col-md-1">
-                    <span> <%= moment(items.start_date).format('hh:mm') %></span>
-                </div>
-                <div class="col-md-1">
-                    <% if(items.is_paid == 1){ %>
-                        <a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a>
-                        <span id="participants-span-<%= items.id %>"></span>
-                    <%}else{%>
-                        <%= __('Waiting for payment') %>
-                    <%}%>
-                </div>
-                <div class="col-md-1">
-                    <% if(items.is_admin == 1){%>
-
-                            <% if(items.is_paid != 1){ %>
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                        data-target="#paymentModal" data-amount="150" data-currency="try"
-                                        data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
-                            <%}else{%>
-                                Paid
-                            <%}%>
-                    <%}%>
-                </div>
-                <div class="col-md-2">
-                    <% if(items.is_admin == 1){%>
-                        <% if(!items.translator_id){ %>
-                                <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">
-                                    <%= __('Select Interpreter') %></a>
-                        <% } else{%>
-                             <%= items.translator_id %>
-                        <%}%>
-                    <%}%>
-                </div>
-
-                <div class="col-md-2">
-                    <% if(items.is_admin == 1){%>
-                        <% if(items.other_participant_id == null){ %>
-                            <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#inviteModal" data-sessionid="<%= items.id %>">
-                                <%= __('Invite Participant') %>
-                            </button>
-                        <%}else{%>
-                            Invited userid:<%= items.other_participant_id %>
-                        <%}%>
-                    <%}else{%>
-                        Invitation sent by userid:<%= items.other_participant_id %>
-                    <%}%>
-                </div>
+        <% if (lists) { %>
+        <div class="row">
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Subject') %></span>
             </div>
-            <% }) %>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
+            </div>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Languages') %></span>
+            </div>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Date') %></span>
+            </div>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Time') %></span>
+            </div>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Connect') %></span>
+            </div>
+            <div class="col-md-1">
+                <span style="font-weight: bold;"><%= __('Payment') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Interpreter') %></span>
+            </div>
+            <div class="col-md-2">
+                <span style="font-weight: bold;"><%= __('Invite') %></span>
+            </div>
+        </div>
+        <% lists.forEach(function (items) { %>
+        <div class="row x">
+            <div class="col-md-2">
+                <span><%= items.description %></span>
+            </div>
+            <div class="col-md-1">
+                <span><%= items.duration %></span>
+            </div>
+            <div class="col-md-1">
+                <span><%= items.lang1 %> > <%= items.lang2 %></span>
+            </div>
+            <div class="col-md-1">
+                <span> <%= moment(items.start_date).format('DD-MM-YYYY') %></span>
+            </div>
+            <div class="col-md-1">
+                <span> <%= moment(items.start_date).format('hh:mm') %></span>
+            </div>
+            <div class="col-md-1">
+                <% if(items.is_paid == 1){ %>
+                <a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a>
+                <span id="participants-span-<%= items.id %>"></span>
+                <% }else{ %>
+                <%= __('Waiting for payment') %>
+                <% } %>
+            </div>
+            <div class="col-md-1">
+                <% if(items.is_admin == 1){ %>
+
+                <% if(items.is_paid != 1){ %>
+                <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#paymentModal" data-amount="150" data-currency="try"
+                        data-sessionNumber="<%= items.id %>"><%= __('Payment') %></button>
+                <% }else{ %>
+                Paid
+                <% } %>
+                <% } %>
+            </div>
+            <div class="col-md-2">
+                <% if(items.is_admin == 1){ %>
+                <% if(!items.translator_id){ %>
+                <a class="btn btn-large btn-info" href="selection/session/<%= items.id %>">
+                    <%= __('Select Interpreter') %></a>
+                <% } else{ %>
+                <%= items.translator_id %>
+                <% } %>
+                <% } %>
+            </div>
+
+            <div class="col-md-2">
+                <% if(items.is_admin == 1){ %>
+                <% if(items.other_participant_id == null){ %>
+                <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#inviteModal" data-sessionid="<%= items.id %>">
+                    <%= __('Invite Participant') %>
+                </button>
+                <% }else{ %>
+                Invited userid:<%= items.other_participant_id %>
+                <% } %>
+                <% }else{ %>
+                Invitation sent by userid:<%= items.other_participant_id %>
+                <% } %>
+            </div>
+        </div>
+        <% }) %>
 
         <form role="form" data-toggle="validator" id="modalForm" name="modalForm">
             <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel">
@@ -500,30 +500,69 @@
         </form>
     </div>
     <% } %>
-    </div>
+</div>
 </div>
 </form>
 <script type="text/javascript">
-    var intervalval, lang1, lang2, catval;
-    $('#interval li').on('click', function () {
-        intervalval = $(this).text();
-    });
-    $('#lang1 li').on('click', function () {
-        lang1 = $('a', this).attr('langval');
-    });
-    $('#lang2 li').on('click', function () {
-        lang2 = $('a', this).attr('langval');
-    });
-    $('#cat li').on('click', function () {
-        catval = $('a', this).attr('catval');
-    });
+
+
     $(document).ready(function () {
+        var intervalval, lang1, lang2, catval, subCatval;
+
+        $(document).on('click', '#interval li', function () {
+            intervalval = $(this).text();
+        });
+
+        $(document).on('click', '#lang2 li', function () {
+            lang2 = $('a', this).attr('langval');
+        });
+
+        $(document).on('click', '#lang1 li', function () {
+            lang2 = $('a', this).attr('langval');
+        });
+
+        $(document).on('click', '#cats li', function(){
+            catval = $('a', this).attr('catval');
+            $("#subCats").empty();
+            $.getJSON("/subCategories?categoryId=" + catval, function (data) {
+                $.each(data, function (key, value) {
+                    $("#subCats").append(" <li><a href='#' subCatval='" + value.id + "'>" + value.sub_category_long_desc
+                            + "</a></li>");
+                });
+            });
+        });
+
+        $('#subCats li').delegate('click', function () {
+            subCatval = $('a', this).attr('subCatval');
+        });
+
         $('#plandate').datetimepicker();
+        $.getJSON("/languages", function (data) {
+            $.each(data, function (key, value) {
+                $("#lang1").append(" <li><a href='#' langval='" + value.lang_short + "'>" + value.lang_desc
+                        + "</a></li>");
+                $("#lang2").append(" <li><a href='#' langval='" + value.lang_short + "'>" + value.lang_desc
+                        + "</a></li>");
+
+
+            });
+        });
+
+        $.getJSON("/categories", function (data) {
+            $.each(data, function (key, value) {
+                $("#cats").append(" <li><a href='#' catval='" + value.id + "'>" + value.category_long_desc
+                        + "</a></li>");
+
+            });
+        });
+
+        $(document).on('click', ".dropdown-menu li a", function () {
+            var selText = $(this).text();
+            $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
+        });
+
     });
-    $(".dropdown-menu li a").click(function () {
-        var selText = $(this).text();
-        $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
-    });
+
 
     function changePassword() {
         $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
@@ -540,7 +579,7 @@
     $('#inviteModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var sessionid = button.data('sessionid')
-        $("#invite-btn").attr("data-sessionid" , sessionid);
+        $("#invite-btn").attr("data-sessionid", sessionid);
     });
 
     $("#invite-btn").click(function () {
