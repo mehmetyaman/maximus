@@ -513,16 +513,18 @@
             intervalval = $(this).text();
         });
 
-        $(document).on('click', '#lang2 li', function () {
-            lang2 = $('a', this).attr('langval');
+        $(document).on('click', '#lang1 li', function () {
+            lang1 = $('a', this).attr('langval');
         });
 
-        $(document).on('click', '#lang1 li', function () {
+        $(document).on('click', '#lang2 li', function () {
             lang2 = $('a', this).attr('langval');
         });
 
         $(document).on('click', '#cats li', function(){
             catval = $('a', this).attr('catval');
+            $("#subCats").parents('.form-group').find('.dropdown-toggle').html("Select Sub Category" + '<span ' +
+                    'class="caret"></span>');
             $("#subCats").empty();
             $.getJSON("/subCategories?categoryId=" + catval, function (data) {
                 $.each(data, function (key, value) {
@@ -532,7 +534,7 @@
             });
         });
 
-        $('#subCats li').delegate('click', function () {
+        $(document).on('click', '#subCats li', function () {
             subCatval = $('a', this).attr('subCatval');
         });
 
@@ -561,6 +563,110 @@
             $(this).parents('.form-group').find('.dropdown-toggle').html(selText + '<span ' + 'class="caret"></span>');
         });
 
+        $("#createSession").click(function () {
+            if ($("#desc").val() === undefined) {
+                alert('<%= __('Fill in the description field, please') %>');
+                return false;
+            }
+            if (lang1 === undefined) {
+                alert('<%= __('Select a language, please!') %>');
+                return false;
+            }
+            if (lang2 === undefined) {
+                alert('<%= __('Select a language, please!') %>');
+                return false;
+            }
+            if (lang1 === lang2) {
+                alert('<%= __('Languages has to be different!') %>');
+                return false;
+            }
+            if (intervalval === undefined) {
+                alert('<%= __('Select a duration, please!') %>');
+                return false;
+            }
+            var formdata = {
+                plandate: $("#plandate").data("DateTimePicker").date().toISOString(),
+                interval: intervalval,
+                lang1: lang1,
+                lang2: lang2,
+                desc: $("#desc").val(),
+                catval: catval,
+                subCatval:subCatval
+            } // this will replace with form values
+            $.post("/plan", formdata, function (data) {
+                $("#plannerDiv").toggle();
+                location.reload();
+            });
+        });
+
+        $('#inviteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var sessionid = button.data('sessionid')
+            $("#invite-btn").attr("data-sessionid", sessionid);
+        });
+
+        $("#invite-btn").click(function () {
+            var participantName = $("#participant-name").val()
+            var sessionid = $(this).data('sessionid')
+            var data = {
+                participantName: participantName,
+                sessionId: sessionid
+            }
+            $.post("/add-participant", data, function (data) {
+                $("#participant-name").val('')
+                $('#inviteModal').modal('toggle')
+            });
+        });
+
+        $('#paymentModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+
+            var amount = button.data('amount')
+            var sessionId = button.data('sessionnumber')
+            var currency = button.data('currency')
+            var modal = $(this)
+
+            var val = '<%= __('Payment amount ') %>' + "" + amount + "" + currency
+            modal.find('.modal-title').text(val)
+
+            $('#paymentAmountHidden').val(amount)
+            $('#paymentCurrencyHidden').val(currency)
+            $('#paymentSessionIdHidden').val(sessionId)
+        })
+
+        $("#paymentButton").click(function () {
+            var modal = $("#paymentModal");
+
+            var data = {
+                amount: $('#paymentAmountHidden').val(),
+                currency: $('#paymentCurrencyHidden').val(),
+                sessionId: $('#paymentSessionIdHidden').val(),
+                billingAddress: {
+                    firstName: $('#billingFirstName').val(),
+                    lastName: $('#billingLastName').val(),
+                    email: $('#billingEmail').val(),
+                    mobile: $('#billingMobile').val(),
+                    country: $('#billingCountry').val(),
+                    city: $('#billingCity').val(),
+                    pinCode: $('#billingPinCode').val(),
+                    address: $('#billingAddress').val()
+                },
+                shippingAddress: {
+                    firstName: $('#shippingFirstName').val(),
+                    lastName: $('#shippingLastName').val(),
+                    email: $('#shippingEmail').val(),
+                    mobile: $('#shippingMobile').val(),
+                    country: $('#shippingCountry').val(),
+                    city: $('#shippingCity').val(),
+                    pinCode: $('#shippingPinCode').val(),
+                    address: $('#shippingAddress').val()
+                }
+            }
+            $.post("/payment", data, function (data) {
+                window.location.href = data
+            });
+
+        })
     });
 
 
@@ -576,109 +682,9 @@
         });
     }
 
-    $('#inviteModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var sessionid = button.data('sessionid')
-        $("#invite-btn").attr("data-sessionid", sessionid);
-    });
 
-    $("#invite-btn").click(function () {
-        var participantName = $("#participant-name").val()
-        var sessionid = $(this).data('sessionid')
-        var data = {
-            participantName: participantName,
-            sessionId: sessionid
-        }
-        $.post("/add-participant", data, function (data) {
-            $("#participant-name").val('')
-            $('#inviteModal').modal('toggle')
-        });
-    });
 
-    $('#paymentModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
 
-        var amount = button.data('amount')
-        var sessionId = button.data('sessionnumber')
-        var currency = button.data('currency')
-        var modal = $(this)
-
-        var val = '<%= __('Payment amount ') %>' + "" + amount + "" + currency
-        modal.find('.modal-title').text(val)
-
-        $('#paymentAmountHidden').val(amount)
-        $('#paymentCurrencyHidden').val(currency)
-        $('#paymentSessionIdHidden').val(sessionId)
-    })
-
-    $("#paymentButton").click(function () {
-        var modal = $("#paymentModal");
-
-        var data = {
-            amount: $('#paymentAmountHidden').val(),
-            currency: $('#paymentCurrencyHidden').val(),
-            sessionId: $('#paymentSessionIdHidden').val(),
-            billingAddress: {
-                firstName: $('#billingFirstName').val(),
-                lastName: $('#billingLastName').val(),
-                email: $('#billingEmail').val(),
-                mobile: $('#billingMobile').val(),
-                country: $('#billingCountry').val(),
-                city: $('#billingCity').val(),
-                pinCode: $('#billingPinCode').val(),
-                address: $('#billingAddress').val()
-            },
-            shippingAddress: {
-                firstName: $('#shippingFirstName').val(),
-                lastName: $('#shippingLastName').val(),
-                email: $('#shippingEmail').val(),
-                mobile: $('#shippingMobile').val(),
-                country: $('#shippingCountry').val(),
-                city: $('#shippingCity').val(),
-                pinCode: $('#shippingPinCode').val(),
-                address: $('#shippingAddress').val()
-            }
-        }
-        $.post("/payment", data, function (data) {
-            window.location.href = data
-        });
-
-    })
-
-    $("#createSession").click(function () {
-        if ($("#desc").val() === undefined) {
-            alert('<%= __('Fill in the description field, please') %>');
-            return false;
-        }
-        if (lang1 === undefined) {
-            alert('<%= __('Select a language, please!') %>');
-            return false;
-        }
-        if (lang2 === undefined) {
-            alert('<%= __('Select a language, please!') %>');
-            return false;
-        }
-        if (lang1 === lang2) {
-            alert('<%= __('Languages has to be different!') %>');
-            return false;
-        }
-        if (intervalval === undefined) {
-            alert('<%= __('Select a duration, please!') %>');
-            return false;
-        }
-        var formdata = {
-            plandate: $("#plandate").data("DateTimePicker").date().toISOString(),
-            interval: intervalval,
-            lang1: lang1,
-            lang2: lang2,
-            desc: $("#desc").val(),
-            catval: catval
-        } // this will replace with form values
-        $.post("/plan", formdata, function (data) {
-            $("#plannerDiv").toggle();
-            location.reload();
-        });
-    });
 </script>
 </body>
 </html>

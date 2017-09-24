@@ -123,13 +123,11 @@ module.exports = function (app, passport, winston, emailserver) {
 
     app.get('/dashboard', function (req, res) {
         var demandedTranslators = [];
-        var subCategories = [];
         var lists = [];
         var userId = req.user.id;
         console.log("here after");
         res.render('user/dashboard.ejs', {
             user: req.user,
-            subCats: subCategories,
             lists: lists,
             demandedTranslators: demandedTranslators,
             moment: moment,
@@ -137,38 +135,68 @@ module.exports = function (app, passport, winston, emailserver) {
         })
     });
 
-
-    function loadCategories(connection, callback) {
-        connection.query('select * from categories', function (err, categories) {
+    app.get('/dashboard', function (req, res, next) {
+        req.getConnection(function (err, connection) {
             if (err) {
-                console.log("load categories: " + err);
-                return callback(err);
+                return next(err)
             }
-            if (categories.length == 0) {
-                return callback(new Error('No categories found.'));
-            }
-            callback(null, categories);
-        });
-    }
 
-    function loadDemandedTranslators(connection, userId, callback) {
-        connection.query('select u.*, ts.id as session_id from' +
-            ' translation_session ts, translation_session_users tsu, ' +
-            ' translation_session_demands tsd , users u where ' +
-            ' ts.id = tsu.translation_session_id and ' +
-            ' tsu.user_id = ? and ' +
-            ' tsd.translation_session_id=ts.id and ' +
-            ' tsd.user_id = u.id', userId, function (err, demandedTranslators) {
-            if (err) {
-                console.log("loadDemandedTranslators : " + err);
-                return callback(err);
-            }
-            if (demandedTranslators.length == 0) {
-                return [];
-            }
-            callback(null, demandedTranslators);
+            connection.query('select ts.*, tsu.is_admin, ' +
+                ' (select user_id from translation_session_users ' +
+                ' where translation_session_id=tsu.translation_session_id ' +
+                ' and user_id!=tsu.user_id) as other_participant_id ' +
+                ' from  translation_session_users tsu, translation_session ts' +
+                ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
+                req.user.id, function (err2, sessions) {
+                    if (err2) {
+                        return next(err2)
+                    }
+
+                    connection.query('select u.*, ts.id as session_id from' +
+                        ' translation_session ts, translation_session_users tsu, ' +
+                        ' translation_session_demands tsd , users u where ' +
+                        ' ts.id = tsu.translation_session_id and ' +
+                        ' tsu.user_id = ? and ' +
+                        ' tsd.translation_session_id=ts.id and ' +
+                        ' tsd.user_id = u.id', req.user.id,
+                        function (err4, demandedTranslators) {
+                            if (err4) {
+                                return next(err4)
+                            }
+                            res.render('user/dashboard.ejs', {
+                                user: req.user,
+                                lists: sessions,
+                                demandedTranslators: demandedTranslators,
+                                moment: moment,
+                                config: config
+                            })
+                        })
+                })
+        })
+    })
+
+
+    app.get('/demandedTranslators', function (req, res) {
+        var userId = req.user.id
+        req.getConnection(function (err, connection) {
+            connection.query('select u.*, ts.id as session_id from' +
+                ' translation_session ts, translation_session_users tsu, ' +
+                ' translation_session_demands tsd , users u where ' +
+                ' ts.id = tsu.translation_session_id and ' +
+                ' tsu.user_id = ? and ' +
+                ' tsd.translation_session_id=ts.id and ' +
+                ' tsd.user_id = u.id', userId, function (err, demandedTranslators) {
+                if (err) {
+                    console.log("loadLanguages : " + err);
+                    return res.status(500).json({error: err});
+                }
+                if (demandedTranslators.length == 0) {
+                    return res.status(200).json({});
+                }
+                return res.status(200).json(demandedTranslators);
+            });
         });
-    }
+    })
 
 
     // LOGOUT ==============================

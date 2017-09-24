@@ -234,3 +234,6 @@ ALTER TABLE `maximus`.`sub_categories`
 ALTER TABLE `maximus`.`languages`
   ADD COLUMN `language` VARCHAR(10) NULL AFTER `lang_desc`;
 
+ALTER TABLE `maximus`.`translation_session`
+  ADD COLUMN `sub_category_id` INT(11) NULL AFTER `created_user`;
+

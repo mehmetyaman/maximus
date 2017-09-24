@@ -129,7 +129,8 @@ module.exports = function (app, winston, emailServer) {
         translator_id: 0,
         is_paid: 0,
         created_date: new Date(),
-        created_user: req.user.id
+        created_user: req.user.id,
+        sub_category_id: input.subCatval
       }
       if (err) {
         connection.rollback(function () {
