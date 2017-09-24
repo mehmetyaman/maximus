@@ -121,22 +121,10 @@ module.exports = function (app, passport, winston, emailserver) {
         })
     })
 
-    app.get('/dashboard', function (req, res) {
-        var demandedTranslators = [];
-        var lists = [];
-        var userId = req.user.id;
-        console.log("here after");
-        res.render('user/dashboard.ejs', {
-            user: req.user,
-            lists: lists,
-            demandedTranslators: demandedTranslators,
-            moment: moment,
-            config: config
-        })
-    });
-
     app.get('/dashboard', function (req, res, next) {
+        console.log("1:" );
         req.getConnection(function (err, connection) {
+            console.log("2:" );
             if (err) {
                 return next(err)
             }
@@ -148,10 +136,11 @@ module.exports = function (app, passport, winston, emailserver) {
                 ' from  translation_session_users tsu, translation_session ts' +
                 ' where tsu.user_id = ? and tsu.translation_session_id = ts.id',
                 req.user.id, function (err2, sessions) {
+                    console.log("3:" );
                     if (err2) {
                         return next(err2)
                     }
-
+                    console.log("4:" );
                     connection.query('select u.*, ts.id as session_id from' +
                         ' translation_session ts, translation_session_users tsu, ' +
                         ' translation_session_demands tsd , users u where ' +
@@ -160,9 +149,14 @@ module.exports = function (app, passport, winston, emailserver) {
                         ' tsd.translation_session_id=ts.id and ' +
                         ' tsd.user_id = u.id', req.user.id,
                         function (err4, demandedTranslators) {
+                            console.log("5:" );
                             if (err4) {
                                 return next(err4)
                             }
+                            console.log("6:" );
+                            console.log("session:" + sessions);
+                            console.log("translator:" + demandedTranslators);
+
                             res.render('user/dashboard.ejs', {
                                 user: req.user,
                                 lists: sessions,
