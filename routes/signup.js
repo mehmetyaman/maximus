@@ -14,7 +14,8 @@ module.exports = function (app, passport, emailserver) {
                     messages: req.flash('signupMessage'),
                     customer: req.query.customer,
                     dataLang: rows,
-                    formData: null
+                    formData: null,
+                    errors: []
                 })
             })
         })
@@ -37,14 +38,14 @@ module.exports = function (app, passport, emailserver) {
 
     // process the user signup form
     app.post('/signup', function (req, res, next) {
-        req.assert('email', 'A valid email address is required').isEmail()  // Validate email
-        req.assert('name',
+        req.check('email', 'A valid email address is required').isEmail()  // Validate email
+        req.check('name',
             'Name field can not be empty and has to be minimum 2 character maximum 25').len(2, 25)
-        req.assert('surname',
+        req.check('surname',
             'Surname field can not be empty and has to be minimum 2 character maximum 25').len(2, 25)
-        req.assert('password',
+        req.check('password',
             'Password field can not be empty and has to be minimum 6 character maximum 20').len(6, 20)
-        req.assert('password', 'Passwords do not match').equals(req.body.repassword)
+        req.check('password', 'Passwords do not match').equals(req.body.repassword)
         req.getValidationResult().then(function (result) {
             var errors = req.validationErrors()
             if (errors) {
@@ -57,7 +58,8 @@ module.exports = function (app, passport, emailserver) {
                 } else {
                     return res.render('user/signup', {
                         messages: messages, // pass it here to access in view file
-                        formData: req.body
+                        formData: req.bodappy,
+                        errors: errors
                     })
                 }
             } else {
@@ -68,7 +70,8 @@ module.exports = function (app, passport, emailserver) {
                     if (!user) {
                         return res.render('user/signup', {
                             messages: req.flash('signupMessage'),
-                            formData: req.body
+                            formData: req.body,
+                            errors: errors
                         })
                     }
                     req.logIn(user, function (err) {
