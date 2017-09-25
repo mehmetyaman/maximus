@@ -37,7 +37,7 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://198.199.64.171:443/paymentResult",
+    "callbackUrl" : "http://198.199.64.171:443/payment-result",
     "api" : {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",

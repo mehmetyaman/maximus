@@ -46,7 +46,7 @@ module.exports = function (app) {
     })
   })
 
-  app.post('/paymentResult', function (req, res, next) {
+  app.post('/payment-result', function (req, res, next) {
     var iyzipay = new Iyzipay(
       config.get('iyzico_client.api')
     )
