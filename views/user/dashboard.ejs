@@ -527,7 +527,7 @@
             $("#subCats").parents('.form-group').find('.dropdown-toggle').html("Select Sub Category" + '<span ' +
                     'class="caret"></span>');
             $("#subCats").empty();
-            $.getJSON("/subCategories?categoryId=" + catval, function (data) {
+            $.getJSON("/sub-categories?categoryId=" + catval, function (data) {
                 $.each(data, function (key, value) {
                     $("#subCats").append(" <li><a href='#' subCatval='" + value.id + "'>" + value.sub_category_long_desc
                             + "</a></li>");

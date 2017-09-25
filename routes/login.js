@@ -81,7 +81,7 @@ module.exports = function (app, passport, winston, emailserver) {
     })
 
     // categoryId
-    app.get('/subCategories', function (req, res) {
+    app.get('/sub-categories', function (req, res) {
         var categoryId = req.query.categoryId;
         req.getConnection(function (err, connection) {
             connection.query('select * from sub_categories where category_id=?', [categoryId], function (err, subCategories) {
@@ -160,7 +160,7 @@ module.exports = function (app, passport, winston, emailserver) {
     })
 
 
-    app.get('/demandedTranslators', function (req, res) {
+    app.get('/demanded-translators', function (req, res) {
         var userId = req.user.id
         req.getConnection(function (err, connection) {
             connection.query('select u.*, ts.id as session_id from' +

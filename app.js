@@ -80,7 +80,8 @@ var noAuthenticationNeededPaths = [
     '/auth/linkedin',
     '/auth/linkedin/callback',
     '/signup',
-    '/signupt']
+    '/signupt',
+    '/document-translation']
 /////////////////////// authentication except urls /////////////////////
 app.use(function (req, res, next) {
     if (noAuthenticationNeededPaths.includes(req.path) ||
