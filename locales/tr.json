@@ -81,5 +81,15 @@
 	"Your email has been verified. You can login now": "TYour email has been verified. You can login now.",
 	"Demand Now": "TDemand Now",
 	"Demanded": "TDemanded",
-	"Price Per Hour": "TPrice Per Hour"
+	"Price Per Hour": "TPrice Per Hour",
+	"Any":"Genel",
+	"Tech/Engineering":"Teknoloji/Mühendislik",
+	"Art/Literatue":"Sanat/Edebiyat",
+	"Medical":"Medikal",
+	"Law/Patents":"Hukuk/Patent",
+	"Science":"Bilim",
+	"Bus/Financial":"İşletme/Finans",
+	"Marketing":"Pazarlama",
+	"Other":"Diğer",
+	"Social Sciences":"Beşeri Bilimler"
 }

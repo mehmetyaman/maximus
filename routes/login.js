@@ -3,6 +3,7 @@ var config = require('config')
 var randomstring = require('randomstring')
 var bcrypt = require('bcrypt-nodejs')
 var util = require('../app/utils/util')
+var i18n = require('i18n')
 
 module.exports = function (app, passport, winston, emailserver) {
 // normal routes ===============================================================
@@ -66,7 +67,7 @@ module.exports = function (app, passport, winston, emailserver) {
     app.get('/categories', function (req, res) {
         var country_code = req.user.country_code
         req.getConnection(function (err, connection) {
-            connection.query('select * from categories where category_language=?', [country_code], function (err, categories) {
+            connection.query('select * from categories', function (err, categories) {
                 if (err) {
                     console.log("loadcategories : " + err);
                     return res.status(500).json({error: err2});

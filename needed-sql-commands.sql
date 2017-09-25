@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS `translation_session_demands`;
 DROP TABLE IF EXISTS `translation_session_users`;
 DROP TABLE IF EXISTS `translation_session`;
 DROP TABLE IF EXISTS `translator_lang`;
+DROP TABLE IF EXISTS `sub_categories`;
 DROP TABLE IF EXISTS `categories`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `languages`;
@@ -224,12 +225,6 @@ ALTER TABLE `maximus`.`translation_session`
 CHANGE COLUMN `start_date` `start_date` TIMESTAMP NULL DEFAULT NULL ,
 CHANGE COLUMN `end_date` `end_date` TIMESTAMP NULL DEFAULT NULL ,
 CHANGE COLUMN `created_date` `created_date` TIMESTAMP NULL DEFAULT NULL ;
-
-ALTER TABLE `maximus`.`categories`
-  ADD COLUMN `category_language` VARCHAR(10) NULL AFTER `category_long_desc`;
-
-ALTER TABLE `maximus`.`sub_categories`
-  ADD COLUMN `sub_category_language` VARCHAR(10) NULL AFTER `sub_category_long_desc`;
 
 ALTER TABLE `maximus`.`languages`
   ADD COLUMN `language` VARCHAR(10) NULL AFTER `lang_desc`;

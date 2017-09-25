@@ -99,5 +99,15 @@
 	"Translator/Interpreter Signup": "Translator/Interpreter Signup",
 	"Linpret Translation/Interpretation Services": "Linpret Translation/Interpretation Services",
 	"New Interepretation Session Plan": "New Interepretation Session Plan",
-	"Interpretation Session Plan Editor": "Interpretation Session Plan Editor"
+	"Interpretation Session Plan Editor": "Interpretation Session Plan Editor",
+	"Any":"Any",
+	"Tech/Engineering":"Tech/Engineering",
+	"Art/Literatue":"Art/Literatue",
+	"Medical":"Medical",
+	"Law/Patents":"Law/Patents",
+	"Science":"Science",
+	"Bus/Financial":"Bus/Financial",
+	"Marketing":"Marketing",
+	"Other":"Other",
+	"Social Sciences":"Social Sciences"
 }
