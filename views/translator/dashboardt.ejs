@@ -140,7 +140,7 @@
             <% }else{ %>
             <div class="col-md-2">
                 <span><%= items.translator_id %></span>
-                <span><a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a></span>
+                <span><a href="/video-conference/<%= items.id %>"><%= __('Connect') %></a></span>
             </div>
             <% } %>
 
@@ -208,7 +208,7 @@
         } else {
             newhtml += '<div class="col-md-2">'
                     + '       <span>' + newItem.translator_id + '</span>'
-                    + '      <span><a href="/videoConference/' + newItem.id + '>Connect</a></span>'
+                    + '      <span><a href="/video-conference/' + newItem.id + '>Connect</a></span>'
                     + '      </div>';
         }
         newhtml += '       </div>';

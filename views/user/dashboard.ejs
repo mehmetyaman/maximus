@@ -331,7 +331,7 @@
             </div>
             <div class="col-md-1">
                 <% if(items.is_paid == 1){ %>
-                <a href="/videoConference/<%= items.id %>"><%= __('Connect') %></a>
+                <a href="/video-conference/<%= items.id %>"><%= __('Connect') %></a>
                 <span id="participants-span-<%= items.id %>"></span>
                 <% }else{ %>
                 <%= __('Waiting for payment') %>

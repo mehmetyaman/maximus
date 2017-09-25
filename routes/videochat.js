@@ -3,7 +3,7 @@ var Peer = require('../app/models/videochatpeer')
 var config = require('config')
 
 module.exports = function (app) {
-  app.get('/videoConference/:id', function (req, res, next) {
+  app.get('/video-conference/:id', function (req, res, next) {
     var videoChatId = req.params.id
     var peerId = req.user.id
     var username = req.user.email
@@ -38,7 +38,7 @@ module.exports = function (app) {
       Peer.find({'videoChatId': videoChatId, 'id': {$nin: [peerId]}},
         function (err, peers) {
           if (err) return next(err)
-          res.render('trans_session/videoConference', {
+          res.render('trans_session/video-conference', {
             title: res.__('Video Conference'),
             roomId: videoChatId,
             peerId: peerId,

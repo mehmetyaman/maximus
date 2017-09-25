@@ -91,7 +91,7 @@ module.exports = function (app) {
 
       doQueries(connection, userid, function (err, rows2) {
         if (err) return next(err)
-        res.render('user/userDashboard', {
+        res.render('user/user-dashboard', {
           page_title: 'User Dashboard page',
           data: rows2[0],
           lists: rows2,
