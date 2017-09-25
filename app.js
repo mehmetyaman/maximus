@@ -18,7 +18,7 @@ var helmet = require('helmet')
 var flash = require('connect-flash')
 
 if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
+    app.set('trust proxy', 1) // trust first proxy
 }
 
 var emailServer = emailSrv.server.connect(config.get('email_server'))
@@ -30,7 +30,6 @@ app.use(morgan('dev', {'stream': logger.stream}))
 paypal.configure(config.get('paypal'))
 
 // set up our express application-
-
 // app.use(require('cookie-parser')) // read cookies (needed for auth)
 app.use(session(config.get('session_config')))
 app.set('views', path.join(__dirname, 'views'))
@@ -54,16 +53,16 @@ app.set('port', config.get('app.port'))
 app.use(helmet())
 
 i18n.configure({
-  locales: ['en', 'de', 'tr'],
-  directory: path.join(__dirname, '/locales')
+    locales: ['en', 'de', 'tr'],
+    directory: path.join(__dirname, '/locales')
 })
 
 logger.info('env=' + app.get('env'))
 
 if (app.get('env') === 'development') {
-  app.enable('verbose errors')
+    app.enable('verbose errors')
 } else {
-  app.disable('verbose errors')
+    app.disable('verbose errors')
 }
 
 /* connection peer, register as middleware
@@ -71,27 +70,26 @@ if (app.get('env') === 'development') {
  */
 var myconnection = require('express-myconnection')
 app.use(
-  myconnection(mysql, config.get('mysql'), 'pool') // or single
+    myconnection(mysql, config.get('mysql'), 'pool') // or single
 )
-// require('mongoose').connect(config.get('mongo.url')) // connect to our database
-//
-// authentication check. all requests are
+
+/////////////////////// authentication except urls /////////////////////
 var noAuthenticationNeededPaths = [
-  '/',
-  '/login',
-  '/auth/linkedin',
-  '/auth/linkedin/callback',
-  '/signup',
-  '/signupt']
-app.get(function (req, res, next) {
-  if (noAuthenticationNeededPaths.includes(req.path) ||
-    req.isAuthenticated()) {
-    return next()
-  } else {
-    logger.info(
-      'unauthorized request, forwarded to /login.. req.path = ' + req.path)
-    res.redirect('/login')
-  }
+    '/',
+    '/login',
+    '/auth/linkedin',
+    '/auth/linkedin/callback',
+    '/signup',
+    '/signupt']
+/////////////////////// authentication except urls /////////////////////
+app.use(function (req, res, next) {
+    if (noAuthenticationNeededPaths.includes(req.path) ||
+        req.isAuthenticated()) {
+        return next()
+    } else {
+        logger.info('unauthorized request, forwarded to /login.. req.path = ' + req.path)
+        res.redirect('/login')
+    }
 })
 
 // load our routes and pass in our app and fully configured passport
@@ -110,40 +108,40 @@ require('./routes/signup')(app, passport, emailServer)
 require('./config/passport')(passport) // pass passport for configuration
 
 app.use(function (req, res, next) {
-  res.status(404)
-  res.format({
-    html: function () {
-      res.render('error/404', {url: req.url})
-    },
-    json: function () {
-      res.json({error: 'Not found'})
-    },
-    default: function () {
-      res.type('txt').send('Not found')
-    }
-  })
+    res.status(404)
+    res.format({
+        html: function () {
+            res.render('error/404', {url: req.url})
+        },
+        json: function () {
+            res.json({error: 'Not found'})
+        },
+        default: function () {
+            res.type('txt').send('Not found')
+        }
+    })
 })
 
 app.use(function (err, req, res, next) {
-  logger.error(err.stack)
-  res.status(err.status || 500)
-  if (!err.type) { // if did not set any operational error type
-    err.type = 'system_error'
-  }
-  res.render('error/500', {error: err})
+    logger.error(err.stack)
+    res.status(err.status || 500)
+    if (!err.type) { // if did not set any operational error type
+        err.type = 'system_error'
+    }
+    res.render('error/500', {error: err})
 })
 
 process.on('uncaughtException', function (err) {
-  logger.error('uncaughtException = ' + err.stack)
+    logger.error('uncaughtException = ' + err.stack)
 })
 
 var server = app.listen(process.env.PORT || app.get('port'), function () {
-  logger.info('Listening on ' + app.get('port'))
+    logger.info('Listening on ' + app.get('port'))
 })
 server.timeout = config.get('app.timeout') / 2 // it multiply by 2. i dont understand why. bc of this i divided by 2
 
 var io = require('socket.io').listen(server)
 io.on('connection', function (socket) {
-  console.log('new connection established')
-  socket.emit('announcements', {message: 'A new user has joined!'})
+    console.log('new connection established')
+    socket.emit('announcements', {message: 'A new user has joined!'})
 })

@@ -41,7 +41,7 @@ module.exports = function (app, winston, emailServer) {
                     throw err
                   })
                   console.log('Error inserting : %s ', err3)
-                  res.status(500).json({error: err3})
+                  return res.status(500).json({error: err3})
                 }
 
                 if (req.user.is_customer) {
@@ -73,7 +73,7 @@ module.exports = function (app, winston, emailServer) {
         [participant, sessionId], function (err3, sessionUsers) {
           if (sessionUsers.length > 0) {
             console.log('user has already assigned to this session')
-            res.send(200)
+            return res.send(200)
           } else {
             var data = {
               invitation_token: token,
@@ -89,7 +89,7 @@ module.exports = function (app, winston, emailServer) {
                     throw err
                   })
                   console.log('Error inserting : %s ', err2)
-                  res.status(500).json({error: err2})
+                  return res.status(500).json({error: err2})
                 }
 
                 emailServer.send({
@@ -103,12 +103,11 @@ module.exports = function (app, winston, emailServer) {
                   subject: res.__('Linpret Translation Meeting Invitation ')
                 }, function (err, message) {
                   if (err) {
-                    res.send(500)
+                    return res.send(500)
                   }
-                  console.log(err || message)
                 })
 
-                res.send(200)
+                return res.send(200)
               })
           }
         })
@@ -161,11 +160,11 @@ module.exports = function (app, winston, emailServer) {
                   throw err
                 })
                 console.log('Error inserting : %s ', err3)
-                res.status(500).json({error: err3})
+                return res.status(500).json({error: err3})
               }
             })
 
-          res.send(200)
+          return res.send(200)
         })
     })
   })

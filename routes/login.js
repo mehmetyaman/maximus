@@ -47,26 +47,24 @@ module.exports = function (app, passport, winston, emailserver) {
     })
 
     app.get('/languages', function (req, res) {
-        var userId = req.user.id
         var country_code = req.user.country_code
         req.getConnection(function (err, connection) {
             connection.query('select * from languages where language=?', [country_code], function (err, languages) {
                 if (err) {
                     console.log("loadLanguages : " + err);
-                    res.status(500).json({error: err2});
+                    return res.status(500).json({error: err2});
                 }
                 //Check that a user was found
                 if (languages.length == 0) {
-                    res.status(200).json({});
+                    return res.status(200).json({});
                 }
-                res.status(200).json(languages);
+                return res.status(200).json(languages);
             });
         })
     })
 
     app.get('/categories', function (req, res) {
         var country_code = req.user.country_code
-        console.log(country_code)
         req.getConnection(function (err, connection) {
             connection.query('select * from categories where category_language=?', [country_code], function (err, categories) {
                 if (err) {

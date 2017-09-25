@@ -595,7 +595,7 @@
             } // this will replace with form values
             $.post("/plan", formdata, function (data) {
                 $("#plannerDiv").toggle();
-                location.reload();
+                window.location.reload();
             });
         });
 
