@@ -564,7 +564,7 @@
         });
 
         $("#createSession").click(function () {
-            if ($("#desc").val() === undefined) {
+            if (!$("#desc").val() || 0 === $("#desc").val().length) {
                 alert('<%= __('Fill in the description field, please') %>');
                 return false;
             }
@@ -582,6 +582,14 @@
             }
             if (intervalval === undefined) {
                 alert('<%= __('Select a duration, please!') %>');
+                return false;
+            }
+            if (catval === undefined) {
+                alert('<%= __('Select a Category, please!') %>');
+                return false;
+            }
+            if ($("#plandate").data("DateTimePicker").date() == null) {
+                alert('<%= __('Select a date, please!') %>');
                 return false;
             }
             var formdata = {

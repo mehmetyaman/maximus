@@ -131,6 +131,7 @@ module.exports = function (app, winston, emailServer) {
         created_user: req.user.id,
         sub_category_id: input.subCatval
       }
+      console.log(data)
       if (err) {
         connection.rollback(function () {
           throw err
