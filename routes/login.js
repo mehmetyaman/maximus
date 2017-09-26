@@ -76,6 +76,12 @@ module.exports = function (app, passport, winston, emailserver) {
                 if (categories.length == 0) {
                     return res.status(200).json({});
                 }
+
+                for (var i = 0; i < categories.length; ++i) {
+                    categories[i]['category_short_desc'] = req.__(categories[i]['category_short_desc']);
+                    categories[i]['category_long_desc'] = req.__(categories[i]['category_long_desc']);
+                }
+
                 return res.status(200).json(categories);
             });
         })
@@ -93,6 +99,11 @@ module.exports = function (app, passport, winston, emailserver) {
                 //Check that a user was found
                 if (subCategories.length == 0) {
                     return res.status(200).json([]);
+                }
+
+                for (var i = 0; i < subCategories.length; ++i) {
+                    subCategories[i]['sub_category_short_desc'] = req.__(subCategories[i]['sub_category_short_desc']);
+                    subCategories[i]['sub_category_long_desc'] = req.__(subCategories[i]['sub_category_long_desc']);
                 }
 
                 return res.status(200).json(subCategories);
