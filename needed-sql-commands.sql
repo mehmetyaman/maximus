@@ -232,6 +232,7 @@ ALTER TABLE `maximus`.`languages`
 ALTER TABLE `maximus`.`translation_session`
   ADD COLUMN `sub_category_id` INT(11) NULL AFTER `created_user`;
 
+-- decimal (m,d) m total digits and d decimal after zero
 ALTER TABLE `maximus`.`translation_session`
-  ADD COLUMN `utc_value` DECIMAL(3,3) NULL AFTER `sub_category_id`;
+  CHANGE COLUMN `utc_value` `utc_value` DECIMAL(4,2) NULL DEFAULT NULL ;
 
