@@ -129,7 +129,8 @@ module.exports = function (app, winston, emailServer) {
         is_paid: 0,
         created_date: new Date(),
         created_user: req.user.id,
-        sub_category_id: input.subCatval
+        sub_category_id: input.subCatval,
+        utc_value:input.utcval
       }
       console.log(data)
       if (err) {
