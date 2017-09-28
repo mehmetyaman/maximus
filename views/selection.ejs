@@ -21,7 +21,7 @@
                 highlight: true, /* Enable substring highlighting */
                 minLength: 1, /* Specify minimum characters required for showing suggestions */
                 source: function (query, process) {
-                    return $.get('/searchTranslator' + query, {}, function (data) {
+                    return $.get('/search-translator/' + query, {}, function (data) {
                         var valueHint;
                         translators = [];
                         map = {};

@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  app.get('/searchTranslator/:key', function (req, res, next) {
+  app.get('/search-translator/:key', function (req, res, next) {
     var key = req.params.key
     var trimmedKey = key.replace(/\s/g, '')
     // var trimmedKey = req.query.key.replace(/\s/g,'');
@@ -18,17 +18,13 @@ module.exports = function (app) {
       connection.query(sql,
         function (err, rows, fields) {
           if (err) return next(err)
-          // var data = [];
-          // for (i = 0; i < rows.length; i++) {
-          //    data.push("name:"+rows[i].name + " " + rows[i].surname + " " + rows[i].email + " ");
-          // }
           res.contentType('application/json')
           res.end(JSON.stringify(rows, null, 2))
         })
     })
   })
 
-  app.get('/searchTranslator/:lang1/:lang2', function (req, res, next) {
+  app.get('/search-translator/:lang1/:lang2', function (req, res, next) {
     var lang1 = req.params.lang1
     var lang2 = req.params.lang2
     var sql = ' SELECT t.id,name, surname, email' +
