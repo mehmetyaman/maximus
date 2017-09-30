@@ -7,57 +7,7 @@
     <script type="text/javascript" src="/bower_components/moment/min/moment.min.js"></script>
     <script type="text/javascript" src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-    <style>
-        body {
-            padding-top: 20px;
-        }
-        #navigation {
-            position: absolute;
-            top:0;
-            right:0;
-        }
-
-        #navMain {
-            list-style: none;
-            float: left;
-            margin: 0;
-            padding: 9px;
-        }
-        #navMain > li {
-            float: right;
-            position: relative;
-            background-color: #00B7FF;
-            padding: 6px 6px;
-        }
-        #navMain > li > a {
-            padding: 0px 0px;
-        }
-
-        #navMain ul {
-            display: none;
-            position: absolute;
-            list-style: none;
-            left: 0;
-            padding: 0;
-            margin: 0;
-        }
-        #navMain ul li a {
-            display: block;
-            color: white;
-        }
-        #navMain li:hover ul {
-            display: block;
-        }
-        #navMain li ul:hover {
-            display: block;
-        }
-
-        #navMain li ul {
-            position: relative;
-            background-color: #337ab7;
-        }
-
-    </style>
+    <link rel="stylesheet" href="/css/some.css"/>
     <script src="/bower_components/socket.io-client/dist/socket.io.js"></script>
 </head>
 <body>
@@ -80,9 +30,9 @@
         <li><a href="#"><strong><%= user.email %>, id=<%= user.id %></strong></a>
             <ul>
                 <div>
-                    <li><a href="/connect/local" ><%= __('Connect Local') %></a></li>
-                    <li><a href="/logout" ><%= __('Logout') %></a></li>
-                    <li><a href="/profile/<%= user.id %>" ><%= __('My Profile') %></a></li>
+                    <li><a href="/connect/local"><%= __('Connect Local') %></a></li>
+                    <li><a href="/logout"><%= __('Logout') %></a></li>
+                    <li><a href="/profile/<%= user.id %>"><%= __('My Profile') %></a></li>
                     <li><a href="#" onclick="changePassword();"><%= __('Change Password') %></a></li>
                 </div>
             </ul>
@@ -104,7 +54,7 @@
                 <span style="font-weight: bold;"><%= __('Duration (In Mins)') %></span>
             </div>
             <div class="col-md-2">
-                <span style="font-weight: bold;" ><%= __('Languages') %></span>
+                <span style="font-weight: bold;"><%= __('Languages') %></span>
             </div>
             <div class="col-md-2">
                 <span style="font-weight: bold;"><%= __('Start Date') %></span>
@@ -121,7 +71,7 @@
                 <span><%= items.description %></span>
             </div>
             <div class="col-md-2">
-                <span ><%= items.duration %></span>
+                <span><%= items.duration %></span>
             </div>
             <div class="col-md-2">
                 <span><%= items.lang1 %> > <%= items.lang2 %></span>
@@ -225,17 +175,17 @@
     lists.forEach(function (items) {
     %>
 
-    $.get( "/peers/<%= items.id %>", function( participants ) {
-        index=0;
-        text="";
-        if(participants && participants.length>0){
-            participants.forEach(function(part) {
-                $.get( "/userData/"+part.userId, function( user ) {
-                    text += user.name+ " " +user.surname;
-                    if(++index!=participants.length) {  // dont add "," after last one
+    $.get("/peers/<%= items.id %>", function (participants) {
+        index = 0;
+        text = "";
+        if (participants && participants.length > 0) {
+            participants.forEach(function (part) {
+                $.get("/userData/" + part.userId, function (user) {
+                    text += user.name + " " + user.surname;
+                    if (++index != participants.length) {  // dont add "," after last one
                         text += ", ";
-                    }else{
-                        text = "("+text+")";
+                    } else {
+                        text = "(" + text + ")";
                         $("#participants-span-<%= items.id %>").html(text);
                     }
                 });

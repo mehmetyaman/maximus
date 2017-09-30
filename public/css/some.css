@@ -1,0 +1,48 @@
+body {
+    padding-top: 20px;
+}
+#navigation {
+    position: absolute;
+    top:0;
+    right:0;
+}
+
+#navMain {
+    list-style: none;
+    float: left;
+    margin: 0;
+    padding: 9px;
+}
+#navMain > li {
+    float: right;
+    position: relative;
+    background-color: #00B7FF;
+    padding: 6px 6px;
+}
+#navMain > li > a {
+    padding: 0px 0px;
+}
+
+#navMain ul {
+    display: none;
+    position: absolute;
+    list-style: none;
+    left: 0;
+    padding: 0;
+    margin: 0;
+}
+#navMain ul li a {
+    display: block;
+    color: white;
+}
+#navMain li:hover ul {
+    display: block;
+}
+#navMain li ul:hover {
+    display: block;
+}
+
+#navMain li ul {
+    position: relative;
+    background-color: #337ab7;
+}
