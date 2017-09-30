@@ -107,6 +107,7 @@ require('./routes/selection')(app)
 require('./routes/sessionComments')(app)
 require('./routes/signup')(app, passport, emailServer)
 require('./config/passport')(passport) // pass passport for configuration
+require('./scheduler/schedule-master')
 
 app.use(function (req, res, next) {
     res.status(404)

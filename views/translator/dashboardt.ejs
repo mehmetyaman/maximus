@@ -134,7 +134,7 @@
                 <% if(items.is_demanded){ %>
                 <a href="#"><%= __('Demanded') %></a>
                 <% } else { %>
-                <a href="#" onclick="demand(<%= items.id %>);"><%= __('Demand Now') %></a>
+                <a href="#" onclick="demand(<%= items.id %>, this);"><%= __('Demand Now') %></a>
                 <% } %>
             </div>
             <% }else{ %>
@@ -202,7 +202,7 @@
             if (newItem.demand_id) {
                 newhtml += '      <a href="#"><%= __('Demanded') %></a>';
             } else {
-                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ');"><%= __('Demand Now') %></a>';
+                newhtml += '      <a href="#" onclick="demand(' + newItem.id + ', this);"><%= __('Demand Now') %></a>';
             }
             newhtml += '</div>';
         } else {
@@ -214,9 +214,9 @@
         newhtml += '       </div>';
         $('#rowContainer').append(newhtml);
     }
-    function demand(id) {
-        $.post("demand/" + id, function (data) {
-            location.reload();
+    function demand(id, el) {
+        $.get("demand/" + id, function (data) {
+            el.text = '<%= __("Demanded") %>';
         });
     }
 
