@@ -215,7 +215,7 @@
         $('#rowContainer').append(newhtml);
     }
     function demand(id, el) {
-        $.get("demand/" + id, function (data) {
+        $.post("demand/" + id, function (data) {
             el.text = '<%= __("Demanded") %>';
         });
     }
