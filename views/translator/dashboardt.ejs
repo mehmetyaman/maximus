@@ -41,8 +41,14 @@
 </nav>
 <form id="plan-form">
     <div class="container" id="rowContainer">
-        <br><br><br><br><br><br><br><br>
-
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <% if (lists) { %>
         <div class="row">
             <div class="col-md-2">
@@ -198,7 +204,6 @@
     });
     }
     %>
-
 
     function changePassword() {
         $.post("change-password-request?email=" + "<%= user.email %>", function (data) {
