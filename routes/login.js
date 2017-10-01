@@ -53,7 +53,7 @@ module.exports = function (app, passport, winston, emailserver) {
             connection.query('select * from languages where language=?', [country_code], function (err, languages) {
                 if (err) {
                     console.log("loadLanguages : " + err);
-                    return res.status(500).json({error: err2});
+                    return res.status(500).json({error: err});
                 }
                 //Check that a user was found
                 if (languages.length == 0) {

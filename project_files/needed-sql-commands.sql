@@ -31,7 +31,8 @@ CREATE TABLE `users` (
   `is_linkedin_user` BOOLEAN                   DEFAULT FALSE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC)
-);
+)
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE `languages` (
   `lang_short` VARCHAR(5)  NOT NULL,
@@ -50,7 +51,8 @@ CREATE TABLE `categories` (
   PRIMARY KEY (`id`),
   `category_long_desc`  VARCHAR(100),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE `sub_categories` (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -64,7 +66,8 @@ CREATE TABLE `sub_categories` (
     ON
     UPDATE NO ACTION,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE `translator_lang` (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -171,7 +174,8 @@ CREATE TABLE `translation_session_invitations` (
   CONSTRAINT `fk_translation_session_invitations_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE `translation_session_star_and_comment` (
   `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -188,7 +192,8 @@ CREATE TABLE `translation_session_star_and_comment` (
   CONSTRAINT `fk_translation_session_star_and_comment_2` FOREIGN KEY (`translation_session_id`) REFERENCES `translation_session` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE `translator_sessions_mean_star` (
   `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -203,7 +208,6 @@ CREATE TABLE `translator_sessions_mean_star` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-
   ENGINE = InnoDB
   AUTO_INCREMENT = 4
   DEFAULT CHARSET = utf8;
@@ -234,5 +238,5 @@ ALTER TABLE `maximus`.`translation_session`
 
 -- decimal (m,d) m total digits and d decimal after zero
 ALTER TABLE `maximus`.`translation_session`
-  CHANGE COLUMN `utc_value` `utc_value` DECIMAL(4,2) NULL DEFAULT NULL ;
+  ADD COLUMN `utc_value` DECIMAL(4,2) NULL DEFAULT NULL ;
 
