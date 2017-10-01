@@ -36,7 +36,7 @@ module.exports = function (app, passport, winston, emailserver) {
                 userId, function (err, sessions) {
                     if (err) {
                         console.log("loadSessions : " + err);
-                        res.status(500).json({error: err2});
+                        res.status(500).json({error: err});
                     }
                     //Check that a user was found
                     if (sessions.length == 0) {
@@ -53,7 +53,7 @@ module.exports = function (app, passport, winston, emailserver) {
             connection.query('select * from languages where language=?', [country_code], function (err, languages) {
                 if (err) {
                     console.log("loadLanguages : " + err);
-                    return res.status(500).json({error: err2});
+                    return res.status(500).json({error: err});
                 }
                 //Check that a user was found
                 if (languages.length == 0) {
@@ -70,7 +70,7 @@ module.exports = function (app, passport, winston, emailserver) {
             connection.query('select * from categories', function (err, categories) {
                 if (err) {
                     console.log("loadcategories : " + err);
-                    return res.status(500).json({error: err2});
+                    return res.status(500).json({error: err});
                 }
                 //Check that a user was found
                 if (categories.length == 0) {
@@ -117,7 +117,7 @@ module.exports = function (app, passport, winston, emailserver) {
             connection.query('select * from languages', function (err, languages) {
                 if (err) {
                     console.log("loadLanguages : " + err);
-                    res.status(500).json({error: err2});
+                    res.status(500).json({error: err});
                 }
                 //Check that a user was found
                 if (languages.length == 0) {

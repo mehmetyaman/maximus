@@ -77,9 +77,9 @@ module.exports = function (app, passport, emailserver) {
                     req.logIn(user, function (err) {
                         if (err) {
                             return next(err)
-                        }
-                        else {
+                        } else {
                             util.sendVerificationEmail(req, user, res, emailserver, next)
+                            res.redirect('/signup-success')
                         }
                     })
                 })(req, res, next)
@@ -149,8 +149,12 @@ module.exports = function (app, passport, emailserver) {
                                         connection.query(
                                             'INSERT INTO translator_lang (translator_id, lang_from, lang_to, price_per_hour) values ? ',
                                             [values], function (err, rows2) {
-                                                if (err) return next(err)
-                                                else util.sendVerificationEmail(req, user, res, emailserver, next)
+                                                if (err) {
+                                                    return next(err)
+                                                } else {
+                                                    util.sendVerificationEmail(req, user, res, emailserver, next)
+                                                    res.redirect('/signup-success')
+                                                }
                                             })
                                     }
                                 )
