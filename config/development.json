@@ -7,11 +7,11 @@
     "timeout":"10000"  //10 sec
   },
   "mysql": {
-    "host": "localhost",
+    "host": "maximus2.crndlsr14dxi.us-west-2.rds.amazonaws.com",
     "user": "root",
-    "password" : "",
+    "password": "admin123",
     "port": 3306,
-    "database":"maximus",
+    "database": "maximus",
     "multipleStatements": "true",
     "acquireTimeout": 10000
   },

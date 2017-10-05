@@ -32,7 +32,8 @@ CREATE TABLE maximus.users (
   `is_linkedin_user` BOOLEAN                   DEFAULT FALSE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC)
-);
+)
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.languages (
   `lang_short` VARCHAR(5)  NOT NULL,
@@ -51,7 +52,8 @@ CREATE TABLE maximus.categories (
   PRIMARY KEY (`id`),
   `category_long_desc`  VARCHAR(100),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.sub_categories (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -65,7 +67,8 @@ CREATE TABLE maximus.sub_categories (
     ON
     UPDATE NO ACTION,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translator_lang (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -172,7 +175,8 @@ CREATE TABLE maximus.translation_session_invitations (
   CONSTRAINT `fk_translation_session_invitations_2` FOREIGN KEY (`translation_session_id`) REFERENCES maximus.translation_session (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translation_session_star_and_comment (
   `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -189,7 +193,8 @@ CREATE TABLE maximus.translation_session_star_and_comment (
   CONSTRAINT `fk_translation_session_star_and_comment_2` FOREIGN KEY (`translation_session_id`) REFERENCES maximus.translation_session (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
-);
+)
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translator_sessions_mean_star (
   `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
