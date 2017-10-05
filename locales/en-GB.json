@@ -66,5 +66,12 @@
   "Email_verification_link_sent_msg": "Email verification link have been sent to your email address. Please check your email.",
   "Go to Login": "Go to Login",
   "Selection Linpret Language Services": "Selection Linpret Language Services",
-  "Paid": "Paid"
+  "Paid": "Paid",
+  "Arabic":"Arabic",
+  "Chinese":"Chinese",
+  "English":"English",
+  "Spanish":"Spanish",
+  "German":"German",
+  "Russian":"Russian",
+  "Turkish":"Turkish"
 }

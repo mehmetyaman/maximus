@@ -211,5 +211,13 @@
   "Linguistics": "TLinguistics",
   "Philosophy": "TPhilosophy",
   "Psychology": "TPsychology",
-  "Religion": "TReligion"
+  "Religion": "TReligion",
+  "Arabic":"Arapça",
+  "Chinese":"Çince",
+  "English":"İngilizce",
+  "Spanish":"İspanyolca",
+  "German":"Almanca",
+  "Russian":"Rusça",
+  "Turkish":"Türkçe"
+
 }

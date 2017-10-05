@@ -248,5 +248,12 @@
   "Linguistics": "Linguistics",
   "Philosophy": "Philosophy",
   "Psychology": "Psychology",
-  "Religion": "Religion"
+  "Religion": "Religion",
+  "Arabic":"Arabic",
+  "Chinese":"Chinese",
+  "English":"English",
+  "Spanish":"Spanish",
+  "German":"German",
+  "Russian":"Russian",
+  "Turkish":"Turkish"
 }
