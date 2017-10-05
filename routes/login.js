@@ -50,7 +50,7 @@ module.exports = function (app, passport, winston, emailserver) {
     app.get('/languages', function (req, res) {
         var country_code = req.user.country_code
         req.getConnection(function (err, connection) {
-            connection.query('select * from languages where language=?', function (err, languages) {
+            connection.query('select * from languages', function (err, languages) {
                 if (err) {
                     console.log("loadLanguages : " + err);
                     return res.status(500).json({error: err});
