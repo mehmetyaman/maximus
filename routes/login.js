@@ -56,12 +56,10 @@ module.exports = function (app, passport, winston, emailserver) {
                     return res.status(500).json({error: err});
                 }
 
-                console.log(languages)
                 for (var i = 0; i < languages.length; ++i) {
                     languages[i]['lang_short'] = req.__(languages[i]['lang_short']);
                     languages[i]['lang_desc'] = req.__(languages[i]['lang_desc']);
                 }
-                console.log(languages)
                 //Check that a user was found
                 if (languages.length == 0) {
                     return res.status(200).json({});
