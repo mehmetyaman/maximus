@@ -43,8 +43,6 @@ CREATE TABLE maximus.languages (
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 
-INSERT INTO maximus.languages VALUES ('ar', 'Arabic'), ('ch', 'Chinese'), ('en', 'English'),
-  ('es', 'Spanish'), ('gr', 'German'), ('ru', 'Russian'), ('tr', 'Turkish');
 
 CREATE TABLE maximus.categories (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -53,7 +51,7 @@ CREATE TABLE maximus.categories (
   `category_long_desc`  VARCHAR(100),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
-DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.sub_categories (
   `id`                  INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -68,7 +66,7 @@ CREATE TABLE maximus.sub_categories (
     UPDATE NO ACTION,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC)
 )
-DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translator_lang (
   `translator_id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -176,7 +174,7 @@ CREATE TABLE maximus.translation_session_invitations (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translation_session_star_and_comment (
   `id`                     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -194,7 +192,7 @@ CREATE TABLE maximus.translation_session_star_and_comment (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-DEFAULT CHARSET = utf8;
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE maximus.translator_sessions_mean_star (
   `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -240,5 +238,5 @@ ALTER TABLE maximus.translation_session
 
 -- decimal (m,d) m total digits and d decimal after zero
 ALTER TABLE maximus.translation_session
-  CHANGE COLUMN `utc_value` `utc_value` DECIMAL(4,2) NULL DEFAULT NULL ;
+  ADD COLUMN `utc_value` DECIMAL(4,2) NULL AFTER `is_paid` ;
 
