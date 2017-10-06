@@ -58,7 +58,7 @@ module.exports = function (app, passport, emailserver) {
                 } else {
                     return res.render('user/signup', {
                         messages: messages, // pass it here to access in view file
-                        formData: req.bodappy,
+                        formData: req.body,
                         errors: errors
                     })
                 }
