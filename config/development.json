@@ -2,8 +2,6 @@
 {
   "app": {
     "port": 4300,
-    "url":"localhost",
-    "protocol":"http",
     "timeout":"10000"  //10 sec
   },
   "mysql": {
@@ -18,8 +16,6 @@
   "mongo": {
     "url" : "mongodb://localhost/passport" // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   },
-  "database": "maxsimus",
-  "users_table": "users",
   "facebookAuth" : {
     "clientID"        : "your-secret-clientID-here", // your App ID
     "clientSecret"    : "your-client-secret-here", // your App Secret
@@ -65,12 +61,5 @@
       "maxAge": 3600000  //one hour
     }
   },
-  "socketURL": "https://cryptic-headland-18558.herokuapp.com/",
-  "socketMessageEvent": "RTCMultiConnection-Message",
-  "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "443",
-  "enableLogs": true,
-  "autoRebootServerOnFailure": false,
-  "enableScalableBroadcast":true,
-  "isUseHTTPs" : false
+  "socketURL": "https://cryptic-headland-18558.herokuapp.com/"
 }

@@ -1,8 +1,6 @@
 {
   "app": {
-    "port": 443,
-    "url":"https://rocky-citadel-53298.herokuapp.com",
-    "protocol":"https",
+    "port": 9000,
     "timeout":"10000"  //10 sec
   },
   "mysql": {
@@ -15,11 +13,8 @@
     "acquireTimeout": 10000
   },
   "mongo": {
-    "url" : "mongodb://localhost"
-     // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
+    "url" : "mongodb://localhost" // looks like mongodb://<user>:<pass>@mongo.onmodulus.net:27017/Mikha4ot
   },
-  "database": "maximus",
-  "users_table": "users",
   "facebookAuth" : {
     "clientID"        : "your-secret-clientID-here", // your App ID
     "clientSecret"    : "your-client-secret-here", // your App Secret
@@ -37,7 +32,7 @@
     "callbackURL"      : "http://localhost:8080/auth/google/callback"
   },
   "iyzico_client" : {
-    "callbackUrl" : "http://198.199.64.171:443/payment-result",
+    "callbackUrl" : "https://test.linpret.com/payment-result",
     "api" : {
       "apiKey": "sandbox-gzh6RHp4ljfg34N9rLOLFheyC0kjtE0y",
       "secretKey": "sandbox-zV8ITmFoMRntuaEhiZqdk7YNEwoYxSLG",
@@ -64,13 +59,6 @@
       "maxAge": 3600000  //one hour
     }
   },
-  "socketURL": "https://cryptic-headland-18558.herokuapp.com:443/",
-  "socketMessageEvent": "RTCMultiConnection-Message",
-  "socketCustomEvent": "RTCMultiConnection-Custom-Message",
-  "port": "443",
-  "enableLogs": true,
-  "autoRebootServerOnFailure": false,
-  "enableScalableBroadcast":true,
-  "isUseHTTPs" : true
+  "socketURL": "https://cryptic-headland-18558.herokuapp.com:443/"
 
 }

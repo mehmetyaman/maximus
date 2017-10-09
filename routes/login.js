@@ -413,8 +413,7 @@ module.exports = function (app, passport, winston, emailserver) {
                             })
                         }
 
-                        res.end(res.__(
-                            'Password change request send your email adress. Please check your email'))
+                        res.end(res.__('Password_change_request_sent_msg'))
                     })
             })
         } else {
@@ -451,8 +450,7 @@ module.exports = function (app, passport, winston, emailserver) {
                         })
 
                         res.render('login.ejs', {
-                            message: res.__(
-                                'Your password change request is sended. Please check your email.'),
+                            message: res.__('Password_change_request_sent_msg'),
                             customer: req.query.customer,
                             openTokenRequest: false
                         })
