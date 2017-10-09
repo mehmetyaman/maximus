@@ -53,6 +53,7 @@
     "user": "info@linpret.com",
     "password": "Hede9903",
     "host": "smtp.gmail.com",
+    "tls": true,
     "ssl": true
   },
   "session_config" : {

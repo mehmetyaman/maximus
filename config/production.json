@@ -50,10 +50,10 @@
     "client_secret": "EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM"
   },
   "email_server" : {
-    "user": "linpretinfo",
-    "password": "Hede9902",
+    "user": "info@linpret.com",
+    "password": "Hede9903",
     "host": "smtp.gmail.com",
-    "ssl": true
+    "tls": true
   },
   "session_config" : {
     "secret": "appsecret",

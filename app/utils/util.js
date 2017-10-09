@@ -7,7 +7,7 @@ module.exports = {
     emailserver.send({
       text: 'Linpret Email Verification link:' + req.protocol + '://' +
       req.get('host') + '/verify-email?token=' + user.email_verification_code,
-      from: 'info@linpret.com',
+      from: 'info@linpret.com', 
       to: user.email,
       cc: "mehmetyaman@gmail.com",
       subject: 'Linpret Email Verification'
