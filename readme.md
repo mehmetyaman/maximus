@@ -60,8 +60,6 @@ Card Number      | Bank                       | Card Type
 374427000000003  | Garanti Bankası            | American Express  
 4475050000000003 | Halkbank                   | Visa (Debit)  
 5528790000000008 | Halkbank                   | Master Card (Credit)  
-4059030000000009 | HSBC Bank                  | Visa (Debit)  
-5504720000000003 | HSBC Bank                  | Master Card (Credit)  
 5892830000000000 | Türkiye İş Bankası         | Master Card (Debit)  
 4543590000000006 | Türkiye İş Bankası         | Visa (Credit)  
 4910050000000006 | Vakıfbank                  | Visa (Debit)  
