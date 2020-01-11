@@ -18,7 +18,7 @@
     "config": "^1.26.1",
     "connect-flash": "~0.1.1",
     "cookie-parser": "~1.0.0",
-    "ejs": "^1.0.0",
+    "ejs": "^3.0.1",
     "ejs-html": "^4.0.3",
     "emailjs": "^1.0.10",
     "errorhandler": "^1.5.0",
